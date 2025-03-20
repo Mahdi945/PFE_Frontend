@@ -1,0 +1,11 @@
+<div class="input-filed">
+    <label class="input-label">{{ label }}</label>
+    <input
+      [type]="type"
+      [placeholder]="placeholder"
+      class="input-control"
+      [ngModel]="value"
+      (ngModelChange)="onValueChange($event)"
+    />
+  </div>
+  

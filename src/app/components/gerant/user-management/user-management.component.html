@@ -1,0 +1,47 @@
+<div class="user-management">
+    <h2>User Management</h2>
+  
+    <form [formGroup]="userForm" (ngSubmit)="addUser()">
+      <input formControlName="username" placeholder="Username" required />
+      <input formControlName="email" type="email" placeholder="Email" required />
+      <input
+        formControlName="numero_telefone"
+        type="tel"
+        placeholder="Phone Number"
+        required
+      />
+      <input formControlName="password" type="password" placeholder="Password" required />
+      <select formControlName="role">
+        <option value="User">User</option>
+        <option value="Admin">Admin</option>
+      </select>
+      <button type="submit">
+        {{ editingUser ? "Update User" : "Add User" }}
+      </button>
+    </form>
+  
+    <table>
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.numero_telefone }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <button (click)="editUser(user)">Edit</button>
+            <button (click)="deleteUser(user.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

@@ -1,0 +1,10 @@
+<div class="input-field">
+  <label class="input-label" [for]="label">{{ label }}</label>
+  <input
+    [type]="type"
+    class="input-control"
+    [ngModel]="value"
+    (ngModelChange)="onValueChange($event)"
+    [attr.id]="label"
+  />
+</div>
