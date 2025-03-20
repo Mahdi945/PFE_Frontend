@@ -1,0 +1,53 @@
+/* Reset default margin & padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Set a matching background color */
+html, body {
+  width: 100%;
+  min-height: 100vh; /* Allow scrolling if content exceeds the screen */
+  font-family: "Nunito Sans", sans-serif;
+  background-color: #1e2c47; /* Light gray background */
+}
+
+/* Dashboard layout */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh; /* Allow it to expand with content */
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #2c2947; /* White background for main content */
+}
+
+/* Centered content */
+.content-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333; /* Dark gray text */
+  text-align: center;
+  padding: 20px;
+}
+
+/* Optional styling for text */
+h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: url('https://cdn.builder.io/api/v1/image/assets/TEMP/26d0a111683e848fe10cb0be77c1c63396bc811ace5f256c6f85c150bae68564?placeholderIfAbsent=true') 
+    center center / cover no-repeat;
+}

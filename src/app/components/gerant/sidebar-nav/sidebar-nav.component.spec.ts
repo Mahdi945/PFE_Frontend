@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DashboardGerantComponent } from './dashboard-gerant.component';
+import { SidebarNavComponent } from './sidebar-nav.component';
 
-describe('DashboardGerantComponent', () => {
-  let component: DashboardGerantComponent;
-  let fixture: ComponentFixture<DashboardGerantComponent>;
+describe('SidebarNavComponent', () => {
+  let component: SidebarNavComponent;
+  let fixture: ComponentFixture<SidebarNavComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DashboardGerantComponent]
+      imports: [SidebarNavComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DashboardGerantComponent);
+    fixture = TestBed.createComponent(SidebarNavComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

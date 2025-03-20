@@ -1,0 +1,47 @@
+<section class="login-form-container">
+  <div class="login-form-wrapper">
+    <h2 class="form-title">Se connecter</h2>
+    <form [formGroup]="loginForm" class="login-form">
+      
+      <!-- Email Field -->
+      <app-form-input
+        label="Email"
+        type="email"
+        [value]="loginForm.get('email')?.value"
+        (ngModelChange)="loginForm.get('email')?.setValue($event)"
+      ></app-form-input>
+      <div *ngIf="isFieldInvalid('email') && loginForm.get('email')?.invalid" class="error-message">
+        <span *ngIf="loginForm.get('email')?.errors?.['required']">L'email est requis.</span>
+        <span *ngIf="loginForm.get('email')?.errors?.['email']">Veuillez entrer un email valide.</span>
+      </div>
+
+      <!-- Password Field -->
+      <app-form-input
+        label="Mot de passe"
+        type="password"
+        [value]="loginForm.get('password')?.value"
+        (ngModelChange)="loginForm.get('password')?.setValue($event)"
+      ></app-form-input>
+      <div *ngIf="isFieldInvalid('password') && loginForm.get('password')?.invalid" class="error-message">
+        <span *ngIf="loginForm.get('password')?.errors?.['required']">Le mot de passe est requis.</span>
+        <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Minimum 6 caractères requis.</span>
+      </div>
+
+      <!-- Action Button -->
+      <app-action-button
+        label="Se connecter"
+        (onClick)="onLogin()"
+        [disabled]="loginForm.invalid"
+      ></app-action-button>
+
+      <div class="signup-section">
+        <a (click)="goToRegister()" class="signup-link">Inscription</a>
+        <img
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/08e844ed332dd5301af3914b792ad638f7ade8461ddec0527b74b8d6c894c528?placeholderIfAbsent=true"
+          class="signup-icon"
+          alt="Sign up"
+        />
+      </div>
+    </form>
+  </div>
+</section>
