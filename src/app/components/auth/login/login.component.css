@@ -1,0 +1,63 @@
+/* Conteneur du champ de mot de passe */
+.password-container {
+  position: relative;
+}
+
+/* Champ de saisie du mot de passe */
+.password-input {
+  padding-right: 40px; /* Assurer l'espace pour l'icône */
+}
+
+/* Icône de bascule du mot de passe */
+.password-toggle {
+  position: absolute;
+  right: 10px; /* Ajustement parfait à droite */
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #6c757d;
+  transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+  color: #495057;
+}
+/* Style du conteneur du MatDialog */
+.mat-dialog-container {
+    border-radius: 15px; /* Bords arrondis */
+    padding: 20px;
+    width: 400px; /* Augmenter la taille du modal */
+    height: auto;
+    background-color: #fff; /* Couleur de fond blanche */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Style du texte du message dans le modal */
+  .mat-dialog-content {
+    font-size: 16px; /* Taille du texte plus grande */
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Style pour le bouton de fermeture (croix rouge) */
+  .close-btn {
+    background-color: red; /* Couleur rouge pour le fond */
+    border: none;
+    color: white;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 50%; /* Faire la croix ronde */
+    cursor: pointer;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Effet de survol pour le bouton de fermeture */
+  .close-btn:hover {
+    background-color: darkred; /* Couleur rouge foncé au survol */
+  }
+  
