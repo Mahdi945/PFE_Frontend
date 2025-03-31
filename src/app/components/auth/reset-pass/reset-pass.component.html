@@ -1,0 +1,104 @@
+<div class="container">
+    <section class="section reset-pass min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-4 col-md-8 d-flex flex-column align-items-center justify-content-center gap-2">
+  
+            <!-- Logo -->
+            <div class="text-center logo-container mb-3">
+              <a href="index.html" class="logo d-flex align-items-center justify-content-center">
+                <img src="logo.png" alt="Logo" class="img-fluid" style="max-height: 250px;">
+              </a>
+            </div>
+  
+            <!-- Formulaire de réinitialisation -->
+            <div class="card mb-4 w-100 shadow-lg">
+              <div class="card-body">
+                <div class="text-center pb-2">
+                  <h5 class="card-title fs-4">Réinitialisation de mot de passe</h5>
+                  <p class="small">Entrez votre nouveau mot de passe et confirmez-le.</p>
+                </div>
+  
+                <form [formGroup]="resetPasswordForm" (ngSubmit)="onResetPassword()" class="row g-3 needs-validation">
+                  <!-- Champ Mot de passe -->
+                  <div class="col-12">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <div class="input-group password-container">
+                      <input [type]="passwordVisible ? 'text' : 'password'" 
+                             formControlName="password" 
+                             (input)="onPasswordChange(resetPasswordForm.get('password')?.value)"
+                             class="form-control password-input" 
+                             id="password" 
+                             required>
+                      <mat-icon class="password-toggle" (click)="togglePasswordVisibility()">
+                        {{ passwordVisible ? 'visibility_off' : 'visibility' }}
+                      </mat-icon>
+                    </div>
+  
+                    <!-- Message d'indication des critères -->
+                    <div class="password-requirements mt-1">
+                      <small class="text-muted">
+                        Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.
+                      </small>
+                    </div>
+  
+                    <!-- Indicateur de force du mot de passe -->
+                    <div class="password-strength mt-1">
+                      <small [ngClass]="{
+                        'text-success': passwordStrength === 'strong',
+                        'text-warning': passwordStrength === 'medium',
+                        'text-danger': passwordStrength === 'weak'
+                      }">
+                        {{ passwordStrength === 'strong' ? 'Mot de passe fort' : 
+                           passwordStrength === 'medium' ? 'Mot de passe moyen' : 
+                           'Mot de passe faible' }}
+                      </small>
+                    </div>
+  
+                    <div *ngIf="resetPasswordForm.get('password')?.invalid && resetPasswordForm.get('password')?.touched" class="invalid-feedback">
+                      Le mot de passe ne respecte pas les critères requis.
+                    </div>
+                  </div>
+  
+                  <!-- Champ Confirmer le mot de passe -->
+                  <div class="col-12">
+                    <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
+                    <div class="input-group password-container">
+                      <input [type]="confirmPasswordVisible ? 'text' : 'password'" 
+                             formControlName="confirmPassword" 
+                             class="form-control password-input" 
+                             id="confirmPassword" 
+                             required>
+                      <mat-icon class="password-toggle" (click)="toggleConfirmPasswordVisibility()">
+                        {{ confirmPasswordVisible ? 'visibility_off' : 'visibility' }}
+                      </mat-icon>
+                    </div>
+  
+                    <div *ngIf="resetPasswordForm.get('confirmPassword')?.invalid && resetPasswordForm.get('confirmPassword')?.touched" class="invalid-feedback">
+                      Les mots de passe doivent correspondre.
+                    </div>
+                  </div>
+  
+                  <!-- Message de statut -->
+                  <div *ngIf="message" class="col-12 text-center mt-2">
+                    <p class="alert" [ngClass]="{'alert-success': !isError, 'alert-danger': isError}">
+                      {{ message }}
+                    </p>
+                  </div>
+  
+                  <!-- Bouton de soumission -->
+                  <div class="col-12">
+                    <button class="btn btn-primary w-100" type="submit" [disabled]="resetPasswordForm.invalid">
+                      Réinitialiser le mot de passe
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+  
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  

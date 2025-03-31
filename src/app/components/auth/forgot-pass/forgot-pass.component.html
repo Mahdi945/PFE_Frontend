@@ -1,0 +1,56 @@
+<div class="container">
+    <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-4 col-md-8 d-flex flex-column align-items-center justify-content-center gap-2">
+          
+            <!-- Logo -->
+            <div class="text-center logo-container" style="margin-bottom: 1px;">
+              <a href="index.html" class="logo d-flex align-items-center justify-content-center">
+                <img src="logo.png" alt="Logo" class="img-fluid" style="max-height: 250px;">
+              </a>
+            </div>
+             
+            <!-- Formulaire de demande de réinitialisation -->
+            <div class="card mb-7 w-100 shadow-lg">
+              <div class="card-body">
+                <div class="text-center pb-2">
+                  <h5 class="card-title fs-4">Réinitialisation de mot de passe</h5>
+                  <p class="small">Entrez votre email pour recevoir le lien de réinitialisation de votre mot de passe.</p>
+                </div>
+  
+                <form [formGroup]="forgotPasswordForm" (ngSubmit)="onRequestPasswordReset()" class="row g-3 needs-validation" novalidate>
+                  
+                  <!-- Champ Email -->
+                  <div class="col-12">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group">
+                      <span class="input-group-text">&#64;</span>
+                      <input type="email" formControlName="email" class="form-control" id="email" required>
+                      <div *ngIf="emailControl?.invalid && emailControl?.touched" class="invalid-feedback">
+                        Veuillez entrer un email valide.
+                      </div>
+                    </div>
+                  </div>
+                
+                <!-- Message de statut -->
+<div *ngIf="message" class="col-12 text-center mt-2">
+    <p class="alert" [ngClass]="{'alert-success': !isError, 'alert-danger': isError}">
+      {{ message }}
+    </p>
+  </div>
+  
+                  <!-- Bouton de soumission -->
+                  <div class="col-12">
+                    <button class="btn btn-primary w-100" type="submit" [disabled]="forgotPasswordForm.invalid">Envoyer</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+  
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  

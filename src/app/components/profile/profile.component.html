@@ -1,0 +1,288 @@
+  <app-navbar></app-navbar>
+  <app-sidebar></app-sidebar>
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Profile</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">Dashboard</li>
+          <li class="breadcrumb-item active">Profile</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section profile">
+      <div class="row">
+        <div class="col-xl-4">
+          <div class="card">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+              
+              <!-- Conteneur de l'image de profil -->
+              <div class="profile-img-container">
+                <ng-container *ngIf="previewImage || user.photo; else emptyProfileImage">
+                  <img [src]="previewImage ||'http://localhost:3000' + user.photo" alt="Profile" class="profile-img">
+
+                </ng-container>
+                <ng-template #emptyProfileImage>
+                  <div class="empty-profile-img d-flex align-items-center justify-content-center">
+                    <button mat-raised-button color="primary" (click)="fileInput.click()">Upload</button>
+                  </div>
+                </ng-template>
+              </div>
+          
+              <h2>{{ user.username }}</h2>
+              <h3>{{ user.role}}</h3>
+          
+              <div class="social-links mt-2">
+                <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+              </div>
+          
+              <!-- Section d'upload -->
+              <div class="upload-section">
+                <input type="file" (change)="onFileSelected($event)" accept="image/*" hidden #fileInput>
+                <button mat-raised-button color="primary" (click)="fileInput.click()">Changer la photo</button>
+                <button mat-raised-button color="accent" (click)="uploadPhoto()" [disabled]="!selectedFile">
+                  Confirmer
+                </button>
+              </div>
+          
+              <!-- Messages de succès ou d'erreur -->
+              <div *ngIf="successMessage" class="message-success">{{ successMessage }}</div>
+              <div *ngIf="errorMessage" class="message-error">{{ errorMessage }}</div>
+            </div>
+          </div>
+          
+        </div>
+        
+
+        <div class="col-xl-8">
+
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Aperçu</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Modifier Profile</button>
+                </li>
+                <!-- 
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Settings</button>
+                </li>
+                -->
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Changer Mot de Passe</button>
+                </li>
+
+              </ul>
+              <div class="tab-content pt-2">
+
+                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                  
+                  <h5 class="card-title">Profile Details</h5>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Nom complet</div>
+                    <div class="col-lg-9 col-md-8">{{ user.username }}</div>
+                  </div>
+
+                
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Role</div>
+                    <div class="col-lg-9 col-md-8">{{ user.role }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Adresse Email</div>
+                    <div class="col-lg-9 col-md-8">{{ user.email}}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Numero de Telephone</div>
+                    <div class="col-lg-9 col-md-8">{{ user.numero_telephone }}</div>
+                  </div>
+
+                 
+
+                 
+
+                </div>
+
+                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+
+                  <!-- Profile Edit Form -->
+<form (ngSubmit)="updateProfile()">
+  <!-- Username -->
+  <div class="row mb-3">
+    <label for="username" class="col-md-4 col-lg-3 col-form-label">Username</label>
+    <div class="col-md-8 col-lg-9">
+      <input 
+        name="username" 
+        type="text" 
+        class="form-control" 
+        id="username" 
+        [(ngModel)]="user.username" 
+        required
+      >
+    </div>
+  </div>
+
+  <!-- Email -->
+  <div class="row mb-3">
+    <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+    <div class="col-md-8 col-lg-9">
+      <input 
+        name="email" 
+        type="email" 
+        class="form-control" 
+        id="email" 
+        [(ngModel)]="user.email" 
+        required
+      >
+    </div>
+  </div>
+
+  <!-- Phone -->
+  <div class="row mb-3">
+    <label for="phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+    <div class="col-md-8 col-lg-9">
+      <input 
+        name="phone" 
+        type="text" 
+        class="form-control" 
+        id="phone" 
+        [(ngModel)]="user.numero_telephone" 
+        required
+      >
+    </div>
+  </div>
+
+<!-- 
+  <div class="row mb-3">
+    <label for="photo" class="col-md-4 col-lg-3 col-form-label">Photo</label>
+    <div class="col-md-8 col-lg-9">
+      <input 
+        type="file" 
+        class="form-control" 
+        (change)="onFileSelected($event)"
+      >
+      
+      <div *ngIf="previewImage">
+        <img [src]="previewImage" alt="Prévisualisation" style="max-width: 100px; max-height: 100px;">
+      </div>
+    </div>
+  </div>
+-->
+  <!-- Success/Error Message -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Submit Button -->
+  <div class="text-center">
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </div>
+</form>
+<!-- End Profile Edit Form -->
+
+
+                </div>
+
+                <div class="tab-pane fade pt-3" id="profile-settings">
+
+                  <!-- Settings Form 
+                  <form>
+
+                    <div class="row mb-3">
+                      <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
+                      <div class="col-md-8 col-lg-9">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="changesMade" checked>
+                          <label class="form-check-label" for="changesMade">
+                            Changes made to your account
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="newProducts" checked>
+                          <label class="form-check-label" for="newProducts">
+                            Information on new products and services
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="proOffers">
+                          <label class="form-check-label" for="proOffers">
+                            Marketing and promo offers
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="securityNotify" checked disabled>
+                          <label class="form-check-label" for="securityNotify">
+                            Security alerts
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form>
+                   End settings Form -->
+
+                </div>
+
+                <div class="tab-pane fade pt-3" id="profile-change-password">
+                  <!-- Change Password Form -->
+                  <form (ngSubmit)="updatePassword()">
+                    
+                
+                    <div class="row mb-3">
+                      <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">Nouveau mot de passe</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input type="password" class="form-control" id="newPassword" [(ngModel)]="newPassword" name="newPassword" required />
+                      </div>
+                    </div>
+                
+                    <div class="row mb-3">
+                      <label for="confirmNewPassword" class="col-md-4 col-lg-3 col-form-label">Confirmer le nouveau mot de passe</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input type="password" class="form-control" id="confirmNewPassword" [(ngModel)]="confirmNewPassword" name="confirmNewPassword" required />
+                      </div>
+                    </div>
+                
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
+                    </div>
+                  </form>
+                  <!-- End Change Password Form -->
+                   
+  <!-- Afficher le message de succès ou d'erreur -->
+  <div *ngIf="successMessage" class="alert alert-success mt-3">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+    {{ errorMessage }}
+  </div>
+                </div>
+                
+
+              </div><!-- End Bordered Tabs -->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+</main><!-- End #main -->
+<app-footer></app-footer>
+

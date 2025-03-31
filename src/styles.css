@@ -1,1 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+/* Style pour le mode sombre */
+body.dar {
+  background-color: #121212;
+  color: white;
+}
+
+/* Style pour le mode clair */
+body {
+  background-color: white;
+  color: black;
+}
