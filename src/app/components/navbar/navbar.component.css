@@ -13,11 +13,12 @@
     color: #6c757d;
   }
   .logo-img {
-    max-height: 120px; /* Hauteur maximale pour ne pas être trop grand */
-    width: auto; /* Garde le ratio */
+    max-height: 90px; /* Hauteur maximale */
+    width: 150px; /* Fixer une largeur plus petite */
     object-fit: contain; /* Ajuste l’image sans la couper */
     filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.2)); /* Ajoute une ombre légère */
   }
+  
   
   /* 🌍 Styles globaux pour gérer les thèmes */
 :root {

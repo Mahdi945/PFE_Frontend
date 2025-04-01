@@ -70,16 +70,16 @@ declare namespace _default {
 export default _default;
 export type Chart = import('./core.controller.js').default;
 export type ChartEvent = import('../types/index.js').ChartEvent;
-export type InteractionOptions = {
+export interface InteractionOptions {
     axis?: string;
     intersect?: boolean;
     includeInvisible?: boolean;
-};
-export type InteractionItem = {
+}
+export interface InteractionItem {
     datasetIndex: number;
     index: number;
     element: import('./core.element.js').default;
-};
+}
 export type Point = import('../types/index.js').Point;
 /**
  * Helper function to select candidate elements for interaction

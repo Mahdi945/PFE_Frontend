@@ -7496,7 +7496,7 @@
     function isRadianAroundZero(val) {
       return val > -RADIAN_EPSILON && val < RADIAN_EPSILON;
     }
-    // eslint-disable-next-line
+     
     var TIME_REG = /^(?:(\d{4})(?:[-\/](\d{1,2})(?:[-\/](\d{1,2})(?:[T ](\d{1,2})(?::(\d{1,2})(?::(\d{1,2})(?:[.,](\d+))?)?)?(Z|[\+\-]\d\d:?\d\d)?)?)?)?)?$/; // jshint ignore:line
     /**
      * @param value valid type: number | string | Date, otherwise return `new Date(NaN)`
@@ -7711,7 +7711,7 @@
      */
     function numericToNumber(val) {
       var valFloat = parseFloat(val);
-      return valFloat == val // eslint-disable-line eqeqeq
+      return valFloat == val  
       && (valFloat !== 0 || !isString(val) || val.indexOf('x') <= 0) // For case ' 0x0 '.
       ? valFloat : NaN;
     }
@@ -7760,7 +7760,7 @@
     var ECHARTS_PREFIX = '[ECharts] ';
     var storedLogs = {};
     var hasConsole = typeof console !== 'undefined'
-    // eslint-disable-next-line
+     
     && console.warn && console.log;
     function outputLog(type, str, onlyOnce) {
       if (hasConsole) {
@@ -7770,7 +7770,7 @@
           }
           storedLogs[str] = true;
         }
-        // eslint-disable-next-line
+         
         console[type](ECHARTS_PREFIX + str);
       }
     }
@@ -15679,7 +15679,7 @@
     var localeStorage = {};
     var localeModels = {};
     var SYSTEM_LANG = !env.domSupported ? DEFAULT_LOCALE : function () {
-      var langStr = ( /* eslint-disable-next-line */
+      var langStr = (  
       document.documentElement.lang || navigator.language || navigator.browserLanguage || DEFAULT_LOCALE).toUpperCase();
       return langStr.indexOf(LOCALE_ZH) > -1 ? LOCALE_ZH : DEFAULT_LOCALE;
     }();
@@ -18163,7 +18163,7 @@
         var emphasisOpt = opt[optType].emphasis;
         if (normalOpt) {
           if ("development" !== 'production') {
-            // eslint-disable-next-line max-len
+             
             deprecateLog("'normal' hierarchy in " + optType + " has been removed since 4.0. All style properties are configured in " + optType + " directly now.");
           }
           // Timeline controlStyle has other properties besides normal and emphasis
@@ -18208,7 +18208,7 @@
       var textStyle = isObject$1(labelOptSingle) && labelOptSingle.textStyle;
       if (textStyle) {
         if ("development" !== 'production') {
-          // eslint-disable-next-line max-len
+           
           deprecateLog("textStyle hierarchy in " + propName + " has been removed since 4.0. All textStyle properties are configured in " + propName + " directly now.");
         }
         for (var i = 0, len = TEXT_STYLE_OPTIONS.length; i < len; i++) {
@@ -21411,7 +21411,7 @@
       throw new Error(errMsg);
     }
 
-    // eslint-disable-next-line max-len
+     
     function createTooltipMarkup(type, option) {
       option.type = type;
       return option;
@@ -23001,12 +23001,12 @@
       }
     };
     function mockMethods(target, Clz) {
-      /* eslint-disable */
+       
       for (var name_1 in Clz.prototype) {
         // Do not use hasOwnProperty
         target[name_1] = noop;
       }
-      /* eslint-enable */
+       
     }
 
     /*
@@ -24766,7 +24766,7 @@
           var height = lineBlockLengthY * lineBlockLengthsX.length * symbolArray.length;
           if ("development" !== 'production') {
             var warn = function (attrName) {
-              /* eslint-disable-next-line */
+               
               console.warn("Calculated decal size is greater than " + attrName + " due to decal option settings so " + attrName + " is used for the decal size. Please consider changing the decal option to make a smaller decal or set " + attrName + " to be larger to avoid incontinuity.");
             };
             if (width > decalOpt.maxTileWidth) {
@@ -25175,7 +25175,7 @@
         var defaultCoarsePointer = 'auto';
         var defaultUseDirtyRect = false;
         if ("development" !== 'production') {
-          var root = /* eslint-disable-next-line */
+          var root =  
           env.hasGlobalWindow ? window : global;
           if (root) {
             defaultRenderer = retrieve2(root.__ECHARTS__DEFAULT__RENDERER__, defaultRenderer);
@@ -25309,7 +25309,7 @@
       ECharts.prototype.isSSR = function () {
         return this._ssr;
       };
-      /* eslint-disable-next-line */
+       
       ECharts.prototype.setOption = function (option, notMerge, lazyUpdate) {
         if (this[IN_MAIN_PROCESS_KEY]) {
           if ("development" !== 'production') {
@@ -25398,7 +25398,7 @@
       };
       ECharts.prototype.getDevicePixelRatio = function () {
         return this._zr.painter.dpr
-        /* eslint-disable-next-line */ || env.hasGlobalWindow && window.devicePixelRatio || 1;
+          || env.hasGlobalWindow && window.devicePixelRatio || 1;
       };
       /**
        * Get canvas which has all thing rendered
@@ -28474,7 +28474,7 @@
         this._store = this._store.selectRange(innerRange);
         return this;
       };
-      /* eslint-enable max-len */
+       
       SeriesData.prototype.mapArray = function (dims, cb, ctx) {
 
         if (isFunction(dims)) {
@@ -28578,7 +28578,7 @@
       /**
        * Get visual property of single data item
        */
-      // eslint-disable-next-line
+       
       SeriesData.prototype.getItemVisual = function (idx, key) {
         var itemVisual = this._itemVisuals[idx];
         var val = itemVisual && itemVisual[key];
@@ -28617,7 +28617,7 @@
         }
         return val;
       };
-      // eslint-disable-next-line
+       
       SeriesData.prototype.setItemVisual = function (idx, key, value) {
         var itemVisual = this._itemVisuals[idx] || {};
         this._itemVisuals[idx] = itemVisual;
@@ -39686,7 +39686,7 @@
         var ticks = intervalScaleProto.getTicks.call(scale);
         if (ticks[1] && (!isValueNice(interval) || getPrecisionSafe(ticks[1].value) > getPrecisionSafe(interval))) {
           warn(
-          // eslint-disable-next-line
+           
           "The ticks may be not readable when set min: " + axisModel.get('min') + ", max: " + axisModel.get('max') + " and alignTicks: true");
         }
       }

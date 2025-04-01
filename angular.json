@@ -37,12 +37,10 @@
               "public/assets/vendor/remixicon/remixicon.css",
               "public/assets/vendor/simple-datatables/style.css",
               "public/assets/css/style.css",
-             
-
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": [
-             "public/assets/vendor/apexcharts/apexcharts.min.js",
+              "public/assets/vendor/apexcharts/apexcharts.min.js",
               "public/assets/vendor/bootstrap/js/bootstrap.bundle.min.js",
               "public/assets/vendor/chart.js/chart.umd.js",
               "public/assets/vendor/echarts/echarts.min.js",
@@ -112,8 +110,22 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
+  },
+  "cli": {
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   }
 }

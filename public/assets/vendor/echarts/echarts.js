@@ -7635,7 +7635,7 @@
     function isRadianAroundZero(val) {
       return val > -RADIAN_EPSILON && val < RADIAN_EPSILON;
     }
-    // eslint-disable-next-line
+     
     var TIME_REG = /^(?:(\d{4})(?:[-\/](\d{1,2})(?:[-\/](\d{1,2})(?:[T ](\d{1,2})(?::(\d{1,2})(?::(\d{1,2})(?:[.,](\d+))?)?)?(Z|[\+\-]\d\d:?\d\d)?)?)?)?)?$/; // jshint ignore:line
     /**
      * @param value valid type: number | string | Date, otherwise return `new Date(NaN)`
@@ -7850,7 +7850,7 @@
      */
     function numericToNumber(val) {
       var valFloat = parseFloat(val);
-      return valFloat == val // eslint-disable-line eqeqeq
+      return valFloat == val  
       && (valFloat !== 0 || !isString(val) || val.indexOf('x') <= 0) // For case ' 0x0 '.
       ? valFloat : NaN;
     }
@@ -7899,7 +7899,7 @@
     var ECHARTS_PREFIX = '[ECharts] ';
     var storedLogs = {};
     var hasConsole = typeof console !== 'undefined'
-    // eslint-disable-next-line
+     
     && console.warn && console.log;
     function outputLog(type, str, onlyOnce) {
       if (hasConsole) {
@@ -7909,7 +7909,7 @@
           }
           storedLogs[str] = true;
         }
-        // eslint-disable-next-line
+         
         console[type](ECHARTS_PREFIX + str);
       }
     }
@@ -16145,7 +16145,7 @@
     var localeStorage = {};
     var localeModels = {};
     var SYSTEM_LANG = !env.domSupported ? DEFAULT_LOCALE : function () {
-      var langStr = ( /* eslint-disable-next-line */
+      var langStr = (  
       document.documentElement.lang || navigator.language || navigator.browserLanguage || DEFAULT_LOCALE).toUpperCase();
       return langStr.indexOf(LOCALE_ZH) > -1 ? LOCALE_ZH : DEFAULT_LOCALE;
     }();
@@ -18815,7 +18815,7 @@
         var emphasisOpt = opt[optType].emphasis;
         if (normalOpt) {
           if ("development" !== 'production') {
-            // eslint-disable-next-line max-len
+             
             deprecateLog("'normal' hierarchy in " + optType + " has been removed since 4.0. All style properties are configured in " + optType + " directly now.");
           }
           // Timeline controlStyle has other properties besides normal and emphasis
@@ -18860,7 +18860,7 @@
       var textStyle = isObject$1(labelOptSingle) && labelOptSingle.textStyle;
       if (textStyle) {
         if ("development" !== 'production') {
-          // eslint-disable-next-line max-len
+           
           deprecateLog("textStyle hierarchy in " + propName + " has been removed since 4.0. All textStyle properties are configured in " + propName + " directly now.");
         }
         for (var i = 0, len = TEXT_STYLE_OPTIONS.length; i < len; i++) {
@@ -22259,9 +22259,9 @@
       if (renderMode === 'html') {
         // `textStyle` is probably from user input, should be encoded to reduce security risk.
         return {
-          // eslint-disable-next-line max-len
+           
           nameStyle: "font-size:" + encodeHTML(nameFontSize + '') + "px;color:" + encodeHTML(nameFontColor) + ";font-weight:" + encodeHTML(nameFontWeight + ''),
-          // eslint-disable-next-line max-len
+           
           valueStyle: "font-size:" + encodeHTML(valueFontSize + '') + "px;color:" + encodeHTML(valueFontColor) + ";font-weight:" + encodeHTML(valueFontWeight + '')
         };
       } else {
@@ -22283,7 +22283,7 @@
     // (value from UI design)
     var HTML_GAPS = [0, 10, 20, 30];
     var RICH_TEXT_GAPS = ['', '\n', '\n\n', '\n\n\n'];
-    // eslint-disable-next-line max-len
+     
     function createTooltipMarkup(type, option) {
       option.type = type;
       return option;
@@ -24199,12 +24199,12 @@
       }
     };
     function mockMethods(target, Clz) {
-      /* eslint-disable */
+       
       for (var name_1 in Clz.prototype) {
         // Do not use hasOwnProperty
         target[name_1] = noop;
       }
-      /* eslint-enable */
+       
     }
 
     /*
@@ -25987,7 +25987,7 @@
           var height = lineBlockLengthY * lineBlockLengthsX.length * symbolArray.length;
           if ("development" !== 'production') {
             var warn = function (attrName) {
-              /* eslint-disable-next-line */
+               
               console.warn("Calculated decal size is greater than " + attrName + " due to decal option settings so " + attrName + " is used for the decal size. Please consider changing the decal option to make a smaller decal or set " + attrName + " to be larger to avoid incontinuity.");
             };
             if (width > decalOpt.maxTileWidth) {
@@ -26396,7 +26396,7 @@
         var defaultCoarsePointer = 'auto';
         var defaultUseDirtyRect = false;
         if ("development" !== 'production') {
-          var root = /* eslint-disable-next-line */
+          var root =  
           env.hasGlobalWindow ? window : global;
           if (root) {
             defaultRenderer = retrieve2(root.__ECHARTS__DEFAULT__RENDERER__, defaultRenderer);
@@ -26530,7 +26530,7 @@
       ECharts.prototype.isSSR = function () {
         return this._ssr;
       };
-      /* eslint-disable-next-line */
+       
       ECharts.prototype.setOption = function (option, notMerge, lazyUpdate) {
         if (this[IN_MAIN_PROCESS_KEY]) {
           if ("development" !== 'production') {
@@ -26619,7 +26619,7 @@
       };
       ECharts.prototype.getDevicePixelRatio = function () {
         return this._zr.painter.dpr
-        /* eslint-disable-next-line */ || env.hasGlobalWindow && window.devicePixelRatio || 1;
+          || env.hasGlobalWindow && window.devicePixelRatio || 1;
       };
       /**
        * Get canvas which has all thing rendered
@@ -29695,7 +29695,7 @@
         this._store = this._store.selectRange(innerRange);
         return this;
       };
-      /* eslint-enable max-len */
+       
       SeriesData.prototype.mapArray = function (dims, cb, ctx) {
 
         if (isFunction(dims)) {
@@ -29799,7 +29799,7 @@
       /**
        * Get visual property of single data item
        */
-      // eslint-disable-next-line
+       
       SeriesData.prototype.getItemVisual = function (idx, key) {
         var itemVisual = this._itemVisuals[idx];
         var val = itemVisual && itemVisual[key];
@@ -29838,7 +29838,7 @@
         }
         return val;
       };
-      // eslint-disable-next-line
+       
       SeriesData.prototype.setItemVisual = function (idx, key, value) {
         var itemVisual = this._itemVisuals[idx] || {};
         this._itemVisuals[idx] = itemVisual;
@@ -43623,7 +43623,7 @@
         var ticks = intervalScaleProto.getTicks.call(scale);
         if (ticks[1] && (!isValueNice(interval) || getPrecisionSafe(ticks[1].value) > getPrecisionSafe(interval))) {
           warn(
-          // eslint-disable-next-line
+           
           "The ticks may be not readable when set min: " + axisModel.get('min') + ", max: " + axisModel.get('max') + " and alignTicks: true");
         }
       }
@@ -64020,7 +64020,7 @@
        * @override
        */
       ThemeRiverSeriesModel.prototype.init = function (option) {
-        // eslint-disable-next-line
+         
         _super.prototype.init.apply(this, arguments);
         // Put this function here is for the sake of consistency of code style.
         // Enable legend selection for each data item
@@ -67573,7 +67573,7 @@
         },
         handle: {
           show: false,
-          // eslint-disable-next-line
+           
           icon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4h1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7v-1.2h6.6z M13.3,22H6.7v-1.2h6.6z M13.3,19.6H6.7v-1.2h6.6z',
           size: 45,
           // handle margin is from symbol center to axis, which is stable when circular move.
@@ -72650,7 +72650,7 @@
           icon: {
             line: 'M4.1,28.9h7.1l9.3-22l7.4,38l9.7-19.7l3,12.8h14.9M4.1,58h51.4',
             bar: 'M6.7,22.9h10V48h-10V22.9zM24.9,13h10v35h-10V13zM43.2,2h10v46h-10V2zM3.1,58h53.7',
-            // eslint-disable-next-line
+             
             stack: 'M8.2,38.4l-8.4,4.1l30.6,15.3L60,42.5l-8.1-4.1l-21.5,11L8.2,38.4z M51.9,30l-8.1,4.2l-13.4,6.9l-13.9-6.9L8.2,30l-8.4,4.2l8.4,4.2l22.2,11l21.5-11l8.1-4.2L51.9,30z M51.9,21.7l-8.1,4.2L35.7,30l-5.3,2.8L24.9,30l-8.4-4.1l-8.3-4.2l-8.4,4.2L8.2,30l8.3,4.2l13.9,6.9l13.4-6.9l8.1-4.2l8.1-4.1L51.9,21.7zM30.4,2.2L-0.2,17.5l8.4,4.1l8.3,4.2l8.4,4.2l5.5,2.7l5.3-2.7l8.1-4.2l8.1-4.2l8.1-4.1L30.4,2.2z' // jshint ignore:line
           },
 
@@ -73038,7 +73038,7 @@
           // Use default textarea
           textarea.readOnly = model.get('readOnly');
           var style = textarea.style;
-          // eslint-disable-next-line max-len
+           
           style.cssText = 'display:block;width:100%;height:100%;font-family:monospace;font-size:14px;line-height:1.6rem;resize:none;box-sizing:border-box;outline:none';
           style.color = model.get('textColor');
           style.borderColor = model.get('textareaBorderColor');
@@ -73049,7 +73049,7 @@
         var blockMetaList = result.meta;
         var buttonContainer = document.createElement('div');
         buttonContainer.style.cssText = 'position:absolute;bottom:5px;left:0;right:0';
-        // eslint-disable-next-line max-len
+         
         var buttonStyle = 'float:right;margin-right:20px;border:none;cursor:pointer;padding:2px 5px;font-size:12px;border-radius:3px';
         var closeButton = document.createElement('div');
         var refreshButton = document.createElement('div');
@@ -73064,7 +73064,7 @@
         addEventListener(refreshButton, 'click', function () {
           if (contentToOption == null && optionToContent != null || contentToOption != null && optionToContent == null) {
             if ("development" !== 'production') {
-              // eslint-disable-next-line
+               
               warn('It seems you have just provided one of `contentToOption` and `optionToContent` functions but missed the other one. Data change is ignored.');
             }
             close();
@@ -73113,7 +73113,7 @@
           readOnly: false,
           optionToContent: null,
           contentToOption: null,
-          // eslint-disable-next-line
+           
           icon: 'M17.5,17.3H33 M17.5,17.3H33 M45.4,29.5h-28 M11.5,2v56H51V14.8L38.4,2H11.5z M38.4,2.2v12.7H51 M45.4,41.7h-28',
           title: ecModel.getLocaleModel().get(['toolbox', 'dataView', 'title']),
           lang: ecModel.getLocaleModel().get(['toolbox', 'dataView', 'lang']),
@@ -73268,7 +73268,7 @@
       RestoreOption.getDefaultOption = function (ecModel) {
         var defaultOption = {
           show: true,
-          // eslint-disable-next-line
+           
           icon: 'M3.8,33.4 M47,18.9h9.8V8.7 M56.3,20.1 C52.1,9,40.5,0.6,26.8,2.1C12.6,3.7,1.6,16.2,2.1,30.6 M13,41.1H3.1v10.2 M3.7,39.9c4.2,11.1,15.8,19.5,29.5,18 c14.2-1.6,25.2-14.1,24.7-28.5',
           title: ecModel.getLocaleModel().get(['toolbox', 'restore', 'title'])
         };
@@ -73905,7 +73905,7 @@
     /* global document, window */
     var CSS_TRANSITION_VENDOR = toCSSVendorPrefix(TRANSITION_VENDOR, 'transition');
     var CSS_TRANSFORM_VENDOR = toCSSVendorPrefix(TRANSFORM_VENDOR, 'transform');
-    // eslint-disable-next-line
+     
     var gCssText = "position:absolute;display:block;border-style:solid;white-space:nowrap;z-index:9999999;" + (env.transform3dSupported ? 'will-change:transform;' : '');
     function mirrorPos(pos) {
       pos = pos === 'left' ? 'right' : pos === 'right' ? 'left' : pos === 'top' ? 'bottom' : 'top';
@@ -75916,14 +75916,14 @@
           show: true,
           type: ICON_TYPES.slice(),
           icon: {
-            /* eslint-disable */
+             
             rect: 'M7.3,34.7 M0.4,10V-0.2h9.8 M89.6,10V-0.2h-9.8 M0.4,60v10.2h9.8 M89.6,60v10.2h-9.8 M12.3,22.4V10.5h13.1 M33.6,10.5h7.8 M49.1,10.5h7.8 M77.5,22.4V10.5h-13 M12.3,31.1v8.2 M77.7,31.1v8.2 M12.3,47.6v11.9h13.1 M33.6,59.5h7.6 M49.1,59.5 h7.7 M77.5,47.6v11.9h-13',
             polygon: 'M55.2,34.9c1.7,0,3.1,1.4,3.1,3.1s-1.4,3.1-3.1,3.1 s-3.1-1.4-3.1-3.1S53.5,34.9,55.2,34.9z M50.4,51c1.7,0,3.1,1.4,3.1,3.1c0,1.7-1.4,3.1-3.1,3.1c-1.7,0-3.1-1.4-3.1-3.1 C47.3,52.4,48.7,51,50.4,51z M55.6,37.1l1.5-7.8 M60.1,13.5l1.6-8.7l-7.8,4 M59,19l-1,5.3 M24,16.1l6.4,4.9l6.4-3.3 M48.5,11.6 l-5.9,3.1 M19.1,12.8L9.7,5.1l1.1,7.7 M13.4,29.8l1,7.3l6.6,1.6 M11.6,18.4l1,6.1 M32.8,41.9 M26.6,40.4 M27.3,40.2l6.1,1.6 M49.9,52.1l-5.6-7.6l-4.9-1.2',
             lineX: 'M15.2,30 M19.7,15.6V1.9H29 M34.8,1.9H40.4 M55.3,15.6V1.9H45.9 M19.7,44.4V58.1H29 M34.8,58.1H40.4 M55.3,44.4 V58.1H45.9 M12.5,20.3l-9.4,9.6l9.6,9.8 M3.1,29.9h16.5 M62.5,20.3l9.4,9.6L62.3,39.7 M71.9,29.9H55.4',
             lineY: 'M38.8,7.7 M52.7,12h13.2v9 M65.9,26.6V32 M52.7,46.3h13.2v-9 M24.9,12H11.8v9 M11.8,26.6V32 M24.9,46.3H11.8v-9 M48.2,5.1l-9.3-9l-9.4,9.2 M38.9-3.9V12 M48.2,53.3l-9.3,9l-9.4-9.2 M38.9,62.3V46.4',
             keep: 'M4,10.5V1h10.3 M20.7,1h6.1 M33,1h6.1 M55.4,10.5V1H45.2 M4,17.3v6.6 M55.6,17.3v6.6 M4,30.5V40h10.3 M20.7,40 h6.1 M33,40h6.1 M55.4,30.5V40H45.2 M21,18.9h62.9v48.6H21V18.9z',
             clear: 'M22,14.7l30.9,31 M52.9,14.7L22,45.7 M4.7,16.8V4.2h13.1 M26,4.2h7.8 M41.6,4.2h7.8 M70.3,16.8V4.2H57.2 M4.7,25.9v8.6 M70.3,25.9v8.6 M4.7,43.2v12.6h13.1 M26,55.8h7.8 M41.6,55.8h7.8 M70.3,43.2v12.6H57.2' // jshint ignore:line
-            /* eslint-enable */
+             
           },
 
           // `rect`, `polygon`, `lineX`, `lineY`, `keep`, `clear`
@@ -76368,9 +76368,9 @@
           position: 'left',
           playIcon: 'path://M31.6,53C17.5,53,6,41.5,6,27.4S17.5,1.8,31.6,1.8C45.7,1.8,57.2,13.3,57.2,27.4S45.7,53,31.6,53z M31.6,3.3 C18.4,3.3,7.5,14.1,7.5,27.4c0,13.3,10.8,24.1,24.1,24.1C44.9,51.5,55.7,40.7,55.7,27.4C55.7,14.1,44.9,3.3,31.6,3.3z M24.9,21.3 c0-2.2,1.6-3.1,3.5-2l10.5,6.1c1.899,1.1,1.899,2.9,0,4l-10.5,6.1c-1.9,1.1-3.5,0.2-3.5-2V21.3z',
           stopIcon: 'path://M30.9,53.2C16.8,53.2,5.3,41.7,5.3,27.6S16.8,2,30.9,2C45,2,56.4,13.5,56.4,27.6S45,53.2,30.9,53.2z M30.9,3.5C17.6,3.5,6.8,14.4,6.8,27.6c0,13.3,10.8,24.1,24.101,24.1C44.2,51.7,55,40.9,55,27.6C54.9,14.4,44.1,3.5,30.9,3.5z M36.9,35.8c0,0.601-0.4,1-0.9,1h-1.3c-0.5,0-0.9-0.399-0.9-1V19.5c0-0.6,0.4-1,0.9-1H36c0.5,0,0.9,0.4,0.9,1V35.8z M27.8,35.8 c0,0.601-0.4,1-0.9,1h-1.3c-0.5,0-0.9-0.399-0.9-1V19.5c0-0.6,0.4-1,0.9-1H27c0.5,0,0.9,0.4,0.9,1L27.8,35.8L27.8,35.8z',
-          // eslint-disable-next-line max-len
+           
           nextIcon: 'M2,18.5A1.52,1.52,0,0,1,.92,18a1.49,1.49,0,0,1,0-2.12L7.81,9.36,1,3.11A1.5,1.5,0,1,1,3,.89l8,7.34a1.48,1.48,0,0,1,.49,1.09,1.51,1.51,0,0,1-.46,1.1L3,18.08A1.5,1.5,0,0,1,2,18.5Z',
-          // eslint-disable-next-line max-len
+           
           prevIcon: 'M10,.5A1.52,1.52,0,0,1,11.08,1a1.49,1.49,0,0,1,0,2.12L4.19,9.64,11,15.89a1.5,1.5,0,1,1-2,2.22L1,10.77A1.48,1.48,0,0,1,.5,9.68,1.51,1.51,0,0,1,1,8.58L9,.92A1.5,1.5,0,0,1,10,.5Z',
           prevBtnSize: 18,
           nextBtnSize: 18,

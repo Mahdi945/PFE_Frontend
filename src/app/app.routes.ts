@@ -10,8 +10,8 @@ import{DashboardPompisteComponent} from './components/pompiste/dashboard-pompist
 import{DashboardCaissierComponent} from './components/caissier/dashboard-caissier/dashboard-caissier.component';
 import{DashboardClientComponent} from './components/client/dashboard-client/dashboard-client.component';
 import{ProfileComponent} from './components/profile/profile.component';
-
-
+import{GestionUtilisateursComponent} from './components/gerant/gestion-utilisateurs/gestion-utilisateurs.component';
+import{AjouterUtilisateurComponent} from './components/gerant/ajouter-utilisateur/ajouter-utilisateur.component';
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'forgetEmail', component: ForgotPassComponent },
@@ -22,6 +22,10 @@ export const routes: Routes = [
   { path: 'dashboard-caissier', component: DashboardCaissierComponent },
   { path: 'dashboard-client', component: DashboardClientComponent },
   { path: 'profile-utilisateur', component: ProfileComponent },
+  {path: 'gestion-utilisateurs',component: GestionUtilisateursComponent},
+  {path: 'ajouter-utilisateur',component: AjouterUtilisateurComponent},
+
+
   { path: 'index', component: IndexComponent },
   
   // Route par défaut pour rediriger vers l'index

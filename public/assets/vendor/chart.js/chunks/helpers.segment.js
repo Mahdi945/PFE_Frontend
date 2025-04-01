@@ -1131,7 +1131,7 @@ var defaults = /* #__PURE__ */ new Defaults({
 }
 /**
  * @private
- */ // eslint-disable-next-line complexity
+ */  
 function _longestText(ctx, font, arrayOfThings, cache) {
     cache = cache || {};
     let data = cache.data = cache.data || {};
@@ -1203,7 +1203,7 @@ function drawPoint(ctx, options, x, y) {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     drawPointLegend(ctx, options, x, y, null);
 }
-// eslint-disable-next-line complexity
+ 
 function drawPointLegend(ctx, options, x, y, w) {
     let type, xOffset, yOffset, size, cornerRadius, width, xOffsetW, yOffsetW;
     const style = options.pointStyle;
@@ -2262,7 +2262,7 @@ function getContainerSize(canvas, width, height) {
     };
 }
 const round1 = (v)=>Math.round(v * 10) / 10;
-// eslint-disable-next-line complexity
+ 
 function getMaximumSize(canvas, bbWidth, bbHeight, aspectRatio) {
     const style = getComputedStyle(canvas);
     const margins = getPositionedStyle(style, 'margin');

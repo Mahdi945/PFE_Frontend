@@ -8,11 +8,11 @@ export declare const requestAnimFrame: (((callback: FrameRequestCallback) => num
  * Throttles calling `fn` once per animation frame
  * Latest arguments are used on the actual call
  */
-export declare function throttled<TArgs extends Array<any>>(fn: (...args: TArgs) => void, thisArg: any): (...args: TArgs) => void;
+export declare function throttled<TArgs extends any[]>(fn: (...args: TArgs) => void, thisArg: any): (...args: TArgs) => void;
 /**
  * Debounces calling `fn` for `delay` ms
  */
-export declare function debounce<TArgs extends Array<any>>(fn: (...args: TArgs) => void, delay: number): (...args: TArgs) => number;
+export declare function debounce<TArgs extends any[]>(fn: (...args: TArgs) => void, delay: number): (...args: TArgs) => number;
 /**
  * Converts 'start' to 'left', 'end' to 'right' and others to 'center'
  * @private

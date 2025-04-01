@@ -23,9 +23,9 @@ export class ProfileComponent implements OnInit {
   errorMessage: string | null = null;
   
   // Variables pour la mise à jour du mot de passe
-  currentPassword: string = '';
-  newPassword: string = '';
-  confirmNewPassword: string = '';
+  currentPassword = '';
+  newPassword = '';
+  confirmNewPassword = '';
 
   constructor(private authService: AuthService) {}
 

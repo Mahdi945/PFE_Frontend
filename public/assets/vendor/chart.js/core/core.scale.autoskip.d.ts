@@ -11,9 +11,9 @@
  */
 export function autoSkip(scale: import('./core.scale.js').default, ticks: Tick[]): Tick[];
 export type Chart = import('./core.controller.js').default;
-export type Tick = {
+export interface Tick {
     value: number | string;
     label?: string;
     major?: boolean;
     $context?: any;
-};
+}

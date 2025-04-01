@@ -20,12 +20,8 @@ export function _segments(line: any, target: any, property: any): ({
         loop: boolean;
         style?: any;
     };
-    start: {
-        [x: number]: any;
-    };
-    end: {
-        [x: number]: any;
-    };
+    start: Record<number, any>;
+    end: Record<number, any>;
 })[];
 export function _getBounds(property: any, first: any, last: any, loop: any): {
     property: any;

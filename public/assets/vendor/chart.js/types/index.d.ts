@@ -52,9 +52,7 @@ export interface ParsingOptions {
    * How to parse the dataset. The parsing can be disabled by specifying parsing: false at chart options or dataset. If parsing is disabled, data must be sorted and in the formats the associated chart type and scales use internally.
    */
   parsing:
-  {
-    [key: string]: string;
-  }
+  Record<string, string>
   | false;
 
   /**
@@ -497,7 +495,7 @@ export declare class Chart<
   readonly boxes: LayoutItem[];
   readonly currentDevicePixelRatio: number;
   readonly chartArea: ChartArea;
-  readonly scales: { [key: string]: Scale };
+  readonly scales: Record<string, Scale>;
   readonly attached: boolean;
 
   readonly legend?: LegendElement<TType>; // Only available if legend plugin is registered and enabled
@@ -551,7 +549,7 @@ export declare class Chart<
   static readonly defaults: Defaults;
   static readonly overrides: Overrides;
   static readonly version: string;
-  static readonly instances: { [key: string]: Chart };
+  static readonly instances: Record<string, Chart>;
   static readonly registry: Registry;
   static getChart(key: string | CanvasRenderingContext2D | HTMLCanvasElement): Chart | undefined;
   static register(...items: ChartComponentLike[]): void;
@@ -1122,7 +1120,7 @@ export interface Plugin<TType extends ChartType = ChartType, O = AnyObject> exte
   defaults?: Partial<O>;
 }
 
-export declare type ChartComponentLike = ChartComponent | ChartComponent[] | { [key: string]: ChartComponent } | Plugin | Plugin[];
+export declare type ChartComponentLike = ChartComponent | ChartComponent[] | Record<string, ChartComponent> | Plugin | Plugin[];
 
 /**
  * Please use the module's default export which provides a singleton instance
@@ -1551,7 +1549,7 @@ export interface ChartEvent {
 export interface ChartComponent {
   id: string;
   defaults?: AnyObject;
-  defaultRoutes?: { [property: string]: string };
+  defaultRoutes?: Record<string, string>;
 
   beforeRegister?(): void;
   afterRegister?(): void;
@@ -1687,7 +1685,7 @@ export interface CoreChartOptions<TType extends ChartType> extends ParsingOption
   }>;
 }
 
-export type AnimationSpec<TType extends ChartType> = {
+export interface AnimationSpec<TType extends ChartType> {
   /**
    * The number of milliseconds an animation takes.
    * @default 1000
@@ -1712,8 +1710,7 @@ export type AnimationSpec<TType extends ChartType> = {
   loop?: Scriptable<boolean, ScriptableContext<TType>>;
 }
 
-export type AnimationsSpec<TType extends ChartType> = {
-  [name: string]: false | AnimationSpec<TType> & {
+export type AnimationsSpec<TType extends ChartType> = Record<string, false | AnimationSpec<TType> & {
     properties: string[];
 
     /**
@@ -1731,19 +1728,16 @@ export type AnimationsSpec<TType extends ChartType> = {
      *
      */
     to: Scriptable<Color | number | boolean, ScriptableContext<TType>>;
-  }
-}
+  }>;
 
-export type TransitionSpec<TType extends ChartType> = {
+export interface TransitionSpec<TType extends ChartType> {
   animation: AnimationSpec<TType>;
   animations: AnimationsSpec<TType>;
 }
 
-export type TransitionsSpec<TType extends ChartType> = {
-  [mode: string]: TransitionSpec<TType>
-}
+export type TransitionsSpec<TType extends ChartType> = Record<string, TransitionSpec<TType>>;
 
-export type AnimationOptions<TType extends ChartType> = {
+export interface AnimationOptions<TType extends ChartType> {
   animation: false | AnimationSpec<TType> & {
     /**
      * Callback called on each step of an animation.
@@ -1756,7 +1750,7 @@ export type AnimationOptions<TType extends ChartType> = {
   };
   animations: AnimationsSpec<TType>;
   transitions: TransitionsSpec<TType>;
-};
+}
 
 export interface FontSpec {
   /**
@@ -2133,9 +2127,9 @@ export interface ElementOptionsByType<TType extends ChartType> {
   point: ScriptableAndArrayOptions<PointOptions & PointHoverOptions, ScriptableContext<TType>>;
 }
 
-export type ElementChartOptions<TType extends ChartType = ChartType> = {
+export interface ElementChartOptions<TType extends ChartType = ChartType> {
   elements: ElementOptionsByType<TType>
-};
+}
 
 export declare class BasePlatform {
   /**
@@ -3178,7 +3172,7 @@ export interface CartesianScaleOptions extends CoreScaleOptions {
   /**
    * Position of the axis.
    */
-  position: 'left' | 'top' | 'right' | 'bottom' | 'center' | { [scale: string]: number };
+  position: 'left' | 'top' | 'right' | 'bottom' | 'center' | Record<string, number>;
 
   /**
    * Stack group. Axes at the same `position` with same `stack` are stacked.
@@ -3333,7 +3327,7 @@ export declare const LogarithmicScale: ChartComponent & {
   new <O extends LogarithmicScaleOptions = LogarithmicScaleOptions>(cfg: AnyObject): LogarithmicScale<O>;
 };
 
-export type TimeScaleTimeOptions = {
+export interface TimeScaleTimeOptions {
   /**
    * Custom parser for dates.
    */
@@ -3351,9 +3345,7 @@ export type TimeScaleTimeOptions = {
   /**
    * Sets how different time units are displayed.
    */
-  displayFormats: {
-    [key: string]: string;
-  };
+  displayFormats: Record<string, string>;
   /**
    * The format string to use for the tooltip.
    */
@@ -3368,9 +3360,9 @@ export type TimeScaleTimeOptions = {
    * @default 'millisecond'
    */
   minUnit: TimeUnit;
-};
+}
 
-export type TimeScaleTickOptions = {
+export interface TimeScaleTickOptions {
   /**
    * Ticks generation input values:
    * - 'auto': generates "optimal" ticks based on scale size and time options.
@@ -3386,7 +3378,7 @@ export type TimeScaleTickOptions = {
    * @default 1
    */
   stepSize: number;
-};
+}
 
 export type TimeScaleOptions = Omit<CartesianScaleOptions, 'min' | 'max'> & {
   min: string | number;
@@ -3626,13 +3618,7 @@ export type ScaleType = keyof ScaleTypeRegistry;
 
 export interface CartesianParsedData extends Point {
   // Only specified when stacked bars are enabled
-  _stacks?: {
-    // Key is the stack ID which is generally the axis ID
-    [key: string]: {
-      // Inner key is the datasetIndex
-      [key: number]: number;
-    }
-  }
+  _stacks?: Record<string, Record<number, number>>
 }
 
 interface BarParsedData extends CartesianParsedData {
@@ -3738,11 +3724,9 @@ export type DatasetChartOptions<TType extends ChartType = ChartType> = {
   };
 };
 
-export type ScaleChartOptions<TType extends ChartType = ChartType> = {
-  scales: {
-    [key: string]: ScaleOptionsByType<ChartTypeRegistry[TType]['scales']>;
-  };
-};
+export interface ScaleChartOptions<TType extends ChartType = ChartType> {
+  scales: Record<string, ScaleOptionsByType<ChartTypeRegistry[TType]['scales']>>;
+}
 
 export type ChartOptions<TType extends ChartType = ChartType> = DeepPartial<
 CoreChartOptions<TType> &

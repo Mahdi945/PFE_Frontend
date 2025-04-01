@@ -23,11 +23,11 @@ export default class TypedRegistry {
        */
     unregister(item: IChartComponent): void;
 }
-export type IChartComponent = {
+export interface IChartComponent {
     id: string;
     defaults: any;
     overrides?: any;
     defaultRoutes: any;
-};
+}
 import defaults from "./core.defaults.js";
 import { overrides } from "./core.defaults.js";

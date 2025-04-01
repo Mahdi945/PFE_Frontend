@@ -1,0 +1,54 @@
+.footer {
+  
+    
+    padding: 20px 0;
+    font-size: 14px;
+  }
+  
+  .footer .social-links {
+    margin-bottom: 10px;
+  }
+  
+  .footer .social-links p {
+    margin-bottom: 5px;
+    font-size: 16px;
+  }
+  
+  .footer .social-links a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 18px;
+    margin: 0 8px;
+    transition: 0.3s;
+    color: white; /* Icônes blanches par défaut */
+  }
+  /* Ajout de couleurs permanentes */
+.footer .social-links .facebook {
+    background: #1877F2; /* Bleu Facebook */
+  }
+  
+  .footer .social-links .instagram {
+    background: #E4405F; /* Dégradé Instagram */
+  }
+  
+  .footer .social-links .linkedin {
+    background: #0077B5; /* Bleu LinkedIn */
+  }
+  
+  .footer .social-links .twitter {
+    background: #1DA1F2; /* Bleu Twitter */
+  }
+  
+  /* Effet au survol : Légèrement plus lumineux */
+  .footer .social-links a:hover {
+    filter: brightness(1.2);
+  }
+  
+  .footer .copyright, 
+  .footer .credits {
+    margin-top: 10px;
+  }

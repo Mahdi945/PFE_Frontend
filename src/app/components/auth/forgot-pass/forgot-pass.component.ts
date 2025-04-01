@@ -13,9 +13,9 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./forgot-pass.component.css']
 })
 export class ForgotPassComponent {
-  email: string = '';
-  message: string = '';
-  isError: boolean = false; // Variable pour déterminer si le message est une erreur ou un succès
+  email = '';
+  message = '';
+  isError = false; // Variable pour déterminer si le message est une erreur ou un succès
   forgotPasswordForm: FormGroup;
 
   constructor(private authService: AuthService, private fb: FormBuilder) {

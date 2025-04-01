@@ -121,10 +121,10 @@ export default class TimeScale extends Scale {
     protected normalize(values: number[]): number[];
 }
 export type Unit = import('../core/core.adapters.js').TimeUnit;
-export type Interval = {
+export interface Interval {
     common: boolean;
     size: number;
     steps?: number;
-};
+}
 export type DateAdapter = import('../core/core.adapters.js').DateAdapter;
 import Scale from "../core/core.scale.js";

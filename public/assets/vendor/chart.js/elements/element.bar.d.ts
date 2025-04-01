@@ -21,12 +21,12 @@ export default class BarElement extends Element<import("../types/basic.js").AnyO
     };
     getRange(axis: any): number;
 }
-export type BarProps = {
+export interface BarProps {
     x: number;
     y: number;
     base: number;
     horizontal: boolean;
     width: number;
     height: number;
-};
+}
 import Element from "../core/core.element.js";

@@ -57,9 +57,9 @@ export function _boundSegments(line: LineElement, bounds?: {
 export function _computeSegments(line: LineElement, segmentOptions?: object): Segment[];
 export type LineElement = import('../elements/element.line.js').default;
 export type PointElement = import('../elements/element.point.js').default;
-export type Segment = {
+export interface Segment {
     start: number;
     end: number;
     loop: boolean;
     style?: any;
-};
+}

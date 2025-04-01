@@ -194,12 +194,8 @@ interface SchemaElement extends ElementRule {
     parentsRequired?: string[];
     pattern?: RegExp;
 }
-interface SchemaMap {
-    [name: string]: {};
-}
-interface SchemaRegExpMap {
-    [name: string]: RegExp;
-}
+type SchemaMap = Record<string, {}>;
+type SchemaRegExpMap = Record<string, RegExp>;
 interface CustomElementSpec {
     extends?: string;
     attributes?: string[];
@@ -236,10 +232,10 @@ interface Schema {
     addCustomElements: (customElements: string | Record<string, CustomElementSpec>) => void;
     addValidChildren: (validChildren: any) => void;
 }
-type Attributes$1 = Array<{
+type Attributes$1 = {
     name: string;
     value: string;
-}> & {
+}[] & {
     map: Record<string, string>;
 };
 interface AstNodeConstructor {
@@ -733,11 +729,11 @@ interface ContextSubMenu extends CommonMenuItemSpec {
     type: 'submenu';
     text: string;
     icon?: string;
-    getSubmenuItems: () => string | Array<ContextMenuContents>;
+    getSubmenuItems: () => string | ContextMenuContents[];
 }
 type ContextMenuContents = string | ContextMenuItem | SeparatorMenuItemSpec | ContextSubMenu;
 interface ContextMenuApi {
-    update: (element: Element) => string | Array<ContextMenuContents>;
+    update: (element: Element) => string | ContextMenuContents[];
 }
 interface FancyActionArgsMap {
     'inserttable': {
@@ -795,7 +791,7 @@ type NestedMenuItemContents = string | MenuItemSpec | NestedMenuItemSpec | Toggl
 interface NestedMenuItemSpec extends CommonMenuItemSpec {
     type?: 'nestedmenuitem';
     icon?: string;
-    getSubmenuItems: () => string | Array<NestedMenuItemContents>;
+    getSubmenuItems: () => string | NestedMenuItemContents[];
     onSetup?: (api: NestedMenuItemInstanceApi) => (api: NestedMenuItemInstanceApi) => void;
 }
 interface NestedMenuItemInstanceApi extends CommonMenuItemInstanceApi {
@@ -1094,7 +1090,7 @@ interface ContextFormSpec extends ContextBarSpec {
     initValue?: () => string;
     label?: string;
     launch?: ContextFormLaunchButtonApi | ContextFormLaunchToggleButtonSpec;
-    commands: Array<ContextFormToggleButtonSpec | ContextFormButtonSpec>;
+    commands: (ContextFormToggleButtonSpec | ContextFormButtonSpec)[];
 }
 interface ContextToolbarSpec extends ContextBarSpec {
     type?: 'contexttoolbar';
@@ -1249,7 +1245,7 @@ interface ViewToggleButtonSpec extends BaseButtonSpec<ViewToggleButtonApi> {
 }
 interface ViewButtonsGroupSpec {
     type: 'group';
-    buttons: Array<ViewNormalButtonSpec | ViewToggleButtonSpec>;
+    buttons: (ViewNormalButtonSpec | ViewToggleButtonSpec)[];
 }
 type ViewButtonSpec = ViewNormalButtonSpec | ViewToggleButtonSpec | ViewButtonsGroupSpec;
 interface ViewInstanceApi {
@@ -1770,7 +1766,7 @@ interface FormatReference {
 }
 interface NestedFormatting {
     title: string;
-    items: Array<FormatReference | StyleFormat>;
+    items: (FormatReference | StyleFormat)[];
 }
 interface CommonStyleFormat {
     name?: string;
@@ -1991,7 +1987,7 @@ interface BaseEditorOptions {
     text_patterns_lookup?: RawDynamicPatternsLookup;
     theme?: string | ThemeInitFunc | false;
     theme_url?: string;
-    toolbar?: boolean | string | string[] | Array<ToolbarGroup>;
+    toolbar?: boolean | string | string[] | ToolbarGroup[];
     toolbar1?: string;
     toolbar2?: string;
     toolbar3?: string;
@@ -2108,7 +2104,7 @@ interface EditorOptions extends NormalizedEditorOptions {
     removed_menuitems: string;
     sandbox_iframes: boolean;
     sandbox_iframes_exclusions: string[];
-    toolbar: boolean | string | string[] | Array<ToolbarGroup>;
+    toolbar: boolean | string | string[] | ToolbarGroup[];
     toolbar_groups: Record<string, GroupToolbarButtonSpec>;
     toolbar_location: ToolbarLocation;
     toolbar_mode: ToolbarMode;
@@ -2191,7 +2187,7 @@ interface DOMUtilsSettings {
     referrerPolicy: ReferrerPolicy;
 }
 type Target = Node | Window;
-type RunArguments<T extends Node = Node> = string | T | Array<string | T> | null;
+type RunArguments<T extends Node = Node> = string | T | (string | T)[] | null;
 type BoundEvent = [
     Target,
     string,
@@ -2199,7 +2195,7 @@ type BoundEvent = [
     any
 ];
 type Callback<K extends string> = EventUtilsCallback<MappedEvent<HTMLElementEventMap, K>>;
-type RunResult<T, R> = T extends Array<any> ? R[] : false | R;
+type RunResult<T, R> = T extends any[] ? R[] : false | R;
 interface DOMUtils {
     doc: Document;
     settings: Partial<DOMUtilsSettings>;
@@ -2231,7 +2227,7 @@ interface DOMUtils {
         (node: string | Node | null, selector?: string | ((node: Node) => boolean | void), root?: Node): Node | null;
     };
     getParents: {
-        <K extends keyof HTMLElementTagNameMap>(elm: string | HTMLElementTagNameMap[K] | null, selector: K, root?: Node, collect?: boolean): Array<HTMLElementTagNameMap[K]>;
+        <K extends keyof HTMLElementTagNameMap>(elm: string | HTMLElementTagNameMap[K] | null, selector: K, root?: Node, collect?: boolean): HTMLElementTagNameMap[K][];
         <T extends Element>(node: string | Node | null, selector: string | ((node: Node) => node is T), root?: Node, collect?: boolean): T[];
         (elm: string | Node | null, selector?: string | ((node: Node) => boolean | void), root?: Node, collect?: boolean): Node[];
     };
@@ -2242,7 +2238,7 @@ interface DOMUtils {
     getNext: (node: Node | null, selector: string | ((node: Node) => boolean)) => Node | null;
     getPrev: (node: Node | null, selector: string | ((node: Node) => boolean)) => Node | null;
     select: {
-        <K extends keyof HTMLElementTagNameMap>(selector: K, scope?: string | Node): Array<HTMLElementTagNameMap[K]>;
+        <K extends keyof HTMLElementTagNameMap>(selector: K, scope?: string | Node): HTMLElementTagNameMap[K][];
         <T extends HTMLElement = HTMLElement>(selector: string, scope?: string | Node): T[];
     };
     is: {
@@ -2257,7 +2253,7 @@ interface DOMUtils {
     createHTML: (name: string, attrs?: Record<string, string | null>, html?: string) => string;
     createFragment: (html?: string) => DocumentFragment;
     remove: {
-        <T extends Node>(node: T | T[], keepChildren?: boolean): typeof node extends Array<any> ? T[] : T;
+        <T extends Node>(node: T | T[], keepChildren?: boolean): typeof node extends any[] ? T[] : T;
         <T extends Node>(node: string, keepChildren?: boolean): T | false;
     };
     getStyle: {
@@ -2305,7 +2301,7 @@ interface DOMUtils {
         (elm: Element, name: string): Element;
     };
     findCommonAncestor: (a: Node, b: Node) => Node | null;
-    run<R, T extends Node>(this: DOMUtils, elm: T | T[], func: (node: T) => R, scope?: any): typeof elm extends Array<any> ? R[] : R;
+    run<R, T extends Node>(this: DOMUtils, elm: T | T[], func: (node: T) => R, scope?: any): typeof elm extends any[] ? R[] : R;
     run<R, T extends Node>(this: DOMUtils, elm: RunArguments<T>, func: (node: T) => R, scope?: any): RunResult<typeof elm, R>;
     isEmpty: (node: Node, elements?: Record<string, any>, options?: IsEmptyOptions) => boolean;
     createRng: () => Range;
@@ -2358,10 +2354,10 @@ interface WriterSettings {
     indent_after?: string;
     indent_before?: string;
 }
-type Attributes = Array<{
+type Attributes = {
     name: string;
     value: string;
-}>;
+}[];
 interface Writer {
     cdata: (text: string) => void;
     comment: (text: string) => void;
@@ -2442,12 +2438,12 @@ interface EditorSelection {
     normalize: () => Range;
     selectorChanged: (selector: string, callback: (active: boolean, args: {
         node: Node;
-        selector: String;
+        selector: string;
         parents: Node[];
     }) => void) => EditorSelection;
     selectorChangedWithUnbind: (selector: string, callback: (active: boolean, args: {
         node: Node;
-        selector: String;
+        selector: string;
         parents: Node[];
     }) => void) => {
         unbind: () => void;
@@ -3036,7 +3032,7 @@ interface Env {
 }
 interface FakeClipboardItem {
     readonly items: Record<string, any>;
-    readonly types: ReadonlyArray<string>;
+    readonly types: readonly string[];
     readonly getType: <D = any>(type: string) => D | undefined;
 }
 interface FakeClipboard {
@@ -3048,9 +3044,7 @@ interface FakeClipboard {
 interface FocusManager {
     isEditorUIElement: (elm: Element) => boolean;
 }
-interface EntitiesMap {
-    [name: string]: string;
-}
+type EntitiesMap = Record<string, string>;
 interface Entities {
     encodeRaw: (text: string, attr?: boolean) => string;
     encodeAllRaw: (text: string) => string;
@@ -3103,7 +3097,7 @@ type ObjCallback<T, R> = ObjCallback$1<T, R>;
 type WalkCallback<T> = (this: any, o: T, i: string, n: keyof T | undefined) => boolean | void;
 interface Tools {
     is: (obj: any, type?: string) => boolean;
-    isArray: <T>(arr: any) => arr is Array<T>;
+    isArray: <T>(arr: any) => arr is T[];
     inArray: <T>(arr: ArrayLike<T>, value: T) => number;
     grep: {
         <T>(arr: ArrayLike<T> | null | undefined, pred?: ArrayCallback<T, boolean>): T[];
@@ -3121,9 +3115,9 @@ interface Tools {
         <T, R>(arr: ArrayLike<T> | null | undefined, cb: ArrayCallback<T, R>): R[];
         <T, R>(obj: Record<string, T> | null | undefined, cb: ObjCallback<T, R>): R[];
     };
-    extend: (obj: Object, ext: Object, ...objs: Object[]) => any;
+    extend: (obj: object, ext: object, ...objs: object[]) => any;
     walk: <T extends Record<string, any>>(obj: T, f: WalkCallback<T>, n?: keyof T, scope?: any) => void;
-    resolve: (path: string, o?: Object) => any;
+    resolve: (path: string, o?: object) => any;
     explode: (s: string | string[], d?: string | RegExp) => string[];
     _addCacheSuffix: (url: string) => string;
 }

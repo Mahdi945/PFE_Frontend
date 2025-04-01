@@ -12,7 +12,7 @@ export class UserService {
 
   // Récupérer tous les utilisateurs
   getAllUsers(): Observable<any> {
-    return this.http.get(`${this.apiUrl}`);
+    return this.http.get(`${this.apiUrl}/users`);
   }
 
   // Récupérer un utilisateur par ID

@@ -71,7 +71,7 @@ export declare function toFont(options: Partial<FontSpec>, fallback?: Partial<Fo
  * @param info.cacheable - Will be set to `false` if option is not cacheable.
  * @since 2.7.0
  */
-export declare function resolve(inputs: Array<unknown>, context?: object, index?: number, info?: {
+export declare function resolve(inputs: unknown[], context?: object, index?: number, info?: {
     cacheable: boolean;
 }): unknown;
 /**

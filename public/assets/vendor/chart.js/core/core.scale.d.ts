@@ -334,10 +334,10 @@ export default class Scale extends Element<import("../types/basic.js").AnyObject
     protected _maxDigits(): number;
 }
 export type Chart = import('../types/index.js').Chart;
-export type Tick = {
+export interface Tick {
     value: number | string;
     label?: string;
     major?: boolean;
     $context?: any;
-};
+}
 import Element from "./core.element.js";

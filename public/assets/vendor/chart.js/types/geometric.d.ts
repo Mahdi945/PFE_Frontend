@@ -12,23 +12,23 @@ export interface Point {
   y: number;
 }
 
-export type TRBL = {
+export interface TRBL {
   top: number;
   right: number;
   bottom: number;
   left: number;
 }
 
-export type TRBLCorners = {
+export interface TRBLCorners {
   topLeft: number;
   topRight: number;
   bottomLeft: number;
   bottomRight: number;
-};
+}
 
 export type CornerRadius = number | Partial<TRBLCorners>;
 
-export type RoundedRect = {
+export interface RoundedRect {
   x: number;
   y: number;
   w: number;

@@ -15,13 +15,13 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./reset-pass.component.css']
 })
 export class ResetPassComponent implements OnInit {
-  message: string = '';  
-  isError: boolean = false; 
+  message = '';  
+  isError = false; 
   resetPasswordForm: FormGroup;
-  passwordVisible: boolean = false;
-  confirmPasswordVisible: boolean = false;
-  passwordStrength: string = ''; 
-  token: string = ''; 
+  passwordVisible = false;
+  confirmPasswordVisible = false;
+  passwordStrength = ''; 
+  token = ''; 
 
   constructor(
     private authService: AuthService, 

@@ -1,5 +1,24 @@
 .hidden {
     transform: translateX(-100%);
     transition: transform 0.3s ease-in-out;
-  }
-  
+}
+
+.sidebar-nav .nav-content {
+    padding-left: 30px; /* Décale les sous-éléments vers la droite */
+}
+
+.sidebar-nav .nav-content li a {
+    display: flex;
+    align-items: center;
+    text-decoration: none; /* Supprime le soulignement */
+    color: #333; /* Couleur du texte, ajuste selon ton design */
+    padding: 5px 10px;
+}
+
+.sidebar-nav .nav-content li a:hover {
+    color: #007bff; /* Couleur au survol */
+}
+
+.sidebar-nav .nav-content li a i {
+    margin-right: 8px; /* Espacement entre l'icône et le texte */
+}

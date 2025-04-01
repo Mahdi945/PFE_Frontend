@@ -34,7 +34,7 @@ import { RouterModule } from '@angular/router'; // Importer RouterModule
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  isPasswordVisible: boolean = false;
+  isPasswordVisible = false;
 
   constructor(
     private fb: FormBuilder,

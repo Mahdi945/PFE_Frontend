@@ -1,6 +1,6 @@
 import {ChartArea} from './geometric.js';
 
-export type LayoutPosition = 'left' | 'top' | 'right' | 'bottom' | 'center' | 'chartArea' | {[scaleId: string]: number};
+export type LayoutPosition = 'left' | 'top' | 'right' | 'bottom' | 'center' | 'chartArea' | Record<string, number>;
 
 export interface LayoutItem {
   /**

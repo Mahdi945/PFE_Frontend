@@ -31,7 +31,7 @@ declare namespace _default {
 }
 export default _default;
 export type Chart = import('./core.controller.js').default;
-export type LayoutItem = {
+export interface LayoutItem {
     /**
      * - The position of the item in the chart layout. Possible values are
      * 'left', 'top', 'right', 'bottom', and 'chartArea'
@@ -85,4 +85,4 @@ export type LayoutItem = {
      * - Bottom edge of the item. Set by layout system and cannot be used in update
      */
     bottom: number;
-};
+}
