@@ -1,0 +1,43 @@
+.charts-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+  
+  .col-md-5 {
+    flex: 0 0 70%;
+    max-width: 40%;
+    height: 200px; 
+  }
+  
+  .col-md-4 {
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+  
+  .filters {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .btn {
+    font-size: 16px;
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+  
+  .card-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
