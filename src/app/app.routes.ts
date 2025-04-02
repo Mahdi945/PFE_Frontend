@@ -12,6 +12,7 @@ import{DashboardClientComponent} from './components/client/dashboard-client/dash
 import{ProfileComponent} from './components/profile/profile.component';
 import{GestionUtilisateursComponent} from './components/gerant/gestion-utilisateurs/gestion-utilisateurs.component';
 import{AjouterUtilisateurComponent} from './components/gerant/ajouter-utilisateur/ajouter-utilisateur.component';
+import{GestionComptesComponent} from './components/gerant/gestion-comptes/gestion-comptes.component';
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'forgetEmail', component: ForgotPassComponent },
@@ -24,6 +25,7 @@ export const routes: Routes = [
   { path: 'profile-utilisateur', component: ProfileComponent },
   {path: 'gestion-utilisateurs',component: GestionUtilisateursComponent},
   {path: 'ajouter-utilisateur',component: AjouterUtilisateurComponent},
+   {path:'gestion-comptes', component: GestionComptesComponent},
 
 
   { path: 'index', component: IndexComponent },

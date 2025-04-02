@@ -7,10 +7,11 @@ import { HttpClientModule } from '@angular/common/http';  // Importation de Http
 import { UserService } from '../../../services/user.service';  // Service pour récupérer les utilisateurs
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router'; // Assurez-vous que ceci est importé
+
 @Component({
   selector: 'app-gestion-utilisateurs',
   standalone: true,
-  imports: [NavbarComponent, SidebarComponent, CommonModule, FooterComponent, FormsModule, HttpClientModule,RouterModule],
+  imports: [NavbarComponent, SidebarComponent, CommonModule, FooterComponent, FormsModule, HttpClientModule, RouterModule],
   templateUrl: './gestion-utilisateurs.component.html',
   styleUrls: ['./gestion-utilisateurs.component.css']
 })
@@ -21,6 +22,9 @@ export class GestionUtilisateursComponent implements OnInit {
   filterRole: string = '';
   selectedUser: any = {};  // Utilisateur sélectionné pour la mise à jour
   isModalOpen: boolean = false;  // Gérer l'état du modal
+  pageSize: number = 10;  // Nombre d'utilisateurs par page (par défaut)
+  currentPage: number = 1;  // Page actuelle
+  totalPages: number = 1;  // Total des pages
 
   constructor(private userService: UserService) {}
 
@@ -32,14 +36,20 @@ export class GestionUtilisateursComponent implements OnInit {
     this.userService.getAllUsers().subscribe(
       (data) => {
         this.users = data;
-        this.filteredUsers = data;
+        this.totalPages = Math.ceil(this.users.length / this.pageSize);
+        this.updateFilteredUsers();
       },
       (error) => {
         console.error('Erreur lors du chargement des utilisateurs', error);
       }
     );
   }
-  
+
+  updateFilteredUsers(): void {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.filteredUsers = this.users.slice(startIndex, endIndex);
+  }
 
   filterUsers(): void {
     this.filteredUsers = this.users.filter((user) =>
@@ -49,6 +59,9 @@ export class GestionUtilisateursComponent implements OnInit {
         user.username.includes(this.searchTerm)) &&
       (this.filterRole === '' || user.role === this.filterRole)
     );
+    this.totalPages = Math.ceil(this.filteredUsers.length / this.pageSize);
+    this.currentPage = 1;  // Reset à la première page
+    this.updateFilteredUsers();
   }
 
   openModal(user: any): void {
@@ -71,5 +84,22 @@ export class GestionUtilisateursComponent implements OnInit {
         console.error('Erreur lors de la mise à jour de l\'utilisateur', error);
       }
     );
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updateFilteredUsers();
+    }
+  }
+
+  changePageSize(): void {
+    const parsedSize = parseInt(this.pageSize.toString(), 10);
+    if (!isNaN(parsedSize) && parsedSize > 0) {
+      this.pageSize = parsedSize;
+      this.totalPages = Math.ceil(this.filteredUsers.length / this.pageSize);
+      this.currentPage = 1;  // Reset à la première page
+      this.updateFilteredUsers();
+    }
   }
 }

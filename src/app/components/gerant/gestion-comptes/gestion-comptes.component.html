@@ -1,1 +1,133 @@
-<p>gestion-comptes works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="container mt-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <i class="bi bi-house-door-fill"></i>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Gestion Comptes</li>
+      </ol>
+    </nav>
+
+    <h2 class="my-3" style="color: rgb(7, 7, 128);">Gestion des Comptes</h2>
+
+    <!-- Filtres -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <input type="text" class="form-control" placeholder="Rechercher par email, téléphone ou username" [(ngModel)]="searchTerm" (input)="filterUsers()">
+      </div>
+      <div class="col-md-3">
+        <select class="form-control" [(ngModel)]="filterRole" (change)="filterUsers()">
+          <option value="">Tous les rôles</option>
+          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-control" [(ngModel)]="filterStatus" (change)="filterUsers()">
+          <option value="">Tous les statuts</option>
+          <option value="active">Activé</option>
+          <option value="inactive">Désactivé</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Tableau des comptes -->
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Nom d'utilisateur</th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Rôle</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.numero_telephone }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <span *ngIf="user.status === 'active'" class="badge bg-success">
+              <i class="bi bi-check-circle me-1"></i> Activé
+            </span>
+            <span *ngIf="user.status === 'inactive'" class="badge bg-danger">
+              <i class="bi bi-exclamation-octagon me-1"></i> Désactivé
+            </span>
+          </td>
+          <td>
+            <button *ngIf="user.status === 'active'" class="btn btn-danger btn-sm" (click)="openDeactivateModal(user)">
+              Désactiver
+            </button>
+            <button *ngIf="user.status === 'inactive'" class="btn btn-success btn-sm" (click)="reactivateUser(user.id)">
+              Réactiver
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-4">
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button class="page-link" (click)="changePage(currentPage - 1)">Précédent</button>
+        </li>
+        <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" [class.active]="i + 1 === currentPage">
+          <button class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</button>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <button class="page-link" (click)="changePage(currentPage + 1)">Suivant</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Modal de désactivation -->
+  <div *ngIf="showModal" class="modal fade show d-block" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Désactiver l'utilisateur</h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p>Veuillez entrer une raison pour la désactivation :</p>
+          <textarea class="form-control" [(ngModel)]="deactivationReason" rows="4"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+          <button type="button" class="btn btn-danger" (click)="deactivateUser()">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de succès/échec -->
+  <div *ngIf="showMessageModal" class="modal fade show d-block" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ messageTitle }}</h5>
+          <button type="button" class="btn-close" (click)="closeMessageModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{ messageContent }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeMessageModal()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
