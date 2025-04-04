@@ -1,1 +1,111 @@
-<p>gestion-affectations-pompistes works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="container mt-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door-fill"></i></li>
+        <li class="breadcrumb-item active">Gestion Affectations</li>
+        <li class="breadcrumb-item active" aria-current="page">Pompistes</li>
+      </ol>
+    </nav>
+
+    <!-- Formulaire pour choisir mois et année -->
+    <div class="card mb-4">
+      <div class="card-header bg-info text-white">Choisir le Mois et l'Année</div>
+      <div class="card-body">
+        <form (ngSubmit)="generateAffectations()">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="mois" class="form-label">Mois</label>
+                <input type="number" class="form-control" id="mois" [(ngModel)]="mois" name="mois" min="1" max="12" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="annee" class="form-label">Année</label>
+                <input type="number" class="form-control" id="annee" [(ngModel)]="annee" name="annee" min="2020" required>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-outline-info" [disabled]="!mois || !annee">Générer automatiquement</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Liste des affectations pour un jour -->
+    <div class="card mt-4">
+      <div class="card-header bg-info text-white">Liste des Affectations</div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="datePicker">Sélectionner un jour :</label>
+          <input type="date" id="datePicker" class="form-control" (change)="onDateChange($event)" [(ngModel)]="selectedDate">
+        </div>
+
+        <table class="table table-striped mt-4" *ngIf="affectations.length > 0">
+          <thead>
+            <tr>
+              <th>Pompiste</th>
+              <th>Pompe</th>
+              <th>Poste</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let affectation of affectations">
+              <td>{{ affectation.username }}</td>
+              <td>{{ affectation.numero_pompe }}</td>
+              <td>{{ affectation.poste_nom }}</td>
+              <td>
+                <button class="btn btn-outline-primary" (click)="editAffectation(affectation)">Modifier</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL de modification -->
+<div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="showModal" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Modifier l'Affectation</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+      </div>
+
+      <div class="modal-body">
+        <form #editForm="ngForm" (ngSubmit)="saveAffectation()">
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="username" class="form-label">Pompiste</label>
+              <input type="text" class="form-control" [(ngModel)]="affectationToEdit.username" name="username" required>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="numero_pompe" class="form-label">Pompe</label>
+              <input type="text" class="form-control" [(ngModel)]="affectationToEdit.numero_pompe" name="numero_pompe" required>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="poste_nom" class="form-label">Poste</label>
+              <input type="text" class="form-control" [(ngModel)]="affectationToEdit.poste_nom" name="poste_nom" required>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end mt-4">
+            <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">Annuler</button>
+            <button type="submit" class="btn btn-primary " [disabled]="!editForm.form.valid">Sauvegarder</button>
+           
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

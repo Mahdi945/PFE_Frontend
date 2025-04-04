@@ -1,4 +1,4 @@
-<aside id="sidebar" class="sidebar" [ngClass]="{ 'hidden': !isSidebarVisible }">
+<aside id="sidebar" class="sidebar" [ngClass]="{ 'visible': isSidebarVisible, 'hidden': !isSidebarVisible }">
   <ul class="sidebar-nav" id="sidebar-nav">
     <!-- Dashboard -->
     <li class="nav-item">
@@ -38,7 +38,7 @@
         <i class="bi bi-calendar-check"></i><span>Gestion des Affectations</span><i class="bi bi-chevron-down ms-auto"></i>
       </a>
       <ul id="assignment-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-        <li><a [routerLink]="['/schedule-pompistes']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Calendrier des Pompistes</span></a></li>
+        <li><a [routerLink]="['/gestion-affectations-pompistes']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Calendrier des Pompistes</span></a></li>
       </ul>
     </li><!-- End Gestion des Affectations -->
 

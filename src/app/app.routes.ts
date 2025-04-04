@@ -13,6 +13,7 @@ import{ProfileComponent} from './components/profile/profile.component';
 import{GestionUtilisateursComponent} from './components/gerant/gestion-utilisateurs/gestion-utilisateurs.component';
 import{AjouterUtilisateurComponent} from './components/gerant/ajouter-utilisateur/ajouter-utilisateur.component';
 import{GestionComptesComponent} from './components/gerant/gestion-comptes/gestion-comptes.component';
+import{GestionAffectationsPompistesComponent} from './components/gerant/gestion-affectations-pompistes/gestion-affectations-pompistes.component';
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'forgetEmail', component: ForgotPassComponent },
@@ -25,7 +26,8 @@ export const routes: Routes = [
   { path: 'profile-utilisateur', component: ProfileComponent },
   {path: 'gestion-utilisateurs',component: GestionUtilisateursComponent},
   {path: 'ajouter-utilisateur',component: AjouterUtilisateurComponent},
-   {path:'gestion-comptes', component: GestionComptesComponent},
+  {path:'gestion-comptes', component: GestionComptesComponent},
+  {path:'gestion-affectations-pompistes', component: GestionAffectationsPompistesComponent},
 
 
   { path: 'index', component: IndexComponent },

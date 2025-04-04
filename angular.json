@@ -38,6 +38,7 @@
               "public/assets/vendor/simple-datatables/style.css",
               "public/assets/css/style.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
+           
             ],
             "scripts": [
               "public/assets/vendor/apexcharts/apexcharts.min.js",

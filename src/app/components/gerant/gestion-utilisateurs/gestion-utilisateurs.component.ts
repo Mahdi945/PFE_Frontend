@@ -19,12 +19,16 @@ export class GestionUtilisateursComponent implements OnInit {
   users: any[] = [];
   filteredUsers: any[] = [];
   searchTerm: string = '';
-  filterRole: string = '';
+  filterRole: string = ''; // Role sélectionné (vide pour "Tous les rôles")
+  filterStatus: string = ''; // Statut sélectionné (vide pour "Tous les statuts")
   selectedUser: any = {};
   isModalOpen: boolean = false;
   pageSize: number = 10;
   currentPage: number = 1;
   totalPages: number = 1;
+
+  roles: string[] = ['cogerant', 'client', 'pompiste', 'caissier']; // Liste des rôles disponibles
+  statuses: string[] = ['active', 'inactive']; // Liste des statuts disponibles
 
   constructor(private userService: UserService) {}
 
@@ -36,7 +40,8 @@ export class GestionUtilisateursComponent implements OnInit {
     this.userService.getAllUsers().subscribe(
       (data) => {
         this.users = data;
-        this.filterUsers();  // Appliquer les filtres après la récupération des utilisateurs
+        this.totalPages = Math.ceil(this.users.length / this.pageSize);
+        this.updateFilteredUsers();  // Appliquer la filtration initiale après la récupération des utilisateurs
       },
       (error) => {
         console.error('Erreur lors du chargement des utilisateurs', error);
@@ -45,30 +50,21 @@ export class GestionUtilisateursComponent implements OnInit {
   }
 
   updateFilteredUsers(): void {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    this.filteredUsers = this.users.slice(startIndex, endIndex);
+    this.filteredUsers = this.users
+      .filter(user =>
+        (this.searchTerm === '' || 
+          user.email.includes(this.searchTerm) || 
+          user.numero_telephone.includes(this.searchTerm) || 
+          user.username.includes(this.searchTerm)) &&
+        (this.filterRole === '' || user.role === this.filterRole) &&
+        (this.filterStatus === '' || user.status === this.filterStatus)
+      )
+      .slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);  // Gestion de la pagination
   }
 
   filterUsers(): void {
-    // Appliquer les filtres
-    const filtered = this.users.filter((user) =>
-      (this.searchTerm === '' || 
-        user.email.includes(this.searchTerm) || 
-        user.numero_telephone.includes(this.searchTerm) || 
-        user.username.includes(this.searchTerm)) &&
-      (this.filterRole === '' || user.role === this.filterRole)
-    );
-    
-    // Calculer le nombre total de pages en fonction des utilisateurs filtrés
-    this.totalPages = Math.ceil(filtered.length / this.pageSize);
-    
-    // Réinitialiser la page actuelle à 1 si les filtres changent
-    this.currentPage = 1;
-
-    // Mettre à jour la liste filtrée des utilisateurs
-    this.users = filtered;
-    this.updateFilteredUsers();
+    this.currentPage = 1;  // Revenir à la première page lors de l'application du filtre
+    this.updateFilteredUsers();  // Mettre à jour les utilisateurs filtrés
   }
 
   openModal(user: any): void {
@@ -105,7 +101,7 @@ export class GestionUtilisateursComponent implements OnInit {
     if (!isNaN(parsedSize) && parsedSize > 0) {
       this.pageSize = parsedSize;
       this.totalPages = Math.ceil(this.filteredUsers.length / this.pageSize);
-      this.currentPage = 1;  // Réinitialiser à la première page
+      this.currentPage = 1;
       this.updateFilteredUsers();
     }
   }

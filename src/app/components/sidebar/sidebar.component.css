@@ -22,3 +22,22 @@
 .sidebar-nav .nav-content li a i {
     margin-right: 8px; /* Espacement entre l'icône et le texte */
 }
+@media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 45px; /* Déplace la sidebar un peu vers le bas */
+      width: 250px;
+      height: calc(100% - 10px); /* Ajuste la hauteur pour compenser le décalage */
+      background-color: #fff;
+      box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+  
+    .sidebar.visible {
+      transform: translateX(0);
+    }
+  }
+  
+  

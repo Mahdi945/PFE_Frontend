@@ -63,10 +63,10 @@
             </span>
           </td>
           <td>
-            <button *ngIf="user.status === 'active'" class="btn btn-danger btn-sm" (click)="openDeactivateModal(user)">
+            <button *ngIf="user.status === 'active'" class="btn btn-outline-danger rounded-pill btn-sm" (click)="openDeactivateModal(user)">
               Désactiver
             </button>
-            <button *ngIf="user.status === 'inactive'" class="btn btn-success btn-sm" (click)="reactivateUser(user.id)">
+            <button *ngIf="user.status === 'inactive'" class="btn btn-outline-success rounded-pill btn-sm" (click)="reactivateUser(user.id)">
               Réactiver
             </button>
           </td>
@@ -104,7 +104,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
-          <button type="button" class="btn btn-danger" (click)="deactivateUser()">Confirmer</button>
+          <button type="button" class="btn btn-primary" (click)="deactivateUser()">Confirmer</button>
         </div>
       </div>
     </div>
