@@ -1,1 +1,128 @@
-<p>gestion-pompes works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+<main id="main" class="main">
+  <div class="container">
+
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item">Gestion des Pompes</li>
+        <li class="breadcrumb-item active">Liste des Pompes</li>
+      </ol>
+    </nav> 
+
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+      <h2 style="color: rgb(7, 7, 128);">Liste des Pompes</h2>
+      <a routerLink="/ajouter-pompe" class="btn btn-success">
+        <i class="bi bi-person-plus"></i> Ajouter Pompe
+      </a>
+    </div>
+    
+    <!-- Filtres -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Rechercher par numéro de pompe" [(ngModel)]="searchTerm" (input)="filterPompes()">
+        </div>
+        <div class="col-md-3">
+          <select class="form-control" [(ngModel)]="filterType" (change)="filterPompes()">
+            <option value="">Tous les types</option>
+            <option value="sans plomb">Sans Plomb</option>
+            <option value="gasoil">Gasoil</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select class="form-control" [(ngModel)]="filterStatut" (change)="filterPompes()">
+            <option value="">Tous les statuts</option>
+            <option value="en_service">En Service</option>
+            <option value="hors_service_temporaire">Hors Service Temporaire</option>
+            <option value="reserve">Réserve</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="hors_service_definitif">Hors Service Définitif</option>
+          </select>
+        </div>
+      </div>
+  
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Numéro</th>
+          <th>Type</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pompe of filteredPompes">
+          <td>{{ pompe.numero_pompe }}</td>
+          <td>{{ pompe.type_pompe }}</td>
+          <td>
+            <button *ngIf="pompe.statut === 'en_service'" class="btn btn-outline-success rounded-pill btn-sm">
+              <i class="bi bi-check-circle"></i> En Service
+            </button>
+            <button *ngIf="pompe.statut === 'hors_service_temporaire'" class="btn btn-outline-warning rounded-pill btn-sm">
+              <i class="bi bi-clock"></i> Hors Service Temporaire
+            </button>
+            <button *ngIf="pompe.statut === 'reserve'" class="btn btn-outline-info rounded-pill btn-sm">
+              <i class="bi bi-archive"></i> Réserve
+            </button>
+            <button *ngIf="pompe.statut === 'maintenance'" class="btn btn-outline-primary rounded-pill btn-sm">
+              <i class="bi bi-tools"></i> Maintenance
+            </button>
+            <button *ngIf="pompe.statut === 'hors_service_definitif'" class="btn btn-outline-danger rounded-pill btn-sm">
+              <i class="bi bi-x-circle"></i> Hors Service Définitif
+            </button>
+          </td>
+          <td>
+            <button class="btn btn-light btn-sm" (click)="toggleActions(pompe)">
+              <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <div *ngIf="selectedPompe?.id === pompe.id && showActions" class="dropdown-menu show position-absolute">
+              <button class="dropdown-item" (click)="openModal(pompe)">Modifier</button>
+              <button class="dropdown-item text-danger" (click)="deletePompe(pompe.id)">Supprimer</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<!-- Modal -->
+<div *ngIf="isModalOpen" class="modal-overlay">
+  <div class="modal-content centered-modal">
+    <div class="modal-header">
+      <h5 class="modal-title">Modifier la Pompe</h5>
+      <button class="btn-close" (click)="closeModal()">X</button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="updatePompe()">
+        <div class="form-group mb-3">
+          <label>Numéro de la pompe</label>
+          <input type="text" [(ngModel)]="selectedPompe.numero_pompe" name="numero_pompe" class="form-control" required />
+        </div>
+        <div class="form-group mb-3">
+          <label>Type de la pompe</label>
+          <select [(ngModel)]="selectedPompe.type_pompe" name="type_pompe" class="form-control" required>
+            <option value="sans plomb">Sans Plomb</option>
+            <option value="gasoil">Gasoil</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+        <div class="form-group mb-3">
+          <label>Statut</label>
+          <select [(ngModel)]="selectedPompe.statut" name="statut" class="form-control" required>
+            <option value="en_service">En Service</option>
+            <option value="hors_service_temporaire">Hors Service Temporaire</option>
+            <option value="reserve">Réserve</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="hors_service_definitif">Hors Service Définitif</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

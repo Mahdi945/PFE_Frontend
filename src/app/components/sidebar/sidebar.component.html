@@ -41,15 +41,26 @@
         <li><a [routerLink]="['/gestion-affectations-pompistes']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Calendrier des Pompistes</span></a></li>
       </ul>
     </li><!-- End Gestion des Affectations -->
-
+     <!-- Gestion des Crédits -->
+     <li class="nav-item" [routerLinkActive]="['active']">
+      <a class="nav-link collapsed" data-bs-target="#credit-nav" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-credit-card-2-back"></i><span>Gestion des Crédits</span><i class="bi bi-chevron-down ms-auto"></i>
+      </a>
+      <ul id="credit-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+        <li><a [routerLink]="['/contract-list']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Liste des Credits</span></a></li>
+        <li><a [routerLink]="['/vehicle-list']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Liste des Voitures</span></a></li>
+        <li><a [routerLink]="['/payment-history']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Historique des Paiements</span></a></li>
+        <li><a [routerLink]="['/transaction-history']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Historique des Transactions</span></a></li>
+      </ul>
+    </li><!-- End Gestion des Crédits -->
     <!-- Gestion des Pompes -->
     <li class="nav-item" [routerLinkActive]="['active']">
       <a class="nav-link collapsed" data-bs-target="#pump-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-fuel-pump"></i><span>Gestion des Pompes</span><i class="bi bi-chevron-down ms-auto"></i>
       </a>
       <ul id="pump-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-        <li><a [routerLink]="['/pump-list']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Liste des Pompes</span></a></li>
-        <li><a [routerLink]="['/add-pump']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Ajouter une Pompe</span></a></li>
+        <li><a [routerLink]="['/liste-pompes']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Liste des Pompes</span></a></li>
+        <li><a [routerLink]="['/ajouter-pompe']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Ajouter une Pompe</span></a></li>
       </ul>
     </li><!-- End Gestion des Pompes -->
 
@@ -64,18 +75,12 @@
       </ul>
     </li><!-- End Gestion des Pistolets -->
 
-    <!-- Gestion des Crédits -->
+    <!-- Gestion de Stock -->
     <li class="nav-item" [routerLinkActive]="['active']">
-      <a class="nav-link collapsed" data-bs-target="#credit-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-credit-card-2-back"></i><span>Gestion des Crédits</span><i class="bi bi-chevron-down ms-auto"></i>
+      <a class="nav-link collapsed" [routerLink]="['/gestion-stock']">
+        <i class="bi bi-box-seam"></i><span>Gestion du Stock</span>
       </a>
-      <ul id="credit-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-        <li><a [routerLink]="['/contract-list']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Liste des Contrats</span></a></li>
-        <li><a [routerLink]="['/vehicle-list']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Liste des Voitures</span></a></li>
-        <li><a [routerLink]="['/payment-history']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Historique des Paiements</span></a></li>
-        <li><a [routerLink]="['/transaction-history']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Historique des Transactions</span></a></li>
-      </ul>
-    </li><!-- End Gestion des Crédits -->
+    </li><!-- End Gestion des Stock -->
   </ng-container><!-- End Gérant -->
 
   <!-- Pour le Cogerant -->
@@ -85,8 +90,8 @@
         <i class="bi bi-pump"></i><span>Gestion des Pompes</span><i class="bi bi-chevron-down ms-auto"></i>
       </a>
       <ul id="pump-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-        <li><a [routerLink]="['/pump-list']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Liste des Pompes</span></a></li>
-        <li><a [routerLink]="['/add-pump']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Ajouter une Pompe</span></a></li>
+        <li><a [routerLink]="['/liste-pompes']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Liste des Pompes</span></a></li>
+        <li><a [routerLink]="['/ajouter-pompe']" routerLinkActive="active"><i class="bi bi-circle"></i><span>Ajouter une Pompe</span></a></li>
       </ul>
     </li><!-- End Gestion des Pompes -->
 

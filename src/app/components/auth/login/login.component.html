@@ -1,73 +1,71 @@
-
 <div class="container">
 
   <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-4 col-md-8 d-flex flex-column align-items-center justify-content-center gap-2">
+        <!-- Réduire la largeur de la carte pour qu'elle soit plus petite et nette -->
+        <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center gap-2">
         
-        
-           
           <!-- Formulaire de connexion -->
-          <div class="card mb-7 w-100 shadow-lg">
+          <div class="card mb-4 shadow-lg" style="width: 150%; max-width: 400px; padding: 10px;">
+
             <div class="card-body">
                 <!-- Logo -->
-          <div class="text-center logo-container" style="margin-bottom: 1px;">
-            <a href="index.html" class="logo d-flex align-items-center justify-content-center">
-              <img src="logo.png" alt="Logo" class="img-fluid" style="max-height: 250px;">
-            </a>
-          </div> <br>
-              <!-- Encadré d'information sous le logo -->
-              <div class="alert alert-info text-center w-100 mb-3" role="alert">
-                Les comptes utilisateurs sont créés uniquement par le gérant.
-              </div>
-              <div class="text-center pb-2">
-                <h5 class="card-title fs-4">Se connecter à votre compte</h5>
-                <p class="small">Entrez votre nom d'utilisateur ou email et votre mot de passe pour vous connecter</p>
-              </div>
+                <div class="text-center logo-container" style="margin-bottom: 1px;">
+                  <a href="index.html" class="logo d-flex align-items-center justify-content-center">
+                    <img src="logo.png" alt="Logo" class="img-fluid" style="max-height: 180px;">
+                  </a>
+                </div><br>
 
-              <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="row g-3 needs-validation" novalidate>
-              
-                <!-- Champ nom d'utilisateur ou email -->
-                <div class="col-12">
-                  <label for="yourUsernameOrEmail" class="form-label">Nom d'utilisateur ou Email</label>
-                  <div class="input-group">
-                    <span class="input-group-text">&#64;</span>
-                    <input type="text" formControlName="usernameOrEmail" class="form-control" id="yourUsernameOrEmail" required>
-                    <div class="invalid-feedback" *ngIf="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched">
-                      Veuillez entrer votre nom d'utilisateur ou email.
+                <!-- Encadré d'information sous le logo -->
+                <div class="alert alert-info text-center w-100 mb-3" role="alert">
+                  Les comptes utilisateurs sont créés uniquement par le gérant.
+                </div>
+                <div class="text-center pb-2">
+                  <h5 class="card-title fs-4">Se connecter à votre compte</h5>
+                  <p class="small">Entrez votre nom d'utilisateur ou email et votre mot de passe pour vous connecter</p>
+                </div>
+
+                <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="row g-3 needs-validation" novalidate>
+                
+                  <!-- Champ nom d'utilisateur ou email -->
+                  <div class="col-12">
+                    <label for="yourUsernameOrEmail" class="form-label">Nom d'utilisateur ou Email</label>
+                    <div class="input-group">
+                      <span class="input-group-text">&#64;</span>
+                      <input type="text" formControlName="usernameOrEmail" class="form-control" id="yourUsernameOrEmail" required>
+                      <div class="invalid-feedback" *ngIf="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched">
+                        Veuillez entrer votre nom d'utilisateur ou email.
+                      </div>
                     </div>
                   </div>
-                </div>
-              
-                <!-- Champ mot de passe avec bouton afficher/masquer -->
-                <div class="col-12">
-                  <label for="yourPassword" class="form-label">Mot de passe</label>
-                  <div class="input-group password-container">
-                    <input [type]="isPasswordVisible ? 'text' : 'password'" formControlName="password" class="form-control password-input"
-                           id="yourPassword" required>
-                    <mat-icon class="password-toggle" (click)="togglePasswordVisibility()">
-                      {{ isPasswordVisible ? 'visibility_off' : 'visibility' }}
-                    </mat-icon>
+                
+                  <!-- Champ mot de passe avec bouton afficher/masquer -->
+                  <div class="col-12">
+                    <label for="yourPassword" class="form-label">Mot de passe</label>
+                    <div class="input-group password-container">
+                      <input [type]="isPasswordVisible ? 'text' : 'password'" formControlName="password" class="form-control password-input"
+                             id="yourPassword" required>
+                      <mat-icon class="password-toggle" (click)="togglePasswordVisibility()">
+                        {{ isPasswordVisible ? 'visibility_off' : 'visibility' }}
+                      </mat-icon>
+                    </div>
+                    <div class="invalid-feedback" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                      Veuillez entrer votre mot de passe !
+                    </div>
                   </div>
-                  <div class="invalid-feedback" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-                    Veuillez entrer votre mot de passe !
+                
+                  <!-- Bouton de connexion -->
+                  <div class="col-12">
+                    <button class="btn btn-primary w-100" type="submit" [disabled]="loginForm.invalid">Se connecter</button>
                   </div>
-                </div>
-              
-                <!-- Bouton de connexion -->
-                <div class="col-12">
-                  <button class="btn btn-primary w-100" type="submit" [disabled]="loginForm.invalid">Se connecter</button>
-                </div>
-              
-                <!-- Lien mot de passe oublié -->
-                <div class="col-12 text-center mt-3">
-                  <p class="small mb-0"><a  routerLink="/forgetEmail">Mot de passe oublié ?</a></p>
-                </div>
-               
-              </form>
-              
-
+                
+                  <!-- Lien mot de passe oublié -->
+                  <div class="col-12 text-center mt-3">
+                    <p class="small mb-0"><a routerLink="/forgetEmail">Mot de passe oublié ?</a></p>
+                  </div>
+                
+                </form>
             </div>
           </div>
 
@@ -78,4 +76,3 @@
   </section>
 
 </div>
-

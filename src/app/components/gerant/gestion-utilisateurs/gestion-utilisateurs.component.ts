@@ -27,7 +27,7 @@ export class GestionUtilisateursComponent implements OnInit {
   currentPage: number = 1;
   totalPages: number = 1;
 
-  roles: string[] = ['cogerant', 'client', 'pompiste', 'caissier']; // Liste des rôles disponibles
+  roles: string[] = ['Cogerant', 'client', 'pompiste', 'caissier']; // Liste des rôles disponibles
   statuses: string[] = ['active', 'inactive']; // Liste des statuts disponibles
 
   constructor(private userService: UserService) {}

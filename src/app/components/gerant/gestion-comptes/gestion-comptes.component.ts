@@ -32,7 +32,7 @@ export class GestionComptesComponent implements OnInit {
   currentPage: number = 1;  
   totalPages: number = 1;  
 
-  roles: string[] = ['cogerant', 'client', 'pompiste', 'caissier'];
+  roles: string[] = ['Cogerant', 'client', 'pompiste', 'caissier'];
 
   constructor(private userService: UserService) {}
 

@@ -13,7 +13,7 @@
 
     <!-- Formulaire pour choisir mois et année -->
     <div class="card mb-4">
-      <div class="card-header bg-info text-white">Choisir le Mois et l'Année</div>
+      <div class="card-header bg-dark text-white">Choisir le Mois et l'Année</div>
       <div class="card-body">
         <form (ngSubmit)="generateAffectations()">
           <div class="row">
@@ -30,19 +30,30 @@
               </div>
             </div>
           </div>
-          <button type="submit" class="btn btn-outline-info" [disabled]="!mois || !annee">Générer automatiquement</button>
+          <button type="submit" class="btn btn-outline-dark" [disabled]="!mois || !annee">
+            <i class="bi bi-gear-fill me-1"></i> Générer automatiquement
+          </button> <br>
+          <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ errorMessage }}
+            <button type="button" class="btn-close" aria-label="Close" (click)="errorMessage = ''"></button>
+          </div>
         </form>
       </div>
     </div>
 
     <!-- Liste des affectations pour un jour -->
     <div class="card mt-4">
-      <div class="card-header bg-info text-white">Liste des Affectations</div>
+      <div class="card-header bg-dark text-white">Liste des Affectations</div>
       <div class="card-body">
         <div class="form-group">
           <label for="datePicker">Sélectionner un jour :</label>
           <input type="date" id="datePicker" class="form-control" (change)="onDateChange($event)" [(ngModel)]="selectedDate">
-        </div>
+        </div> <br>
+       <!-- Messages de succès et d'erreur -->
+<div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+  {{ successMessage }}
+  <button type="button" class="btn-close" aria-label="Close" (click)="successMessage = ''"></button>
+</div>
 
         <table class="table table-striped mt-4" *ngIf="affectations.length > 0">
           <thead>
@@ -55,11 +66,13 @@
           </thead>
           <tbody>
             <tr *ngFor="let affectation of affectations">
-              <td>{{ affectation.username }}</td>
+              <td>{{ affectation.pompiste }}</td>
               <td>{{ affectation.numero_pompe }}</td>
-              <td>{{ affectation.poste_nom }}</td>
+              <td>{{ affectation.poste }}</td>
               <td>
-                <button class="btn btn-outline-primary" (click)="editAffectation(affectation)">Modifier</button>
+                <button class="btn btn-outline-dark" (click)="editAffectation(affectation)">
+                  <i class="bi bi-pencil-square"></i> Modifier
+                </button>
               </td>
             </tr>
           </tbody>
@@ -74,7 +87,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
 
-      <div class="modal-header bg-info text-white">
+      <div class="modal-header bg-dark text-white">
         <h5 class="modal-title">Modifier l'Affectation</h5>
         <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
       </div>
@@ -83,23 +96,30 @@
         <form #editForm="ngForm" (ngSubmit)="saveAffectation()">
           <div class="row">
             <div class="col-md-4 mb-3">
-              <label for="username" class="form-label">Pompiste</label>
-              <input type="text" class="form-control" [(ngModel)]="affectationToEdit.username" name="username" required>
+              <label for="pompiste" class="form-label">Pompiste</label>
+              <select class="form-control" [(ngModel)]="affectationToEdit.pompiste" name="pompiste" required>
+                <option *ngFor="let pompiste of uniquePompistes" [value]="pompiste">{{ pompiste }}</option>
+              </select>
             </div>
             <div class="col-md-4 mb-3">
               <label for="numero_pompe" class="form-label">Pompe</label>
-              <input type="text" class="form-control" [(ngModel)]="affectationToEdit.numero_pompe" name="numero_pompe" required>
+              <select class="form-control" [(ngModel)]="affectationToEdit.numero_pompe" name="numero_pompe" required>
+                <option *ngFor="let pompe of uniquePompes" [value]="pompe">{{ pompe }}</option>
+              </select>
             </div>
             <div class="col-md-4 mb-3">
-              <label for="poste_nom" class="form-label">Poste</label>
-              <input type="text" class="form-control" [(ngModel)]="affectationToEdit.poste_nom" name="poste_nom" required>
+              <label for="poste" class="form-label">Poste</label>
+              <select class="form-control" [(ngModel)]="affectationToEdit.poste" name="poste" required>
+                <option *ngFor="let poste of uniquePostes" [value]="poste">{{ poste }}</option>
+              </select>
             </div>
           </div>
 
           <div class="d-flex justify-content-end mt-4">
-            <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">Annuler</button>
-            <button type="submit" class="btn btn-primary " [disabled]="!editForm.form.valid">Sauvegarder</button>
-           
+            <button type="button" class="btn btn-outline-secondary me-2" (click)="closeModal()">Annuler</button>
+            <button type="submit" class="btn btn-dark" [disabled]="!affectationToEdit.id" (click)="saveAffectation()">
+              <i class="bi bi-check-circle-fill me-1"></i> Sauvegarder
+            </button>
           </div>
         </form>
       </div>

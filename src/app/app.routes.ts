@@ -14,6 +14,9 @@ import{GestionUtilisateursComponent} from './components/gerant/gestion-utilisate
 import{AjouterUtilisateurComponent} from './components/gerant/ajouter-utilisateur/ajouter-utilisateur.component';
 import{GestionComptesComponent} from './components/gerant/gestion-comptes/gestion-comptes.component';
 import{GestionAffectationsPompistesComponent} from './components/gerant/gestion-affectations-pompistes/gestion-affectations-pompistes.component';
+import{GestionPompesComponent} from './components/gerant/gestion-pompes/gestion-pompes.component';
+import{AjouterPompeComponent} from './components/gerant/ajouter-pompe/ajouter-pompe.component';
+import{GestionPistoletsComponent} from './components/gerant/gestion-pistolets/gestion-pistolets.component';
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'forgetEmail', component: ForgotPassComponent },
@@ -28,7 +31,9 @@ export const routes: Routes = [
   {path: 'ajouter-utilisateur',component: AjouterUtilisateurComponent},
   {path:'gestion-comptes', component: GestionComptesComponent},
   {path:'gestion-affectations-pompistes', component: GestionAffectationsPompistesComponent},
-
+  {path:'liste-pompes', component: GestionPompesComponent},
+  {path:'ajouter-pompe', component: AjouterPompeComponent},
+  {path:'gestion-pistolets', component: GestionPistoletsComponent},
 
   { path: 'index', component: IndexComponent },
   

@@ -71,7 +71,7 @@ export class LoginComponent {
     }
   
     const credentials = this.loginForm.value;
-    console.log(credentials); // Vérifiez que l'objet envoyé contient bien usernameOrEmail et password
+  
   
     // Déterminer si le champ usernameOrEmail est un email ou un username
     const isEmail = credentials.usernameOrEmail.includes('@');

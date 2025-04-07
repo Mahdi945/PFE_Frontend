@@ -1,1 +1,89 @@
-<p>ajouter-pompe works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h2 style="color: rgb(7, 7, 128);">Ajouter une pompe</h2>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door"></i></a></li>
+        <li class="breadcrumb-item">Gestion des pompes</li>
+        <li class="breadcrumb-item active">Ajouter une pompe</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Formulaire d'ajout de pompe -->
+  <form class="row g-3 p-4 shadow-sm bg-white rounded" (ngSubmit)="onSubmit()" #pompeForm="ngForm">
+    <div class="col-12">
+      <label for="numero_pompe" class="form-label fw-bold">Numéro de la pompe</label>
+      <input type="text" class="form-control" id="numero_pompe" name="numero_pompe" [(ngModel)]="pompe.numero_pompe" required minlength="3" maxlength="50">
+    </div>
+
+    <div class="col-12">
+      <label for="type_pompe" class="form-label fw-bold">Type de pompe</label>
+      <select class="form-control" id="type_pompe" name="type_pompe" [(ngModel)]="pompe.type_pompe" required>
+        <option value="" disabled selected>Choisissez un type de pompe</option>
+        <option value="sans plomb">Sans plomb</option>
+        <option value="gasoil">Gasoil</option>
+        <option value="autre">Autre</option>
+      </select>
+    </div>
+
+    <div class="col-12">
+      <label for="statut" class="form-label fw-bold">Statut</label>
+      <select class="form-control" id="statut" name="statut" [(ngModel)]="pompe.statut" required>
+        <option value="" disabled selected>Choisissez un statut</option>
+        <option value="en_service">En service</option>
+        <option value="hors_service_temporaire">Hors service temporaire</option>
+        <option value="reserve">Réservée</option>
+        <option value="maintenance">En maintenance</option>
+        <option value="hors_service_definitif">Hors service définitif</option>
+      </select>
+    </div>
+
+    <!-- Affichage des erreurs -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3 text-center">
+      <strong>Erreur :</strong> {{ errorMessage }}
+    </div>
+
+    <div class="text-center d-flex justify-content-center gap-3 mt-4">
+      <button type="reset" class="btn btn-secondary px-4">Vider</button>
+      <button type="submit" class="btn btn-primary px-4" [disabled]="pompeForm.invalid">Valider</button>
+    </div>
+  </form>
+
+  <!-- Modal de confirmation -->
+  <div *ngIf="showConfirmationBox" class="modal fade show" tabindex="-1" style="display: block;" id="confirmationModal" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirmer l'ajout</h5>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Êtes-vous sûr de vouloir ajouter cette pompe ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+          <button type="button" class="btn btn-primary" (click)="confirmPompeAddition()">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message de succès -->
+  <div *ngIf="showSuccessBox" class="success-box text-center">
+    <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+    <h4>Pompe ajoutée avec succès !</h4>
+  </div>
+</main>
+
+<app-footer></app-footer>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center">
+  <i class="bi bi-arrow-up-short"></i>
+</a>
+
+<!-- Script pour gérer Bootstrap Modal -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
