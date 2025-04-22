@@ -1,0 +1,235 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+<main id="main" class="main">
+  <div class="container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item">Gestion des Pompes</li>
+        <li class="breadcrumb-item active">Liste des Pompes</li>
+      </ol>
+    </nav>
+
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+      <h2 style="color: rgb(7, 7, 128);">Liste des Pompes</h2>
+      <a routerLink="/ajouter-pompe" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Ajouter Pompe
+      </a>
+    </div>
+
+    <!-- Filtres -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <input type="text" class="form-control" placeholder="Rechercher par numéro" [(ngModel)]="searchTerm" (input)="filterPompes()">
+      </div>
+      <div class="col-md-3">
+        <select class="form-control" [(ngModel)]="filterType" (change)="filterPompes()">
+          <option value="">Tous les types</option>
+          <option value="sans plomb">Sans Plomb</option>
+          <option value="gasoil">Gasoil</option>
+          <option value="multi-produits">Multi-produits</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-control" [(ngModel)]="filterStatut" (change)="filterPompes()">
+          <option value="">Tous les statuts</option>
+          <option value="en_service">En Service</option>
+          <option value="hors_service_temporaire">Hors Service Temporaire</option>
+          <option value="reserve">Réserve</option>
+          <option value="maintenance">Maintenance</option>
+          <option value="hors_service_definitif">Hors Service Définitif</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Tableau des pompes -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Numéro</th>
+            <th>Type</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pompe of paginatedPompes">
+            <td>{{ pompe.numero_pompe }}</td>
+            <td>{{ pompe.type_pompe | titlecase }}</td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'bg-success': pompe.statut === 'en_service',
+                'bg-warning': pompe.statut === 'hors_service_temporaire' || pompe.statut === 'maintenance',
+                'bg-info': pompe.statut === 'reserve',
+                'bg-danger': pompe.statut === 'hors_service_definitif'
+              }">
+                {{ getStatutLabel(pompe.statut) }}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-primary me-2" (click)="openPistoletsModal(pompe)">
+                <i class="bi bi-eye"></i> Voir Pistolets
+              </button>
+              <button class="btn btn-sm btn-primary me-2" (click)="openEditModal(pompe)">
+                <i class="bi bi-pencil"></i>
+              </button>
+            
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav *ngIf="totalPages > 1" class="mt-4">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="changePage(currentPage - 1)">Précédent</a>
+        </li>
+        <li class="page-item" *ngFor="let page of getPagesArray()" 
+            [class.active]="page === currentPage">
+          <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <a class="page-link" (click)="changePage(currentPage + 1)">Suivant</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</main>
+<!-- ... (contenu précédent inchangé jusqu'au modal des pistolets) ... -->
+
+<!-- Modal des Pistolets -->
+<div class="modal fade" [class.show]="isPistoletsModalOpen" tabindex="-1" style="display: block;" *ngIf="isPistoletsModalOpen">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">
+          <i class="bi bi-droplet me-2"></i>
+          Pistolets - Pompe #{{ selectedPompe?.numero_pompe }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closePistoletsModal()"></button>
+      </div>
+      <div class="modal-body p-3">
+        <div *ngIf="loadingPistolets" class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+        </div>
+
+        <div *ngIf="!loadingPistolets" class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Numéro</th>
+                <th>Produit</th>
+                <th>Prix Unitaire</th>
+                
+                <th>Statut</th>
+              
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let pistolet of selectedPompe?.pistolets">
+                <td>{{ pistolet.numero_pistolet }}</td>
+                <td>{{ pistolet.nom_produit }}</td>
+                <td>{{ pistolet.prix_unitaire }}</td>
+                
+                <td>
+                  <select class="form-select form-select-sm" 
+                          [(ngModel)]="pistolet.statut" 
+                          (change)="updatePistoletStatut(pistolet)">
+                    <option value="disponible">Disponible</option>
+                    <option value="indisponible">Indisponible</option>
+                    <option value="maintenance">Maintenance</option>
+                  </select>
+                </td>
+                
+              </tr>
+              <tr *ngIf="!selectedPompe?.pistolets?.length">
+                <td colspan="7" class="text-center text-muted py-3">
+                  Aucun pistolet associé à cette pompe
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closePistoletsModal()">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="isPistoletsModalOpen"></div>
+<!-- Modal d'édition de pompe -->
+<div class="modal fade" [class.show]="isEditModalOpen" tabindex="-1" style="display: block;" *ngIf="isEditModalOpen">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modifier la pompe</h5>
+        <button type="button" class="btn-close" (click)="closeEditModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="updatePompe()">
+          <div class="mb-3">
+            <label class="form-label">Numéro</label>
+            <input type="text" class="form-control" [(ngModel)]="selectedPompe.numero_pompe" name="numero_pompe" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Type</label>
+            <select class="form-select" [(ngModel)]="selectedPompe.type_pompe" name="type_pompe" required>
+              <option value="sans plomb">Sans Plomb</option>
+              <option value="gasoil">Gasoil</option>
+              <option value="multi-produits">Multi-produits</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Statut</label>
+            <select class="form-select" [(ngModel)]="selectedPompe.statut" name="statut" required>
+              <option value="en_service">En Service</option>
+              <option value="hors_service_temporaire">Hors Service Temporaire</option>
+              <option value="reserve">Réserve</option>
+              <option value="maintenance">Maintenance</option>
+              <option value="hors_service_definitif">Hors Service Définitif</option>
+            </select>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary me-2" (click)="closeEditModal()">Annuler</button>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="isEditModalOpen"></div>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" [class.show]="showDeleteModal" tabindex="-1" style="display: block;" *ngIf="showDeleteModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Confirmer la suppression</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeDeleteModal()"></button>
+      </div>
+      <div class="modal-body">
+        <p>Êtes-vous sûr de vouloir supprimer la pompe <strong>{{ pompeToDelete?.numero_pompe }}</strong> ?</p>
+        <p class="text-danger">Cette action supprimera également tous les pistolets associés et ne peut pas être annulée.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()">Annuler</button>
+        <button type="button" class="btn btn-danger" (click)="confirmDeletePompe()">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="showDeleteModal"></div>
+
+
+<div class="modal-backdrop fade show" *ngIf="isPistoletModalOpen"></div>
+
+<app-footer></app-footer>

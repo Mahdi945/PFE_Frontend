@@ -1,0 +1,81 @@
+.profile-img {
+    width: 40px; /* Taille de l'icône */
+    height: 40px;
+    object-fit: cover; /* Garde le ratio et coupe l’excès */
+    object-position: center top; /* Centre et affiche plus le haut */
+    border-radius: 50%; /* Rend l’image circulaire */
+    border: 2px solid #ffffff; /* Optionnel : Ajoute une bordure blanche pour le contraste */
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2); /* Ajoute un léger effet d'ombre */
+  }
+  
+  .default-profile-icon {
+    font-size: 40px;
+    color: #6c757d;
+  }
+  .logo-img {
+    max-height: 90px; /* Hauteur maximale */
+    width: 150px; /* Fixer une largeur plus petite */
+    object-fit: contain; /* Ajuste l’image sans la couper */
+    filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.2)); /* Ajoute une ombre légère */
+  }
+  
+  
+  /* 🌍 Styles globaux pour gérer les thèmes */
+:root {
+    --bg-color: #f5f5f5;
+    --text-color: #222;
+    --button-bg: #ddd;
+    --button-hover: #bbb;
+  }
+  
+  .dark-theme {
+    --bg-color: #222;
+    --text-color: #f5f5f5;
+    --button-bg: #555;
+    --button-hover: #777;
+  }
+  
+  /* 🌙☀️ Style du bouton switcher */
+  .theme-toggle {
+    width: 50px;
+    height: 25px;
+    border-radius: 25px;
+    border: none;
+    background: var(--button-bg);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    cursor: pointer;
+    padding: 3px;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .theme-toggle:hover {
+    background: var(--button-hover);
+  }
+  
+  /* 🔵 Petite boule animée */
+  .circle {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    left: 5px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* 🌑 Mode sombre : déplacer la boule */
+  .dark-theme .circle {
+    transform: translateX(25px);
+  }
+  
+  /* 🌍 Appliquer le fond et la couleur du texte partout */
+  body {
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
+  }
+  
+  

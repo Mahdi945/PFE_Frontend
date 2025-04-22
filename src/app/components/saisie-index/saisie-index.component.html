@@ -1,0 +1,95 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item">Gestion des Relevés</li>
+        <li class="breadcrumb-item active">Saisie des Index</li>
+      </ol>
+    </nav>
+
+    <div class="pagetitle">
+      <h2 style="color: rgb(7, 7, 128);">Saisie des Index</h2>
+      <div *ngIf="currentUser" class="alert alert-info">
+        <div *ngIf="loadingAffectation" class="spinner-border spinner-border-sm"></div>
+        Utilisateur: {{ currentUser.username }} ({{ currentUser.role }})
+        <span *ngIf="currentAffectation"> 
+          - Poste: {{ currentAffectation.poste }} 
+          - Pompe: {{ currentAffectation.numero_pompe }}
+        </span>
+        <span *ngIf="!currentAffectation && !loadingAffectation" class="text-danger">
+          (Aucune affectation trouvée pour aujourd'hui)
+        </span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <form [formGroup]="indexForm" (ngSubmit)="onSubmit()">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="pistolet_id" class="form-label">Pistolet</label>
+              <select id="pistolet_id" class="form-select" formControlName="pistolet_id" (change)="onPistoletChange()">
+                <option value="">Sélectionner un pistolet</option>
+                <option *ngFor="let p of pistolets" [value]="p.id">
+                  {{ p.numero_pistolet }} - {{ p.nom_produit }} ({{ p.prix_unitaire | currency:'EUR':'symbol':'1.2-2' }})
+                </option>
+              </select>
+              <div *ngIf="loadingPistolets" class="mt-2">
+                <span class="spinner-border spinner-border-sm"></span> Chargement des pistolets...
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="date" class="form-label">Date</label>
+              <input type="date" id="date" class="form-control" formControlName="date">
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="index_ouverture" class="form-label">Index d'ouverture</label>
+              <input type="number" step="0.01" id="index_ouverture" class="form-control" 
+                     formControlName="index_ouverture" placeholder="0.00" readonly>
+              <small class="text-muted" *ngIf="lastClosingIndex !== null">
+                Dernier index de fermeture: {{ lastClosingIndex | number:'1.2-2' }}
+              </small>
+            </div>
+            <div class="col-md-6">
+              <label for="index_fermeture" class="form-label">Index de fermeture</label>
+              <input type="number" step="0.01" id="index_fermeture" class="form-control" 
+                     formControlName="index_fermeture" placeholder="0.00" 
+                     (input)="updateCalculs()">
+            </div>
+          </div>
+
+          <div class="row mb-3 bg-light p-3 rounded">
+            <div class="col-md-4">
+              <p class="mb-1">Quantité vendue:</p>
+              <h5>{{ quantiteVendue | number:'1.2-2' }} L</h5>
+            </div>
+            <div class="col-md-4" *ngIf="selectedPistolet">
+              <p class="mb-1">Prix unitaire:</p>
+              <h5>{{ selectedPistolet.prix_unitaire | currency:'EUR':'symbol':'1.2-2' }}</h5>
+            </div>
+            <div class="col-md-4">
+              <p class="mb-1">Montant total:</p>
+              <h5>{{ montantTotal | currency:'EUR':'symbol':'1.2-2' }}</h5>
+            </div>
+          </div>
+
+          <div class="text-end">
+            <button type="submit" class="btn btn-primary" 
+                    [disabled]="indexForm.invalid || !currentAffectation || loadingAffectation">
+              <i class="bi bi-save"></i> Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

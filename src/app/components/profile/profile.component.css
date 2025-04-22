@@ -1,0 +1,86 @@
+.profile-img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;  /* Rendre l'espace circulaire */
+    overflow: hidden;
+    background-color: #f0f0f0;  /* Couleur de fond agréable pour l'espace vide */
+    border: 2px solid #ddd; /* Bordure douce pour le cercle */
+  }
+  
+  .profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  /* Cela permet à l'image de s'ajuster proprement à l'intérieur du cercle */
+  }
+  
+  .empty-profile-img {
+    width: 100%;
+    height: 100%;
+    background-color: #ddd; /* Couleur de fond lorsque l'image est absente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: #666;
+    font-weight: bold;
+  }
+  
+  .upload-section {
+    margin-top: 20px;
+  }
+  
+  .message-success {
+    color: green;
+    margin-top: 10px;
+  }
+  
+  .message-error {
+    color: red;
+    margin-top: 10px;
+  }
+  .profile-img-container {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    position: relative;
+  }
+  
+  .profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  /* Remplir entièrement le cercle */
+    object-position: center;  /* Centrer l'image dans le cercle */
+  }
+  
+  .empty-profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .upload-section {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+  }
+  .profile-imgg {
+    width: 110px; /* Largeur fixe */
+    height: 110px; /* Hauteur fixe */
+    object-fit: cover; /* Coupe l’image pour qu’elle remplisse parfaitement l’espace */
+    
+   
+  }
+  
+  

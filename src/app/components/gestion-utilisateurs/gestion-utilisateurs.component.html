@@ -1,0 +1,157 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <i class="bi bi-house-door-fill"></i>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Gestion des Utilisateurs</li>
+      </ol>
+    </nav>
+
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+      <h2 style="color: rgb(7, 7, 128);">Gestion des Utilisateurs</h2>
+      <a routerLink="/ajouter-utilisateur" class="btn btn-success">
+        <i class="bi bi-person-plus"></i> Ajouter Utilisateur
+      </a>
+    </div>
+
+    <!-- Filtres -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <input type="text" class="form-control" placeholder="Rechercher par email, téléphone ou username" [(ngModel)]="searchTerm" (input)="filterUsers()">
+      </div>
+      <div class="col-md-3">
+        <select class="form-control" [(ngModel)]="filterRole" (change)="filterUsers()">
+          <option value="">Tous les rôles</option>
+          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-control" [(ngModel)]="filterStatus" (change)="filterUsers()">
+          <option value="">Tous les statuts</option>
+          <option value="active">Activé</option>
+          <option value="inactive">Désactivé</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Tableau des utilisateurs -->
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Photo</th>
+          <th>Nom d'utilisateur</th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Rôle</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td>
+            <div class="user-photo-container">
+              <img *ngIf="user.photo" [src]="user.photo" alt="Photo" class="user-photo">
+              <div *ngIf="!user.photo" class="default-icon">
+                <i class="bi bi-person-circle"></i>
+              </div>
+            </div>
+          </td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.numero_telephone }}</td>
+          <td>
+            <div class="dropdown" [class.show]="showRoleDropdown[user.id]">
+              <button class="btn btn-outline-secondary dropdown-toggle" 
+                      type="button" 
+                      (click)="toggleRoleDropdown(user.id)">
+                {{ user.role }}
+              </button>
+              <div class="dropdown-menu" [class.show]="showRoleDropdown[user.id]">
+                <a class="dropdown-item" 
+                   *ngFor="let role of roles" 
+                   (click)="changeUserRole(user, role)">
+                  {{ role }}
+                </a>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span *ngIf="user.status === 'active'" class="badge bg-success">
+              <i class="bi bi-check-circle me-1"></i> Activé
+            </span>
+            <span *ngIf="user.status === 'inactive'" class="badge bg-danger">
+              <i class="bi bi-exclamation-octagon me-1"></i> Désactivé
+            </span>
+          </td>
+          <td>
+            <button *ngIf="user.status === 'active'" class="btn btn-outline-danger rounded-pill btn-sm" (click)="openDeactivateModal(user)">
+              Désactiver
+            </button>
+            <button *ngIf="user.status === 'inactive'" class="btn btn-outline-success rounded-pill btn-sm" (click)="reactivateUser(user.id)">
+              Réactiver
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <nav *ngIf="totalPages > 1">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="changePage(currentPage - 1)">Précédent</a>
+        </li>
+        <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" 
+            [class.active]="i + 1 === currentPage">
+          <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <a class="page-link" (click)="changePage(currentPage + 1)">Suivant</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Modal de désactivation -->
+  <div *ngIf="showDeactivateModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Désactiver l'utilisateur</h5>
+        <button type="button" class="btn-close" (click)="closeDeactivateModal()"></button>
+      </div>
+      <div class="modal-body">
+        <p>Veuillez entrer une raison pour la désactivation :</p>
+        <textarea class="form-control" [(ngModel)]="deactivationReason" rows="4"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary me-2" (click)="closeDeactivateModal()">Annuler</button>
+        <button type="button" class="btn btn-primary" (click)="deactivateUser()">Confirmer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de message -->
+  <div *ngIf="showMessageModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ messageTitle }}</h5>
+        <button type="button" class="btn-close" (click)="closeMessageModal()"></button>
+      </div>
+      <div class="modal-body">
+        <p>{{ messageContent }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeMessageModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

@@ -1,0 +1,60 @@
+import { Routes } from '@angular/router';
+import { LoginComponent } from './components/auth/login/login.component'; 
+import { IndexComponent } from './index/index.component';
+import { ForgotPassComponent } from './components/auth/forgot-pass/forgot-pass.component';
+import { ResetPassComponent } from './components/auth/reset-pass/reset-pass.component';
+import { Page404Component } from './page-404/page-404.component'; // Importer la page 404
+import{DashbordGerantComponent} from './components/gerant/dashbord-gerant/dashbord-gerant.component';
+import{DashboardCogerantComponent} from './components/cogerant/dashboard-cogerant/dashboard-cogerant.component';
+import{DashboardPompisteComponent} from './components/pompiste/dashboard-pompiste/dashboard-pompiste.component';
+import{DashboardCaissierComponent} from './components/caissier/dashboard-caissier/dashboard-caissier.component';
+import{DashboardClientComponent} from './components/client/dashboard-client/dashboard-client.component';
+import{ProfileComponent} from './components/profile/profile.component';
+import{GestionUtilisateursComponent} from './components/gestion-utilisateurs/gestion-utilisateurs.component';
+import{AjouterUtilisateurComponent} from './components/ajouter-utilisateur/ajouter-utilisateur.component';
+import{GestionComptesComponent} from './components/gestion-comptes/gestion-comptes.component';
+import{GestionAffectationsPompistesComponent} from './components/gestion-affectations-pompistes/gestion-affectations-pompistes.component';
+import{GestionPompesComponent} from './components/gestion-pompes/gestion-pompes.component';
+import{AjouterPompeComponent} from './components/ajouter-pompe/ajouter-pompe.component';
+import{GestionPistoletsComponent} from './components/gestion-pistolets/gestion-pistolets.component';
+import{GestionCreditsComponent} from './components/gestion-credits/gestion-credits.component';
+import{GestionVehiculesComponent} from './components/gestion-vehicules/gestion-vehicules.component';
+import{GestionPaimentsComponent} from './components/gestion-paiments/gestion-paiments.component';
+import{GestionTransactionsComponent} from './components/gestion-transactions/gestion-transactions.component';
+import{SaisieCreditComponent} from './components/saisie-credit/saisie-credit.component';
+import{SaisieIndexComponent} from './components/saisie-index/saisie-index.component';
+import{SaisiePaiementComponent} from './components/saisie-paiement/saisie-paiement.component';
+
+export const routes: Routes = [
+  { path: 'login', component: LoginComponent },
+  { path: 'forgetEmail', component: ForgotPassComponent },
+  { path: 'reset-password', component: ResetPassComponent },
+  { path: 'dashboard-gerant', component: DashbordGerantComponent },
+  { path: 'dashboard-cogerant', component: DashboardCogerantComponent },
+  { path: 'dashboard-pompiste', component: DashboardPompisteComponent },
+  { path: 'dashboard-caissier', component: DashboardCaissierComponent },
+  { path: 'dashboard-client', component: DashboardClientComponent },
+  { path: 'profile-utilisateur', component: ProfileComponent },
+  {path: 'gestion-utilisateurs',component: GestionUtilisateursComponent},
+  {path: 'ajouter-utilisateur',component: AjouterUtilisateurComponent},
+  {path:'gestion-comptes', component: GestionComptesComponent},
+  {path:'gestion-affectations-pompistes', component: GestionAffectationsPompistesComponent},
+  {path:'liste-pompes', component: GestionPompesComponent},
+  {path:'ajouter-pompe', component: AjouterPompeComponent},
+  {path:'gestion-pistolets', component: GestionPistoletsComponent},
+  {path:'gestion-credits', component: GestionCreditsComponent},
+  {path:'gestion-vehicules', component: GestionVehiculesComponent},
+  {path:'gestion-transactions', component: GestionTransactionsComponent},
+  {path:'liste-paiements', component: GestionPaimentsComponent},
+  {path:'saisie-credit', component: SaisieCreditComponent},
+  {path:'saisie-index', component: SaisieIndexComponent},
+  {path:'saisie-paiement', component: SaisiePaiementComponent},
+  { path: 'index', component: IndexComponent },
+  
+  // Route par défaut pour rediriger vers l'index
+  { path: '', redirectTo: '/index', pathMatch: 'full' },
+  // Route pour la page 404 (doit être la dernière)
+  { path: '**', component: Page404Component }
+
+  
+];

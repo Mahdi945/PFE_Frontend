@@ -1,0 +1,114 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="pagetitle bg-light p-3 rounded-3 mb-4">
+    <h1 class="text-primary fw-bold">Tableau de Bord Pompiste</h1>
+    <nav>
+      <ol class="breadcrumb bg-transparent p-0">
+        <li class="breadcrumb-item"><a href="/dashboard" class="text-decoration-none text-muted">Accueil</a></li>
+        <li class="breadcrumb-item active text-primary">Tableau de Bord</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Modal pour les détails d'événement -->
+  <div *ngIf="showModal" class="modal-backdrop fade show"></div>
+  <div *ngIf="showModal" class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Détails de l'affectation</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="selectedEvent">
+            <p><strong>Date:</strong> {{ selectedEvent.date }}</p>
+            <p><strong>Pompe:</strong> {{ selectedEvent.pompe }}</p>
+            <p><strong>Poste:</strong> {{ selectedEvent.poste }}</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="closeModal()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section dashboard">
+    <div class="row g-4">
+      <!-- Calendrier -->
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-0 py-3">
+            <h5 class="card-title m-0 text-primary">
+              <i class="bi bi-calendar-event me-2"></i>Mon Calendrier des Affectations
+              <span class="badge bg-primary bg-opacity-10 text-primary float-end fs-6">
+                {{ getMonthName(mois) }} {{ annee }}
+              </span>
+            </h5>
+          </div>
+          
+          <div class="card-body p-4">
+            <div *ngIf="isLoading" class="text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <p class="mt-2 text-muted">Chargement de vos affectations...</p>
+            </div>
+
+            <div *ngIf="!isLoading" class="rounded-3 overflow-hidden">
+              <full-calendar [options]="calendarOptions"></full-calendar>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Détails des affectations -->
+      <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header bg-white border-0 py-3">
+            <h5 class="card-title m-0 text-primary">
+              <i class="bi bi-list-check me-2"></i>Mes Affectations ce Mois
+              <span class="badge bg-primary float-end fs-6">
+                {{ affectations.length }}
+              </span>
+            </h5>
+          </div>
+
+          <div class="card-body p-4">
+            <div *ngIf="affectations.length === 0 && !isLoading" class="alert alert-info bg-info bg-opacity-10 border-info">
+              <i class="bi bi-info-circle me-2"></i> Aucune affectation trouvée pour ce mois
+            </div>
+
+            <div *ngIf="affectations.length > 0" class="table-responsive">
+              <table class="table table-borderless table-hover align-middle">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="text-muted fw-normal">Date</th>
+                    <th class="text-muted fw-normal">Pompe</th>
+                    <th class="text-muted fw-normal">Poste</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let aff of affectations" class="border-top">
+                    <td class="text-dark">{{ aff.date | date: 'dd/MM' }}</td>
+                    <td>
+                      <span class="badge rounded-pill text-white" 
+                            [style.background-color]="getEventColor(aff.numero_pompe)">
+                        {{ aff.numero_pompe }}
+                      </span>
+                    </td>
+                    <td class="text-dark">{{ aff.poste }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>

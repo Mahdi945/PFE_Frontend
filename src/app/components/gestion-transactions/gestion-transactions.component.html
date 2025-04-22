@@ -1,0 +1,213 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item">Gestion des transactions</li>
+        <li class="breadcrumb-item active">Historique des transactions</li>
+      </ol>
+    </nav>
+
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+      <h2 style="color: rgb(7, 7, 128);">Historique des transactions</h2>
+      <div class="col-12 col-md-6 d-flex justify-content-md-end justify-content-center gap-2 mt-3 mt-md-0">
+        <button class="btn btn-success" (click)="exportToExcel()" title="Exporter les transactions">
+          <i class="bi bi-file-excel"></i> Exporter en Excel
+        </button>
+      </div>
+    </div>
+
+    <!-- Filtres simplifiés -->
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <input type="text" class="form-control" placeholder="Rechercher par username..." 
+               [(ngModel)]="searchTerm" (input)="filterTransactions()">
+      </div>
+      <div class="col-md-3">
+        <input type="text" class="form-control" placeholder="Rechercher par immatriculation..." 
+               [(ngModel)]="selectedImmatriculation" (input)="filterTransactions()">
+      </div>
+      <div class="col-md-3">
+        <input type="date" class="form-control" [(ngModel)]="selectedDate" (change)="filterTransactions()">
+      </div>
+      <div class="col-md-3">
+        <select class="form-control" [(ngModel)]="selectedCredit" (change)="filterTransactions()">
+          <option [ngValue]="null">Tous les crédits</option>
+          <option *ngFor="let credit of credits" [ngValue]="credit.id">Crédit #{{credit.id}}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Résumé -->
+    <div class="alert alert-info d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{{ filteredTransactions.length }}</strong> transaction(s) trouvée(s)
+      </div>
+     </div>
+
+    <!-- Tableau des transactions -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Username</th>
+            <th>Immatriculation</th>
+            <th>Quantité (L)</th>
+            <th>Montant (DT)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of filteredTransactions | slice:(currentPage-1)*pageSize:currentPage*pageSize">
+            <td>{{ t.id }}</td>
+            <td>{{ t.date_transaction | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ t.username }}</td>
+            <td>{{ t.immatriculation }}</td>
+            <td>{{ t.quantite | number:'1.2-2' }}</td>
+            <td>{{ t.montant | number:'1.2-2' }}</td>
+            <td>
+              <button class="btn btn-sm btn-info" (click)="openDetails(t)">
+                <i class="bi bi-eye"></i> Voir
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredTransactions.length === 0 && !isLoading">
+            <td colspan="7" class="text-center">Aucune transaction trouvée</td>
+          </tr>
+          <tr *ngIf="isLoading">
+            <td colspan="7" class="text-center">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav *ngIf="totalPages > 1">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="changePage(currentPage - 1)">Précédent</a>
+        </li>
+        <li class="page-item" *ngFor="let p of getPages()" [class.active]="p === currentPage">
+          <a class="page-link" (click)="changePage(p)">{{ p }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <a class="page-link" (click)="changePage(currentPage + 1)">Suivant</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</main>
+
+<!-- Modal de détails -->
+<div class="modal fade show" [class.show]="showDetailsModal" style="display: block; background-color: rgba(0,0,0,0.5);" *ngIf="showDetailsModal && selectedTransaction">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Détails de la transaction #{{ selectedTransaction.id }}</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeDetails()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card mb-3">
+              <div class="card-header bg-light">
+                <h6>Informations transaction</h6>
+              </div>
+              <div class="card-body">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <strong>Date:</strong> {{ selectedTransaction.date_transaction | date:'dd/MM/yyyy HH:mm' }}
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Quantité:</strong> {{ selectedTransaction.quantite | number:'1.2-2' }} L
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Montant:</strong> {{ selectedTransaction.montant | number:'1.2-2' }} DT
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card mb-3">
+              <div class="card-header bg-light">
+                <h6>Informations utilisateur</h6>
+              </div>
+              <div class="card-body">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <strong>Nom complet du Client:</strong> {{ selectedTransaction.username }}
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Email:</strong> {{ selectedTransaction.email }}
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Numero de Telephone:</strong> {{ selectedTransaction.numero_telephone }}
+                  </li>
+                
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card mb-3">
+              <div class="card-header bg-light">
+                <h6>Informations véhicule</h6>
+              </div>
+              <div class="card-body">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <strong>Immatriculation:</strong> {{ selectedTransaction.immatriculation }}
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Marque:</strong> {{ selectedTransaction.marque }}
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Type:</strong> {{ selectedTransaction.type_vehicule }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header bg-light">
+                <h6>Informations crédit</h6>
+              </div>
+              <div class="card-body">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <strong>ID Crédit:</strong> {{ selectedTransaction.id_credit }}
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Solde crédit:</strong> {{ selectedTransaction.solde_credit | number:'1.2-2' }} DT
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Crédit utilisé:</strong> {{ selectedTransaction.credit_utilise | number:'1.2-2' }} DT
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Montant restant:</strong> {{ selectedTransaction.montant_restant | number:'1.2-2' }} DT
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDetails()">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

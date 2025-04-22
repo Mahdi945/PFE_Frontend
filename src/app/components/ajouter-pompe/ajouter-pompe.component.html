@@ -1,0 +1,141 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h2 style="color: rgb(7, 7, 128);">Ajouter une pompe</h2>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door"></i></a></li>
+        <li class="breadcrumb-item">Gestion des pompes</li>
+        <li class="breadcrumb-item active">Ajouter une pompe</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Formulaire d'ajout de pompe -->
+  <form class="row g-3 p-4 shadow-sm bg-white rounded" (ngSubmit)="onSubmit()" #pompeForm="ngForm">
+    <div class="col-12">
+      <label for="numero_pompe" class="form-label fw-bold">Numéro de la pompe *</label>
+      <input type="text" class="form-control" id="numero_pompe" name="numero_pompe" 
+             [(ngModel)]="pompe.numero_pompe" required minlength="3" maxlength="50">
+    </div>
+
+    <div class="col-12">
+      <label for="type_pompe" class="form-label fw-bold">Type de pompe *</label>
+      <select class="form-control" id="type_pompe" name="type_pompe" [(ngModel)]="pompe.type_pompe" required>
+        <option value="" disabled selected>Choisissez un type de pompe</option>
+        <option value="sans plomb">Sans plomb</option>
+        <option value="gasoil">Gasoil</option>
+        <option value="multi-produits">Multi-produits</option>
+      </select>
+    </div>
+
+    <div class="col-12">
+      <label for="statut" class="form-label fw-bold">Statut de la pompe *</label>
+      <select class="form-control" id="statut" name="statut" [(ngModel)]="pompe.statut" required>
+        <option value="" disabled selected>Choisissez un statut</option>
+        <option value="en_service">En service</option>
+        <option value="hors_service_temporaire">Hors service temporaire</option>
+        <option value="reserve">Réservée</option>
+        <option value="maintenance">En maintenance</option>
+        <option value="hors_service_definitif">Hors service définitif</option>
+      </select>
+    </div>
+
+    <!-- Section pour les pistolets -->
+    <div class="col-12">
+      <label for="nombre_pistolets" class="form-label fw-bold">Nombre de pistolets *</label>
+      <input type="number" class="form-control" id="nombre_pistolets" 
+             [(ngModel)]="nombrePistolets" name="nombre_pistolets" 
+             min="1" max="10" required>
+      <button type="button" class="btn btn-secondary mt-2" 
+              (click)="genererFormulairePistolets()">
+        Configurer les pistolets
+      </button>
+    </div>
+
+    <!-- Formulaire pour les pistolets (maintenant obligatoire) -->
+    <div *ngIf="showPistoletsForm" class="col-12 mt-4 p-3 border rounded">
+      <h5>Configuration des pistolets (obligatoire)</h5>
+      <div *ngFor="let pistolet of pistolets; let i = index" class="mb-3 p-2 border-bottom">
+        <h6>Pistolet #{{i + 1}}</h6>
+        <div class="row">
+          <div class="col-md-3">
+            <label class="form-label">Numéro du pistolet *</label>
+            <input type="text" class="form-control" 
+                   [(ngModel)]="pistolet.numero_pistolet" 
+                   [name]="'pistolet_numero_' + i" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Produit *</label>
+            <select class="form-control" 
+                    [(ngModel)]="pistolet.nom_produit" 
+                    [name]="'pistolet_produit_' + i" required>
+              <option value="" disabled selected>Sélectionner</option>
+              <option *ngFor="let produit of produitsDisponibles" [value]="produit.code">
+                {{produit.nom}} ({{produit.code}})
+              </option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Prix unitaire (DT) *</label>
+            <input type="number" class="form-control" 
+                   [(ngModel)]="pistolet.prix_unitaire" 
+                   [name]="'pistolet_prix_' + i" min="0.01" step="0.01" required>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+    <!-- Affichage des erreurs -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3 text-center">
+      <strong>Erreur :</strong> {{ errorMessage }}
+    </div>
+
+    <div class="text-center d-flex justify-content-center gap-3 mt-4">
+      <button type="reset" class="btn btn-secondary px-4">Vider</button>
+      <button type="submit" class="btn btn-primary px-4" 
+              [disabled]="pompeForm.invalid || !showPistoletsForm || !tousPistoletsValides()">
+        Valider
+      </button>
+    </div>
+  </form>
+
+  <!-- Modal de confirmation -->
+  <div *ngIf="showConfirmationBox" class="modal fade show" tabindex="-1" style="display: block;" id="confirmationModal" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirmer l'ajout</h5>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Êtes-vous sûr de vouloir ajouter cette pompe avec {{pistolets.length}} pistolet(s) ?
+          <div class="mt-3">
+            <strong>Détails des pistolets :</strong>
+            <ul>
+              <li *ngFor="let pistolet of pistolets">
+                {{pistolet.numero_pistolet}} - {{pistolet.nom_produit}} ({{pistolet.prix_unitaire}} FCFA)
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+          <button type="button" class="btn btn-primary" (click)="confirmPompeAddition()">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message de succès -->
+  <div *ngIf="showSuccessBox" class="success-box text-center">
+    <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+    <h4>Pompe et pistolets ajoutés avec succès !</h4>
+    <p>Redirection dans {{countdown}} secondes...</p>
+  </div>
+</main>
+
+<app-footer></app-footer>

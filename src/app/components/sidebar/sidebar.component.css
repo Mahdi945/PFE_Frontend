@@ -1,0 +1,84 @@
+.hidden {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-nav .nav-content {
+    padding-left: 10px; /* Décale les sous-éléments vers la droite */
+}
+
+.sidebar-nav .nav-content li a {
+    display: flex;
+    align-items: center;
+    text-decoration: none; /* Supprime le soulignement */
+    color: #333; /* Couleur du texte, ajuste selon ton design */
+    padding: 5px 10px;
+}
+
+.sidebar-nav .nav-content li a:hover {
+    color: #007bff; /* Couleur au survol */
+}
+
+.sidebar-nav .nav-content li a i {
+    margin-right: 8px; /* Espacement entre l'icône et le texte */
+}
+/* Taille des icônes */
+.bi {
+    font-size: 1.2rem; /* Taille de base */
+  }
+  
+  /* Icônes des sous-éléments plus grandes */
+  .nav-content .bi.fs-5 {
+    font-size: 1.4rem !important;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  
+  /* Espacement des sous-éléments */
+  .nav-content li a {
+    padding: 10px 15px 10px 45px !important;
+    display: flex;
+    align-items: center;
+  }
+  
+  .nav-content li a span {
+    margin-left: 8px;
+  }
+  
+  /* Animation des flèches */
+  .bi-chevron-down {
+    transition: transform 0.3s ease;
+  }
+  
+  .collapsed .bi-chevron-down {
+    transform: rotate(-90deg);
+  }
+  
+/* Suppression du cercle pour les éléments actifs */
+.nav-content li a.active::before {
+    content: none;
+}
+
+  
+
+@media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 45px; /* Déplace la sidebar un peu vers le bas */
+      width: 250px;
+      height: calc(100% - 10px); /* Ajuste la hauteur pour compenser le décalage */
+      background-color: #fff;
+      box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+  
+    .sidebar.visible {
+      transform: translateX(0);
+    }
+  }
+
+
+  
+  

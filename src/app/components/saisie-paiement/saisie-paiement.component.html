@@ -1,0 +1,129 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item">Gestion des paiements</li>
+        <li class="breadcrumb-item active">Nouveau paiement</li>
+      </ol>
+    </nav>
+
+    <div class="pagetitle">
+      <h2 style="color: rgb(7, 7, 128);">Nouveau paiement</h2>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <form (ngSubmit)=" validateForm(paymentForm)" #paymentForm="ngForm">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label">Crédit concerné *</label>
+                <select class="form-control" [(ngModel)]="newPayment.id_credit" name="id_credit" required>
+                  <option value="" disabled selected>Sélectionnez un crédit</option>
+                  <option *ngFor="let credit of activeCredits" [value]="credit.id">
+                    #{{credit.id}} - {{credit.utilisateur}} 
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label">Montant (DT) *</label>
+                <input type="number" class="form-control" [(ngModel)]="newPayment.montant_paye" name="montant_paye" min="0.01" step="0.01" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label">Mode de paiement *</label>
+                <select class="form-control" [(ngModel)]="newPayment.mode_paiement" name="mode_paiement" required>
+                  <option value="" disabled selected>Sélectionnez un mode</option>
+                  <option value="especes">Espèces</option>
+                  <option value="carte">Carte bancaire</option>
+                  <option value="virement">Virement</option>
+                  <option value="cheque">Chèque</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label">Date du paiement</label>
+                <input type="datetime-local" class="form-control" [(ngModel)]="newPayment.date_paiement" name="date_paiement">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" [(ngModel)]="newPayment.description" name="description" rows="3"></textarea>
+          </div>
+
+          <div class="alert alert-danger" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <button type="reset" class="btn btn-secondary px-4">Vider</button>
+            <button type="submit" class="btn btn-primary" [disabled]="paymentForm.invalid">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal de confirmation -->
+<div class="modal fade show" [class.show]="showConfirmationModal" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);" *ngIf="showConfirmationModal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Confirmer le paiement</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="showConfirmationModal = false"></button>
+        </div>
+        <div class="modal-body">
+          <p>Êtes-vous sûr de vouloir enregistrer ce paiement ?</p>
+          <div class="alert alert-info">
+            <strong>Détails :</strong><br>
+            Montant: {{ newPayment.montant_paye | number:'1.2-2' }} DT<br>
+            Mode: {{ getPaymentModeLabel(newPayment.mode_paiement) }}<br>
+            Date: {{ newPayment.date_paiement | date:'dd/MM/yyyy HH:mm' }}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="showConfirmationModal = false">Annuler</button>
+          <button type="button" class="btn btn-primary" (click)="confirmPayment()">
+            <span *ngIf="!isSaving">Confirmer</span>
+            <span *ngIf="isSaving">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Enregistrement...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de succès -->
+  <div class="modal fade show" [class.show]="showSuccessModal" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);" *ngIf="showSuccessModal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title">Succès</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="redirectToHistory()"></button>
+        </div>
+        <div class="modal-body text-center">
+          <i class="bi bi-check-circle-fill text-success display-4 mb-3"></i>
+          <p>{{ successMessage }}</p>
+        </div>
+       
+      </div>
+    </div>
+  </div>
+  
+  <app-footer></app-footer>

@@ -1,0 +1,26 @@
+/* Style des boutons du calendrier */
+.fc .fc-button {
+    background-color: #3498db !important;
+    border-color: #3498db !important;
+    color: white !important;
+  }
+  
+  .fc .fc-button:hover {
+    background-color: #2980b9 !important;
+    border-color: #2980b9 !important;
+  }
+  
+  .fc .fc-button-active {
+    background-color: #1a5276 !important;
+    border-color: #1a5276 !important;
+  }
+  
+  .fc .fc-today-button {
+    background-color: #2ecc71 !important;
+    border-color: #2ecc71 !important;
+  }
+  
+  .fc .fc-today-button:hover {
+    background-color: #27ae60 !important;
+    border-color: #27ae60 !important;
+  }

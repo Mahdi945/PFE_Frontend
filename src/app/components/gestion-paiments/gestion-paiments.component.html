@@ -1,0 +1,192 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item">Gestion des paiements</li>
+        <li class="breadcrumb-item active">Historique des paiements</li>
+      </ol>
+    </nav>
+
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+      <h2 style="color: rgb(7, 7, 128);">Historique des paiements</h2>
+      <div class="col-12 col-md-6 d-flex justify-content-md-end justify-content-center gap-2 mt-3 mt-md-0">
+        <button class="btn btn-success" (click)="exportToExcel()" title="Exporter tous les paiements">
+            <i class="bi bi-file-excel"></i> Exporter en Excel
+        </button>
+        
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <input type="text" class="form-control" placeholder="Rechercher..." [(ngModel)]="searchTerm" (input)="filterPayments()">
+      </div>
+      <div class="col-md-2">
+        <select class="form-control" [(ngModel)]="selectedCredit" (change)="filterPayments()">
+          <option [ngValue]="null">Tous les crédits</option>
+          <option *ngFor="let credit of credits" [ngValue]="credit.id">Crédit #{{credit.id}}</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="form-control" [(ngModel)]="selectedUser" (change)="filterPayments()">
+          <option [ngValue]="null">Tous les clients</option>
+          <option *ngFor="let user of users" [ngValue]="user.id">{{user.username}}</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select class="form-control" [(ngModel)]="selectedMode" (change)="filterPayments()">
+          <option [ngValue]="null">Tous les modes</option>
+          <option value="especes">Espèces</option>
+          <option value="carte">Carte</option>
+          <option value="virement">Virement</option>
+          <option value="cheque">Chèque</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <input type="date" class="form-control" [(ngModel)]="selectedDate" (change)="filterPayments()">
+      </div>
+    </div>
+<!-- Résumé -->
+<div class="alert alert-info d-flex justify-content-between align-items-center">
+  <div>
+    <strong>{{ filteredPayments.length }}</strong> transaction(s) trouvée(s)
+  </div>
+ 
+</div>
+  
+
+    <!-- Tableau des paiements -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Référence</th>
+            <th>Crédit</th>
+            <th>Client</th>
+            <th>Montant (DT)</th>
+            <th>Reste (DT)</th>
+            <th>Date</th>
+            <th>Mode</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let payment of filteredPayments | slice:(currentPage-1)*pageSize:currentPage*pageSize">
+            <td>{{ payment.reference_paiement }}</td>
+            <td>Crédit #{{ payment.id_credit }}</td>
+            <td>{{ payment.username || 'Inconnu' }}</td>
+            <td>{{ payment.montant_paye | number:'1.2-2' }}</td>
+            <td>{{ payment.montant_restant | number:'1.2-2' }}</td>
+            <td>{{ payment.date_paiement | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <span [ngSwitch]="payment.mode_paiement">
+                <span *ngSwitchCase="'especes'" class="badge bg-success">Espèces</span>
+                <span *ngSwitchCase="'carte'" class="badge bg-primary">Carte</span>
+                <span *ngSwitchCase="'virement'" class="badge bg-info">Virement</span>
+                <span *ngSwitchCase="'cheque'" class="badge bg-warning">Chèque</span>
+              </span>
+            </td>
+            
+          </tr>
+          <tr *ngIf="filteredPayments.length === 0">
+            <td colspan="8" class="text-center">Aucun paiement trouvé</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav *ngIf="totalPages > 1">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="changePage(currentPage - 1)">Précédent</a>
+        </li>
+        <li class="page-item" *ngFor="let page of getPages()" [class.active]="page === currentPage">
+          <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <a class="page-link" (click)="changePage(currentPage + 1)">Suivant</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</main>
+
+<!-- Modal d'ajout de paiement -->
+<div class="modal fade show" [class.show]="showAddModal" tabindex="-1" role="dialog" style="display: block; background-color: rgba(0,0,0,0.5);" *ngIf="showAddModal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Nouveau paiement</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeAddModal()" >
+          
+        </button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="submitPayment()" #paymentForm="ngForm">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Crédit concerné *</label>
+                <select class="form-control" [(ngModel)]="newPayment.id_credit" name="id_credit" required>
+                  <option value="" disabled selected>Sélectionnez un crédit</option>
+                  <option *ngFor="let credit of activeCredits" [value]="credit.id">
+                    #{{credit.id}} - {{credit.utilisateur}} ({{(credit.solde_credit - (credit.credit_utilise || 0)) | currency:'DT ':'symbol':'1.2-2'}} restant)
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Montant (DT) *</label>
+                <input type="number" class="form-control" [(ngModel)]="newPayment.montant_paye" name="montant_paye" min="0.01" step="0.01" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Mode de paiement *</label>
+                <select class="form-control" [(ngModel)]="newPayment.mode_paiement" name="mode_paiement" required>
+                  <option value="" disabled selected>Sélectionnez un mode</option>
+                  <option value="especes">Espèces</option>
+                  <option value="carte">Carte bancaire</option>
+                  <option value="virement">Virement</option>
+                  <option value="cheque">Chèque</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Date du paiement</label>
+                <input type="datetime-local" class="form-control" [(ngModel)]="newPayment.date_paiement" name="date_paiement">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mt-3">
+            <label>Description</label>
+            <textarea class="form-control" [(ngModel)]="newPayment.description" name="description" rows="3"></textarea>
+          </div>
+
+          <div class="alert alert-danger mt-3" *ngIf="errorMessage">
+            {{ errorMessage }}
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeAddModal()">Annuler</button>
+            <button type="submit" class="btn btn-primary" [disabled]="paymentForm.invalid">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

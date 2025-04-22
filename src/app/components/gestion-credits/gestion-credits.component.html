@@ -1,0 +1,170 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item">Gestion des crédits</li>
+        <li class="breadcrumb-item active">Liste des crédits</li>
+      </ol>
+    </nav>
+
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+      <h2 style="color: rgb(7, 7, 128);">Liste des crédits</h2>
+      <!-- Bouton pour afficher le modal d'ajout -->
+      <button class="btn btn-success" (click)="openAddModal()">
+        <i class="bi bi-plus-circle"></i> Ajouter Crédit
+      </button>
+    </div>
+   <!-- Filtres -->
+<div class="row mb-3">
+  <div class="col-md-4">
+    <input type="text" class="form-control" placeholder="Rechercher par nom ou ID crédit" [(ngModel)]="searchTerm" (input)="filterCredits()">
+  </div>
+  
+  <div class="col-md-4">
+    <select class="form-control" [(ngModel)]="selectedType" (change)="filterCredits()">
+      <option value="">Tous les types</option>
+      <option value="individuelle">Individuelle</option>
+      <option value="organisationnelle">Organisationnelle</option>
+    </select>
+  </div>
+
+  <div class="col-md-4">
+    <select class="form-control" [(ngModel)]="selectedEtat" (change)="filterCredits()">
+      <option value="">Tous les états</option>
+      <option value="actif">Actif</option>
+      <option value="remboursé">Remboursé</option>
+      <option value="annulé">Annulé</option>
+      <option value="expiré">Expiré</option>
+    </select>
+  </div>
+</div>
+
+    <!-- Tableau des crédits -->
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Nom Client</th>
+          <th>Type de Crédit</th>
+          <th>Solde</th>
+          <th>Date de début</th>
+          <th>Durée</th>
+          <th>Crédit utilisé</th>
+          <th>État</th> <!-- Nouvelle colonne pour l'état -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let credit of filteredCredits">
+          <td>{{ credit.id }}</td>
+          <td>{{ credit.utilisateur }}</td>
+          <td>{{ credit.type_credit }}</td>
+          <td>{{ credit.solde_credit }} DT</td>
+          <td>{{ credit.date_debut | date }}</td>
+          <td>{{ credit.duree_credit }} jours</td>
+          <td>{{ credit.credit_utilise || '0 DT' }}</td>
+          <td>
+            <!-- Affichage des états avec des icônes -->
+            <span *ngIf="credit.etat === 'actif'" class="badge bg-success">
+                <i class="bi bi-clock"></i> Actif
+              </span>
+            <span *ngIf="credit.etat === 'remboursé'" class="badge bg-primary">
+              <i class="bi bi-check-circle"></i> Remboursé
+            </span>
+            <span *ngIf="credit.etat === 'annulé'" class="badge bg-danger">
+              <i class="bi bi-x-circle"></i> Annulé
+            </span>
+            <span *ngIf="credit.etat === 'expiré'" class="badge bg-warning text-dark">
+              <i class="bi bi-exclamation-circle"></i> Expiré
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- Pagination 
+    <div class="d-flex justify-content-center mt-4">
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button class="page-link" (click)="changePage(currentPage - 1)">Précédent</button>
+        </li>
+        <li *ngFor="let page of [].constructor(totalPages); let i = index" class="page-item" [class.active]="i + 1 === currentPage">
+          <button class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</button>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <button class="page-link" (click)="changePage(currentPage + 1)">Suivant</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+-->
+  
+    <!-- Pagination -->
+    <nav *ngIf="totalPages > 1">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="changePage(currentPage - 1)">Précédent</a>
+        </li>
+        <li
+          class="page-item"
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          [class.active]="i + 1 === currentPage"
+        >
+          <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <a class="page-link" (click)="changePage(currentPage + 1)">Suivant</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</main>
+
+<!-- Modal d'ajout de crédit -->
+<div *ngIf="isModalOpen" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" style="color: rgb(7, 7, 128);">Ajouter Crédit</h5>
+      <button class="btn-close" (click)="closeModal()">X</button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="addCredit()">
+        <div class="form-group mb-3">
+          <label for="utilisateur">Nom Complet de Client :</label>
+          <input type="text" id="utilisateur" [(ngModel)]="selectedCredit.utilisateur" name="utilisateur" class="form-control" required>
+        </div>
+        <div class="form-group mb-3">
+          <label for="type_credit">Type de Crédit :</label>
+          <select id="type_credit" [(ngModel)]="selectedCredit.type_credit" name="type_credit" class="form-control" required>
+            <option value="" selected disabled>Veuillez choisir un type de crédit</option>
+            <option value="individuelle">Individuelle</option>
+            <option value="organisationnelle">Organisationnelle</option>
+          </select>
+        </div>
+        <div class="form-group mb-3">
+          <label for="solde_credit">Solde Crédit : (DT)</label>
+          <input type="number" id="solde_credit" [(ngModel)]="selectedCredit.solde_credit" name="solde_credit" class="form-control" required>
+        </div>
+        <div class="form-group mb-3">
+          <label for="date_debut">Date de Début :</label>
+          <input type="date" id="date_debut" [(ngModel)]="selectedCredit.date_debut" name="date_debut" class="form-control" required>
+        </div>
+        <div class="form-group mb-3">
+          <label for="duree_credit">Durée (jours) :</label>
+          <input type="number" id="duree_credit" [(ngModel)]="selectedCredit.duree_credit" name="duree_credit" class="form-control" required>
+        </div>
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+          {{ errorMessage }}
+        </div>
+        <div class="d-flex justify-content-end mt-3">
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
