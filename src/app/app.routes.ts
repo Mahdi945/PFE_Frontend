@@ -24,6 +24,7 @@ import{GestionTransactionsComponent} from './components/gestion-transactions/ges
 import{SaisieCreditComponent} from './components/saisie-credit/saisie-credit.component';
 import{SaisieIndexComponent} from './components/saisie-index/saisie-index.component';
 import{SaisiePaiementComponent} from './components/saisie-paiement/saisie-paiement.component';
+import{VisualiserRevenuesComponent} from './components/visualiser-revenues/visualiser-revenues.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -49,6 +50,8 @@ export const routes: Routes = [
   {path:'saisie-credit', component: SaisieCreditComponent},
   {path:'saisie-index', component: SaisieIndexComponent},
   {path:'saisie-paiement', component: SaisiePaiementComponent},
+  {path:'visualiser-revenues', component: VisualiserRevenuesComponent},
+
   { path: 'index', component: IndexComponent },
   
   // Route par défaut pour rediriger vers l'index

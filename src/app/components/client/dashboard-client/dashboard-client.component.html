@@ -1,1 +1,261 @@
-<p>dashboard-client works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="container">
+    <!-- Breadcrumb -->
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item active">Tableau de Bord Client</li>
+      </ol>
+    </nav>
+
+    <div class="pagetitle">
+      <h2 style="color: rgb(7, 7, 128);">Tableau de Bord Client</h2>
+    </div>
+
+    <!-- Cartes de Statistiques -->
+    <div class="row">
+      <!-- Carte Crédits Actifs -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                  Crédits Actifs</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  {{dashboardData.creditStats?.credits_actifs || 0}}
+                </div>
+              </div>
+              <div class="col-auto">
+                <i class="bi bi-credit-card-2-front fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Total Paiements -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                  Total Paiements</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  {{formatCurrency(dashboardData.paymentStats?.total_paye || 0)}}
+                </div>
+              </div>
+              <div class="col-auto">
+                <i class="bi bi-cash-stack fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Solde Restant -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                  Solde Restant</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  {{formatCurrency(dashboardData.creditStats?.solde_restant || 0)}}
+                </div>
+              </div>
+              <div class="col-auto">
+                <i class="bi bi-wallet2 fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Véhicules Associés -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                  Véhicules Associés</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  {{dashboardData.vehicules.length || 0}}
+                </div>
+              </div>
+              <div class="col-auto">
+                <i class="bi bi-car-front-fill fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphiques -->
+    <div class="row">
+      <!-- Graphique Crédits -->
+      <div class="col-xl-4 col-lg-5">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Répartition des Crédits</h6>
+          </div>
+          <div class="card-body">
+            <div class="chart-pie pt-4 pb-2">
+              <canvas id="creditChart" height="250"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Graphique Paiements -->
+      <div class="col-xl-8 col-lg-7">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Historique des Paiements</h6>
+          </div>
+          <div class="card-body">
+            <div class="chart-area">
+              <canvas id="paymentChart" height="250"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableaux -->
+    <div class="row">
+      <!-- Dernières Transactions -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Dernières Transactions</h6>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Date</th>
+                    <th>Véhicule</th>
+                    <th>Montant</th>
+                    <th>Crédit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let transaction of recentTransactions">
+                    <td>{{formatDate(transaction.date_transaction)}}</td>
+                    <td>
+                      <span *ngIf="transaction.immatriculation">
+                        {{transaction.marque}} ({{transaction.immatriculation}})
+                      </span>
+                      <span *ngIf="!transaction.immatriculation">-</span>
+                    </td>
+                    <td>{{formatCurrency(transaction.montant)}}</td>
+                    <td>{{transaction.type_credit || '-'}}</td>
+                  </tr>
+                  <tr *ngIf="recentTransactions.length === 0">
+                    <td colspan="4" class="text-center">Aucune transaction récente</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Derniers Paiements -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Derniers Paiements</h6>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Date</th>
+                    <th>Montant</th>
+                    <th>Mode</th>
+                    <th>Crédit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let payment of recentPayments">
+                    <td>{{formatDate(payment.date_paiement)}}</td>
+                    <td>{{formatCurrency(payment.montant_paye)}}</td>
+                    <td>{{payment.mode_paiement}}</td>
+                    <td>{{payment.type_credit}}</td>
+                  </tr>
+                  <tr *ngIf="recentPayments.length === 0">
+                    <td colspan="4" class="text-center">Aucun paiement récent</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des Crédits -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Mes Crédits</h6>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+            <thead class="table-light">
+              <tr>
+                <th>Type</th>
+                <th>Date Début</th>
+                <th>Durée (jours)</th>
+                <th>Solde Initial</th>
+                <th>Utilisé</th>
+                <th>Restant</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let credit of credits" [ngClass]="{
+                'table-success': credit.etat === 'actif',
+                'table-warning': credit.etat === 'expiré',
+                'table-danger': credit.etat === 'annulé'
+              }">
+                <td>{{credit.type_credit}}</td>
+                <td>{{formatDate(credit.date_debut)}}</td>
+                <td>{{credit.duree_credit}}</td>
+                <td>{{formatCurrency(credit.solde_credit)}}</td>
+                <td>{{formatCurrency(credit.credit_utilise || 0)}}</td>
+                <td>{{formatCurrency(credit.solde_credit - (credit.credit_utilise || 0))}}</td>
+                <td>
+                  <span class="badge" [ngClass]="{
+                    'bg-success': credit.etat === 'actif',
+                    'bg-warning': credit.etat === 'expiré',
+                    'bg-danger': credit.etat === 'annulé',
+                    'bg-info': credit.etat === 'remboursé'
+                  }">
+                    {{credit.etat}}
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="credits.length === 0">
+                <td colspan="7" class="text-center">Aucun crédit trouvé</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

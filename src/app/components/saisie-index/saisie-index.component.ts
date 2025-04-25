@@ -32,6 +32,14 @@ export class SaisieIndexComponent implements OnInit {
   currentUser: any = null;
   currentAffectation: any = null;
   loadingAffectation: boolean = false;
+  
+  // Modales
+  showConfirmationModal: boolean = false;
+  showSuccessModal: boolean = false;
+  showErrorModal: boolean = false;
+  modalMessage: string = '';
+  countdown: number = 5;
+  countdownInterval: any;
 
   constructor(
     private fb: FormBuilder,
@@ -46,7 +54,6 @@ export class SaisieIndexComponent implements OnInit {
       index_fermeture: ['', [Validators.required, Validators.min(0)]]
     });
 
-    // Écouter les changements sur index_fermeture pour recalculer les totaux
     this.indexForm.get('index_fermeture')?.valueChanges.subscribe(() => {
       this.updateCalculs();
     });
@@ -70,14 +77,14 @@ export class SaisieIndexComponent implements OnInit {
           
           if (this.currentUser.role === 'pompiste') {
             this.loadCurrentAffectation();
-            this.loadAvailablePistolets();
           } else {
-            alert('Seuls les pompistes peuvent saisir des index');
+            this.showError('Seuls les pompistes peuvent saisir des index');
           }
         }
       },
       error: (err) => {
         console.error('Erreur lors du chargement du profil', err);
+        this.showError('Erreur lors du chargement du profil');
       }
     });
   }
@@ -98,43 +105,52 @@ export class SaisieIndexComponent implements OnInit {
               console.log('Affectation trouvée:', this.currentAffectation);
               
               if (!this.currentAffectation) {
-                alert('Aucune affectation trouvée pour aujourd\'hui');
-              } else if (!this.currentAffectation.affectation_id) {
-                console.error('L\'affectation trouvée n\'a pas d\'ID:', this.currentAffectation);
-                alert('Erreur: l\'affectation n\'a pas d\'identifiant valide');
+                this.showError('Aucune affectation trouvée pour aujourd\'hui');
+              } else if (!this.currentAffectation.pompe_id) {
+                console.error('L\'affectation trouvée n\'a pas de pompe_id:', this.currentAffectation);
+                this.showError('Erreur: aucune pompe associée à cette affectation');
+              } else {
+                this.loadPistoletsByPompe(this.currentAffectation.pompe_id);
               }
               
               this.loadingAffectation = false;
             },
             error: (err) => {
               console.error('Erreur lors de la récupération des affectations', err);
+              this.showError('Erreur lors de la récupération des affectations');
               this.loadingAffectation = false;
             }
           });
         } else {
-          alert('Aucun calendrier trouvé pour aujourd\'hui');
+          this.showError('Aucun calendrier trouvé pour aujourd\'hui');
           this.loadingAffectation = false;
         }
       },
       error: (err) => {
         console.error('Erreur lors de la récupération du calendrier', err);
+        this.showError('Erreur lors de la récupération du calendrier');
         this.loadingAffectation = false;
       }
     });
   }
 
-  loadAvailablePistolets(): void {
+  loadPistoletsByPompe(pompeId: number): void {
+    if (!pompeId) return;
+  
     this.loadingPistolets = true;
-    this.pompeService.getAllPistolets().subscribe({
-      next: (pistolets) => {
-        this.pistolets = pistolets.filter((p: any) => 
-          p.statut === 'disponible' && 
-          (!this.currentAffectation || p.pompe_id === this.currentAffectation.pompe_id)
-        );
+    this.pompeService.getPistoletsByPompeId(pompeId).subscribe({
+      next: (pistolets: any[]) => {
+        // Filtrer uniquement les pistolets disponibles
+        this.pistolets = pistolets.filter((p: any) => p.statut === 'disponible');
         this.loadingPistolets = false;
+        
+        if (this.pistolets.length === 0) {
+          this.showError('Aucun pistolet disponible pour cette pompe');
+        }
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erreur lors du chargement des pistolets', err);
+        this.showError('Erreur lors du chargement des pistolets');
         this.loadingPistolets = false;
       }
     });
@@ -149,7 +165,7 @@ export class SaisieIndexComponent implements OnInit {
       new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().split('T')[0], 
       this.today
     ).subscribe({
-      next: (releves) => {
+      next: (releves: any[]) => {
         if (releves.length > 0) {
           releves.sort((a: any, b: any) => 
             new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -161,7 +177,7 @@ export class SaisieIndexComponent implements OnInit {
         }
         this.updateCalculs();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erreur lors de la récupération des historiques', err);
         this.lastClosingIndex = 0;
         this.indexForm.get('index_ouverture')?.setValue(0);
@@ -170,49 +186,97 @@ export class SaisieIndexComponent implements OnInit {
     });
   }
 
+
   onSubmit(): void {
     if (this.indexForm.invalid || !this.currentAffectation?.affectation_id) {
-      alert('Veuillez remplir tous les champs correctement et vérifier votre affectation');
+      this.showError('Veuillez remplir tous les champs correctement');
       return;
     }
 
     const formValue = this.indexForm.getRawValue();
-    
-    // Convertir les valeurs en nombres
     formValue.index_ouverture = Number(formValue.index_ouverture);
     formValue.index_fermeture = Number(formValue.index_fermeture);
 
     if (formValue.index_fermeture < formValue.index_ouverture) {
-      alert('L\'index de fermeture doit être supérieur ou égal à l\'index d\'ouverture');
+      this.showError('L\'index de fermeture doit être supérieur ou égal à l\'index d\'ouverture');
       return;
     }
 
+    this.showConfirmationModal = true;
+  }
+
+  confirmSubmit(): void {
+    this.showConfirmationModal = false;
+    const formValue = this.indexForm.getRawValue();
+
     const dataToSend = {
-      affectation_id: this.currentAffectation.affectation_id, // Utilisation de affectation_id au lieu de id
+      affectation_id: this.currentAffectation.affectation_id,
       pistolet_id: formValue.pistolet_id,
-      index_ouverture: formValue.index_ouverture,
-      index_fermeture: formValue.index_fermeture,
-      date: formValue.date
+      index_ouverture: Number(formValue.index_ouverture),
+      index_fermeture: Number(formValue.index_fermeture),
+     
     };
 
-    console.log('Données envoyées au backend:', dataToSend);
+    console.log('Envoi des données au serveur:', dataToSend);
 
     this.pompeService.enregistrerReleve(dataToSend).subscribe({
-      next: () => {
-        alert('Relevé enregistré avec succès');
+      next: (response) => {
+        console.log('Réponse du serveur:', response);
+        this.showSuccess('Relevé enregistré avec succès');
         this.indexForm.reset({
           date: this.today,
+          pistolet_id: '',
           index_ouverture: '',
           index_fermeture: ''
         });
         this.lastClosingIndex = null;
+        this.startCountdown();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erreur lors de l\'enregistrement', err);
-        console.error('Détails de l\'erreur:', err.error);
-        alert(`Erreur lors de l'enregistrement du relevé: ${err.error?.message || 'Erreur inconnue'}`);
+        
+        let errorMessage = 'Erreur lors de l\'enregistrement du relevé';
+        if (err.error?.code === 'RELEVE_EXISTANT') {
+          errorMessage = 'Un relevé existe déjà pour cette affectation aujourd\'hui';
+        } else if (err.error?.code === 'INDEX_INCOHERENT') {
+          errorMessage = 'Index d\'ouverture ne correspond pas au dernier index enregistré';
+        } else if (err.error?.message) {
+          errorMessage = err.error.message;
+        }
+        
+        this.showError(errorMessage);
       }
     });
+  }
+
+  startCountdown(): void {
+    this.countdown = 5;
+    this.countdownInterval = setInterval(() => {
+      this.countdown--;
+      if (this.countdown <= 0) {
+        clearInterval(this.countdownInterval);
+        this.showSuccessModal = false;
+      }
+    }, 1000);
+  }
+
+  showSuccess(message: string): void {
+    this.modalMessage = message;
+    this.showSuccessModal = true;
+  }
+
+  showError(message: string): void {
+    this.modalMessage = message;
+    this.showErrorModal = true;
+  }
+
+  closeModal(): void {
+    this.showConfirmationModal = false;
+    this.showSuccessModal = false;
+    this.showErrorModal = false;
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
   }
 
   get quantiteVendue(): number {
@@ -233,5 +297,13 @@ export class SaisieIndexComponent implements OnInit {
     }
     return 0;
   }
+
+  get currentShift(): string {
+    if (!this.currentAffectation) return '';
+    
+    const hour = new Date().getHours();
+    if (hour >= 6 && hour < 14) return 'Matin';
+    if (hour >= 14 && hour < 22) return 'Après-midi';
+    return 'Nuit';
+  }
 }
-//K

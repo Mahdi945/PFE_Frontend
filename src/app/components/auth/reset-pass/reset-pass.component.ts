@@ -10,13 +10,14 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-reset-pass',
   standalone: true,  
-  imports: [CommonModule, ReactiveFormsModule, RouterModule,MatIconModule],  
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, MatIconModule],  
   templateUrl: './reset-pass.component.html',
   styleUrls: ['./reset-pass.component.css']
 })
 export class ResetPassComponent implements OnInit {
   message = '';  
   isError = false; 
+  isLoading = false;
   resetPasswordForm: FormGroup;
   passwordVisible = false;
   confirmPasswordVisible = false;
@@ -37,6 +38,11 @@ export class ResetPassComponent implements OnInit {
       ]],
       confirmPassword: ['', [Validators.required]]
     }, { validator: this.passwordMatchValidator });
+
+    // Écouter les changements sur le champ password
+    this.resetPasswordForm.get('password')?.valueChanges.subscribe(val => {
+      this.onPasswordChange(val);
+    });
   }
 
   ngOnInit(): void {
@@ -47,6 +53,7 @@ export class ResetPassComponent implements OnInit {
     }
   }
 
+  // Getters pour les contrôles du formulaire
   get passwordControl() {
     return this.resetPasswordForm.get('password');
   }
@@ -55,12 +62,31 @@ export class ResetPassComponent implements OnInit {
     return this.resetPasswordForm.get('confirmPassword');
   }
 
+  // Getters pour les critères de mot de passe
+  get passwordHasMinLength() {
+    return this.passwordControl?.value?.length >= 8;
+  }
+
+  get passwordHasUpperCase() {
+    return /[A-Z]/.test(this.passwordControl?.value);
+  }
+
+  get passwordHasNumber() {
+    return /\d/.test(this.passwordControl?.value);
+  }
+
+  get passwordHasSpecialChar() {
+    return /[\W_]/.test(this.passwordControl?.value);
+  }
+
+  // Validateur de correspondance des mots de passe
   passwordMatchValidator(formGroup: FormGroup) {
     const password = formGroup.get('password')?.value;
     const confirmPassword = formGroup.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { mismatch: true };
   }
 
+  // Analyse de la force du mot de passe
   onPasswordChange(password: string) {
     if (!password) {
       this.passwordStrength = '';
@@ -79,20 +105,24 @@ export class ResetPassComponent implements OnInit {
     }
   }
 
+  // Soumission du formulaire
   onResetPassword() {
     if (this.resetPasswordForm.invalid || !this.token) {
       return;
     }
 
+    this.isLoading = true;
     const newPassword = this.resetPasswordForm.value.password;
 
     this.authService.resetPassword(newPassword, this.token).subscribe(
       () => {
         this.message = 'Mot de passe réinitialisé avec succès.';
-        this.isError = false; 
-        setTimeout(() => this.router.navigate(['/login']), 2000);  
+        this.isError = false;
+        this.isLoading = false;
+        setTimeout(() => this.router.navigate(['/login']), 2000);
       },
       (error) => {
+        this.isLoading = false;
         this.isError = true;
         this.message = error.status === 400 ? 'Le token est invalide ou a expiré.' :
                       error.status === 401 ? 'Accès non autorisé. Vérifiez le lien.' :
@@ -102,10 +132,12 @@ export class ResetPassComponent implements OnInit {
     );
   }
 
+  // Basculer la visibilité du mot de passe
   togglePasswordVisibility() {
     this.passwordVisible = !this.passwordVisible;
   }
 
+  // Basculer la visibilité de la confirmation
   toggleConfirmPasswordVisibility() {
     this.confirmPasswordVisible = !this.confirmPasswordVisible;
   }

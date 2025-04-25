@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -84,7 +84,24 @@ export class PompePistoletService {
     }): Observable<any> {
       return this.http.post(`${this.baseUrl}/add`, data);
     }
-  
+    /**
+ * Ajouter un rapport journalier manuellement
+ * @param data Données du rapport à ajouter
+ * @returns Observable avec la réponse du serveur
+ */
+ajouterRapportManuel(data: {
+  date_rapport: string,
+  pistolet_id: number,
+  total_quantite: number,
+  total_montant: number
+}): Observable<any> {
+  return this.http.post(`${this.baseUrl}/rapports/manuel`, data).pipe(
+    catchError(error => {
+      console.error('Erreur lors de l\'ajout du rapport manuel:', error);
+      return throwError(() => error);
+    })
+  );
+}
     /**
      * Récupérer les pistolets d'une pompe
      */
@@ -109,21 +126,60 @@ export class PompePistoletService {
     /**
      * Enregistrer un relevé de poste
      */
- // Après
-enregistrerReleve(data: {
-  affectation_id: number,
-  pistolet_id: number,
-  index_ouverture: number,
-  index_fermeture: number,
-  date: string
-}): Observable<any> {
-  return this.http.post(`${this.baseUrl}/releves`, data);
-}
+    enregistrerReleve(data: {
+      affectation_id: number,
+      pistolet_id: number,
+      index_ouverture: number,
+      index_fermeture: number,
+      
+    }): Observable<any> {
+      console.log('Envoi des données au serveur:', data);
+      return this.http.post(`${this.baseUrl}/releves`, data).pipe(
+        catchError((error) => {
+          console.error('Erreur lors de l\'enregistrement:', error);
+          console.log('Détails complets de l\'erreur:', {
+            status: error.status,
+            statusText: error.statusText,
+            url: error.url,
+            error: error.error
+          });
+          return throwError(error);
+        })
+      );
+    }
     /**
      * Générer le rapport journalier
      */
-    genererRapportJournalier(date: string): Observable<any> {
-      return this.http.post(`${this.baseUrl}/rapports/generer`, { date });
+    genererRapportJournalier(date: string | Date): Observable<any> {
+      const dateStr = typeof date === 'string' ? date : date.toISOString().split('T')[0];
+      
+      return this.http.post<{
+        success: boolean;
+        message: string;
+        date_rapport: string;
+      }>(`${this.baseUrl}/rapports/generer`, { date: dateStr }).pipe(
+        catchError(error => {
+          console.error('Erreur API:', error);
+          return throwError(() => error);
+        })
+      );
+    }
+   
+    ajouterReleveManuel(data: {
+      affectation_id: number,
+      pistolet_id: number,
+      index_ouverture: number,
+      index_fermeture: number,
+      date_heure: string
+    }): Observable<any> {
+      return this.http.post(`${this.baseUrl}/releves/manuel`, data);
+    }
+  
+    /**
+     * Mettre à jour le statut d'un relevé
+     */
+    updateStatutReleve(releveId: number, statut: string): Observable<any> {
+      return this.http.put(`${this.baseUrl}/${releveId}/statut`, { statut });
     }
   
     /**
@@ -136,7 +192,17 @@ enregistrerReleve(data: {
       
       return this.http.get(`${this.baseUrl}/${pistoletId}/historique`, { params });
     }
+    getRevenusJournaliers(dateDebut: string, dateFin: string, pistoletId?: number): Observable<any> {
+      let params = new HttpParams()
+        .set('date_debut', dateDebut)
+        .set('date_fin', dateFin);
   
+      if (pistoletId) {
+        params = params.set('pistolet_id', pistoletId.toString());
+      }
+  
+      return this.http.get(`${this.baseUrl}/revenus-journaliers`, { params });
+    }
     // ======================
     // Méthodes dépréciées (à supprimer progressivement)
     // ======================

@@ -21,7 +21,7 @@
           - Pompe: {{ currentAffectation.numero_pompe }}
         </span>
         <span *ngIf="!currentAffectation && !loadingAffectation" class="text-danger">
-          (Aucune affectation trouvée pour aujourd'hui)
+          (Aucune affectation trouvée pour votre poste actuel)
         </span>
       </div>
     </div>
@@ -44,7 +44,7 @@
             </div>
             <div class="col-md-6">
               <label for="date" class="form-label">Date</label>
-              <input type="date" id="date" class="form-control" formControlName="date">
+              <input type="date" id="date" class="form-control" formControlName="date" [max]="today">
             </div>
           </div>
 
@@ -61,7 +61,7 @@
               <label for="index_fermeture" class="form-label">Index de fermeture</label>
               <input type="number" step="0.01" id="index_fermeture" class="form-control" 
                      formControlName="index_fermeture" placeholder="0.00" 
-                     (input)="updateCalculs()">
+                     [min]="indexForm.get('index_ouverture')?.value">
             </div>
           </div>
 
@@ -87,6 +87,75 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmation -->
+  <div *ngIf="showConfirmationModal" class="modal fade show" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);" id="confirmationModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmer l'enregistrement</h5>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Êtes-vous sûr de vouloir enregistrer ce relevé ?</p>
+          <div *ngIf="selectedPistolet" class="mt-3">
+            <strong>Détails du relevé :</strong>
+            <ul class="list-group">
+              <li class="list-group-item">Pistolet: {{selectedPistolet.numero_pistolet}} - {{selectedPistolet.nom_produit}}</li>
+              <li class="list-group-item">Date: {{indexForm.get('date')?.value}}</li>
+              <li class="list-group-item">Index ouverture: {{indexForm.get('index_ouverture')?.value | number:'1.2-2'}}</li>
+              <li class="list-group-item">Index fermeture: {{indexForm.get('index_fermeture')?.value | number:'1.2-2'}}</li>
+              <li class="list-group-item">Quantité vendue: {{quantiteVendue | number:'1.2-2'}} L</li>
+              <li class="list-group-item">Montant total: {{montantTotal | currency:'EUR':'symbol':'1.2-2'}}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+          <button type="button" class="btn btn-primary" (click)="confirmSubmit()">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de succès -->
+  <div *ngIf="showSuccessModal" class="modal fade show" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title">Succès</h5>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+          <h4 class="mt-3">{{modalMessage}}</h4>
+          <p>Redirection dans {{countdown}} secondes...</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" (click)="closeModal()">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal d'erreur -->
+  <div *ngIf="showErrorModal" class="modal fade show" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">Erreur</h5>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
+          <h4 class="mt-3">{{modalMessage}}</h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" (click)="closeModal()">OK</button>
+        </div>
       </div>
     </div>
   </div>

@@ -127,7 +127,8 @@ export class SidebarComponent implements OnInit {
       'Historique des Transactions': 'bi-clock-history',
       'Enregistrer pompe': 'bi-plus-circle',
       'Liste pompes': 'bi-list-ul',
-      'Saisie Paiements': 'bi-cash-stack'
+      'Saisie Paiements': 'bi-cash-stack',
+      'Visualiser Revenues': 'bi-receipt'
     };
     return icons[elementName] || 'bi-circle';
   }
@@ -151,7 +152,8 @@ export class SidebarComponent implements OnInit {
       'Historique des Transactions': '/gestion-transactions',
       'Enregistrer pompe': '/ajouter-pompe',
       'Liste pompes': '/liste-pompes',
-      'Saisie Paiements': '/saisie-paiement'
+      'Saisie Paiements': '/saisie-paiement',
+      'Visualiser Revenues': '/visualiser-revenues',
     };
     return routes[elementName] || '#';
   }

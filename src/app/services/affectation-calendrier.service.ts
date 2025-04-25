@@ -60,6 +60,10 @@ regenerateAffectations(mois: number, annee: number): Observable<any> {
   getCalendrierByDate(date: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/date/${date}`);
   }
-
-
+  getCurrentAffectation(pompisteId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/current/${pompisteId}`);
+  }
+  
+  getAvailablePistolets(affectationId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/pistolets/${affectationId}`);}
 }

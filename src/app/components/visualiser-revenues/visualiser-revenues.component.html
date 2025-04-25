@@ -1,1 +1,363 @@
-<p>visualiser-revenues works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main id="main" class="main">
+  <div class="container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item">Gestion des Relevés</li>
+        <li class="breadcrumb-item active">Consultation des Revenues</li>
+      </ol>
+    </nav>
+
+    <div class="pagetitle">
+      <h2 style="color: rgb(7, 7, 128);">Visualiser Les Revenues Journalieres</h2>
+      
+      <!-- Onglets de navigation -->
+      <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="activeTab === 'visualisation'" 
+             (click)="changeTab('visualisation')">
+            <i class="bi bi-eye"></i> Visualisation
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="activeTab === 'ajout-manuel'" 
+             (click)="changeTab('ajout-manuel')">
+            <i class="bi bi-pencil-square"></i> Ajout Manuel
+          </a>
+        </li>
+      </ul>
+
+      <!-- Contenu de l'onglet Visualisation -->
+      <div *ngIf="activeTab === 'visualisation'">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">Visualisation des Revenus Journaliers</h1>
+          <div class="btn-toolbar mb-2 mb-md-0 gap-2">
+            <button class="btn btn-primary" (click)="loadRevenues()" [disabled]="loading">
+              <i class="bi bi-arrow-repeat"></i> Actualiser
+            </button>
+            
+            <div class="input-group" style="width: 250px;" [formGroup]="reportForm">
+              <input type="date" class="form-control" formControlName="report_date">
+              <button class="btn btn-success" (click)="generateReport()" [disabled]="generatingReport || !reportForm.valid">
+                <span *ngIf="generatingReport" class="spinner-border spinner-border-sm me-1"></span>
+                <i class="bi bi-file-earmark-text"></i> Générer Rapport
+              </button>
+            </div>
+            
+            <button class="btn btn-secondary" (click)="exportToExcel()" [disabled]="revenuesData.length === 0">
+              <i class="bi bi-file-excel"></i> Exporter Excel
+            </button>
+          </div>
+        </div>
+
+        <!-- Filtres -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5>Filtres</h5>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="filterForm" (ngSubmit)="loadRevenues()">
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label for="date_debut" class="form-label">Date début</label>
+                  <input type="date" class="form-control" id="date_debut" formControlName="date_debut">
+                </div>
+                <div class="col-md-3">
+                  <label for="date_fin" class="form-label">Date fin</label>
+                  <input type="date" class="form-control" id="date_fin" formControlName="date_fin">
+                </div>
+                <div class="col-md-3">
+                  <label for="pistolet_id" class="form-label">Pistolet</label>
+                  <select class="form-select" id="pistolet_id" formControlName="pistolet_id">
+                    <option value="">Tous les pistolets</option>
+                    <option *ngFor="let p of pistolets" [value]="p.id">
+                      {{ p.numero_pistolet }} - {{ p.nom_produit }}
+                    </option>
+                  </select>
+                </div>
+                
+                <div class="col-12">
+                  <button type="submit" class="btn btn-primary" [disabled]="loading">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                    Appliquer les filtres
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Tableau des résultats -->
+        <div class="card">
+          <div class="card-header">
+            <h5>Revenus Journaliers</h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="loading" class="text-center my-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <p class="mt-2">Chargement des données...</p>
+            </div>
+
+            <div *ngIf="!loading && revenuesData.length === 0" class="alert alert-info">
+              Aucune donnée disponible pour les critères sélectionnés.
+            </div>
+
+            <div *ngIf="!loading && revenuesData.length > 0" class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Date</th>
+                    <th>Produit</th>
+                    <th>Pompiste</th>
+                    <th>Prix Unitaire (DT)</th>
+                    
+                    <!-- Quantités par poste -->
+                    <th>Matin (Quantité)</th>
+                    <th>Après-midi (Quantité)</th>
+                    <th>Nuit (Quantité)</th>
+                    
+                    <th>Total (Quantité)</th>
+                    <th>Écart (Quantité)</th>
+                    
+                    <!-- Montants par poste -->
+                    <th>Matin (Montant DT)</th>
+                    <th>Après-midi (Montant DT)</th>
+                    <th>Nuit (Montant DT)</th>
+                    
+                    <th>Total (Montant DT)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of revenuesData">
+                    <td>{{item.date | date:'dd/MM/yyyy'}}</td>
+                    <td>{{item.nom_produit}}</td>
+                    <td>{{item.nom_pompiste}}</td>
+                    <td>{{(item.prix_unitaire || 0) | number:'1.3-3'}} DT</td>
+                    
+                    <!-- Quantités -->
+                    <td>{{(item.postes[1].quantite || 0) | number:'1.3-3'}}</td>
+                    <td>{{(item.postes[2].quantite || 0) | number:'1.3-3'}}</td>
+                    <td>{{(item.postes[3].quantite || 0) | number:'1.3-3'}}</td>
+                    
+                    <!-- Totaux -->
+                    <td>{{(item.total_quantite || 0) | number:'1.3-3'}}</td>
+                    <td>{{calculateEcart(item) | number:'1.3-3'}}</td>
+                    
+                    <!-- Montants en DT -->
+                    <td>{{(item.postes[1].montant || 0) | number:'1.3-3'}} DT</td>
+                    <td>{{(item.postes[2].montant || 0) | number:'1.3-3'}} DT</td>
+                    <td>{{(item.postes[3].montant || 0) | number:'1.3-3'}} DT</td>
+                    
+                    <!-- Total général -->
+                    <td>{{(item.total_montant || 0) | number:'1.3-3'}} DT</td>
+                  </tr>
+                </tbody>
+                <!-- Ligne des totaux -->
+<tfoot class="table-group-divider">
+  <tr class="table-active fw-bold">
+    <td colspan="4" class="text-end">Totaux :</td>
+    
+    <!-- Totaux quantités par poste -->
+    <td>{{getTotalQuantitePoste(1) | number:'1.3-3'}}</td>
+    <td>{{getTotalQuantitePoste(2) | number:'1.3-3'}}</td>
+    <td>{{getTotalQuantitePoste(3) | number:'1.3-3'}}</td>
+    
+    <!-- Total quantité générale -->
+    <td>{{getTotalQuantite() | number:'1.3-3'}}</td>
+    <td>-</td>
+    
+    <!-- Totaux montants par poste -->
+    <td>{{getTotalMontantPoste(1) | number:'1.3-3'}} DT</td>
+    <td>{{getTotalMontantPoste(2) | number:'1.3-3'}} DT</td>
+    <td>{{getTotalMontantPoste(3) | number:'1.3-3'}} DT</td>
+    
+    <!-- Total montant général -->
+    <td>{{getTotalMontant() | number:'1.3-3'}} DT</td>
+  </tr>
+</tfoot>
+              </table>
+              <!-- Résumé de la recette du jour -->
+<div class="alert alert-success mt-3" *ngIf="revenuesData.length > 0">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <i class="bi bi-cash-coin me-2"></i>
+      <strong>Recette totale aujourd'hui :</strong> 
+      {{getTotalMontant() | number:'1.3-3'}} DT
+    </div>
+    <div>
+      <strong>Total général :</strong> 
+      {{getTotalQuantite() }} litres | 
+      {{getTotalMontant() | number:'1.3-3'}} DT
+    </div>
+  </div>
+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div *ngIf="activeTab === 'ajout-manuel'">
+        <!-- Contenu de l'onglet Ajout Manuel 
+        <div class="row">
+          <!-- Formulaire d'ajout manuel de relevé 
+          <div class="col-md-6">
+            <div class="card mb-4">
+              <div class="card-header bg-primary text-white">
+                <h5><i class="bi bi-plus-circle"></i> Ajouter un Relevé Manuel</h5>
+              </div>
+              <div class="card-body">
+                <form [formGroup]="manualReleveForm" (ngSubmit)="addManualReleve()">
+                  <div class="mb-3">
+                    <label class="form-label">Affectation</label>
+                    <select class="form-select" formControlName="affectation_id">
+                      <option value="">Sélectionner une affectation</option>
+                      <option *ngFor="let a of affectations" [value]="a.id">
+                        {{ a.pompiste_id }} - Poste {{ a.poste_id }}
+                      </option>
+                    </select>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label class="form-label">Pistolet</label>
+                    <select class="form-select" formControlName="pistolet_id">
+                      <option value="">Sélectionner un pistolet</option>
+                      <option *ngFor="let p of pistolets" [value]="p.id">
+                        {{ p.numero_pistolet }} - {{ p.nom_produit }}
+                      </option>
+                    </select>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label class="form-label">Index d'ouverture</label>
+                    <input type="number" step="0.001" class="form-control" formControlName="index_ouverture">
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label class="form-label">Index de fermeture</label>
+                    <input type="number" step="0.001" class="form-control" formControlName="index_fermeture">
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label class="form-label">Date et heure</label>
+                    <input type="datetime-local" class="form-control" formControlName="date_heure">
+                  </div>
+                  
+                  <button type="submit" class="btn btn-primary" [disabled]="loading || !manualReleveForm.valid">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                    Ajouter le relevé
+                  </button>
+                </form>
+              </div>
+            </div>
+          
+--> 
+          <!-- Formulaire d'ajout manuel de rapport -->
+          <div class="col-md-6">
+            <div class="card mb-4">
+              <div class="card-header bg-success text-white">
+                <h5><i class="bi bi-file-earmark-text"></i> Ajouter un Rapport Manuel</h5>
+              </div>
+              <div class="card-body">
+                <form [formGroup]="manualReportForm" (ngSubmit)="addManualReport()">
+                  <div class="mb-3">
+                    <label class="form-label">Date du rapport</label>
+                    <input type="date" class="form-control" formControlName="date_rapport">
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label class="form-label">Pistolet</label>
+                    <select class="form-select" formControlName="pistolet_id">
+                      <option value="">Sélectionner un pistolet</option>
+                      <option *ngFor="let p of pistolets" [value]="p.id">
+                        {{ p.numero_pistolet }} - {{ p.nom_produit }}
+                      </option>
+                    </select>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label class="form-label">Quantité totale</label>
+                    <input type="number" step="0.001" class="form-control" formControlName="total_quantite">
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label class="form-label">Montant total (DT)</label>
+                    <input type="number" step="0.001" class="form-control" formControlName="total_montant">
+                  </div>
+                  
+                  <button type="submit" class="btn btn-success" [disabled]="loading || !manualReportForm.valid">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                    Ajouter le rapport
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!--
+    </div>
+   --> </div>
+
+  <!-- Modale de succès -->
+  <div class="modal fade show" [ngClass]="{'d-block': showSuccessModal}" tabindex="-1" *ngIf="showSuccessModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title">Succès</h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{modalMessage}}</p>
+          <p>Fermeture automatique dans {{countdown}} secondes...</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" (click)="closeModal()">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale d'erreur -->
+  <div class="modal fade show" [ngClass]="{'d-block': showErrorModal}" tabindex="-1" *ngIf="showErrorModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">Erreur</h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{modalMessage}}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" (click)="closeModal()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale d'information -->
+  <div class="modal fade show" [ngClass]="{'d-block': showInfoModal}" tabindex="-1" *ngIf="showInfoModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title">Information</h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <p>{{modalMessage}}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-info" (click)="closeModal()">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>
