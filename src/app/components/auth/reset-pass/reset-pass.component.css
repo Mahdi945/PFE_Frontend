@@ -1,106 +1,127 @@
-.password-strength-bar {
-    margin-top: 10px;
-    height: 5px;
-    width: 100%;
-    border-radius: 5px;
-    background-color: #f0f0f0;
-    overflow: hidden;
-  }
-  
-  .strength {
-    height: 100%;
-    transition: all 0.3s ease;
-  }
-  
-  .strength.weak {
-    width: 33%;
-  }
-  
-  .strength.medium {
-    width: 66%;
-  }
-  
-  .strength.strong {
-    width: 100%;
-  }
-  
-  /* Style du formulaire */
-  .card {
-    border-radius: 10px;
-  }
-  
-  .invalid-feedback {
-    font-size: 12px;
-    color: #dc3545;
-  }
-  
-  .alert {
-    margin-top: 10px;
-  }
-  
-  .alert-success {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .alert-danger {
-    background-color: #dc3545;
-    color: white;
-  }
-  /* Styles du Modal */
-.modal {
-  display: none;  /* Cacher le modal par défaut */
-  position: fixed;
-  z-index: 1; /* S'assurer que le modal est au-dessus de tout */
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);  /* Fond semi-transparent */
+
+
+/* Carte du formulaire */
+.card {
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
 }
 
-.modal-content {
-  background-color: white;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 40%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+.card:hover {
+  transform: translateY(-5px);
 }
 
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-bottom: none;
 }
 
-.modal-title {
-  margin: 0;
-  font-size: 1.25rem;
+/* Logo */
+.logo-container {
+  transition: transform 0.3s ease;
 }
 
-.close {
-  font-size: 1.5rem;
-  font-weight: bold;
-  cursor: pointer;
+.logo-container:hover {
+  transform: scale(1.05);
 }
 
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 10px;
+/* Champs de formulaire */
+.form-control {
+  background-color: #f8f9fa;
+  border: none !important;
+  box-shadow: none !important;
 }
 
-/* Styles pour les autres éléments */
+.form-control:focus {
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
 .password-container {
-  position: relative;
+  transition: all 0.3s ease;
 }
 
+.password-container:focus-within {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Bouton toggle */
 .password-toggle {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: #6c757d;
+  transition: color 0.2s;
 }
 
+.password-toggle:hover {
+  color: #667eea;
+}
+
+/* Barre de force du mot de passe */
+.password-strength-bar {
+  height: 6px;
+  background-color: #e9ecef;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.strength {
+  height: 100%;
+  transition: all 0.4s ease;
+}
+
+.strength.weak {
+  background-color: #dc3545;
+  width: 25%;
+}
+
+.strength.medium {
+  background-color: #fd7e14;
+  width: 50%;
+}
+
+.strength.strong {
+  background-color: #28a745;
+  width: 100%;
+}
+
+/* Bouton principal */
+.btn-primary {
+  background-color: #667eea;
+  border: none;
+  padding: 12px;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #5a6fd1;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    border-radius: 0;
+  }
+  
+  .card-header {
+    padding: 2rem 1rem;
+  }
+  
+  .card-body {
+    padding: 2rem;
+  }
+}
