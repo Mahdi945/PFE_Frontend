@@ -3,52 +3,530 @@
 
 <main id="main" class="main">
   <div class="pagetitle">
-    <h1>Dashboard</h1>
+    <h1>Tableau de Bord Gérant</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><i class="bi bi-house-door-fill"></i></li>
-        <li class="breadcrumb-item active">Dashboard</li>
+        <li class="breadcrumb-item"><a href="#"><i class="bi bi-house-door"></i></a></li>
+        <li class="breadcrumb-item active">Tableau de Bord</li>
       </ol>
     </nav>
   </div>
 
-  <!-- Reports -->
-  <div class="col-12">
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Statistiques des utilisateurs</h5>
-
-            <!-- Filters Section -->
-            <div class="filters text-center mb-3">
-              <button class="btn btn-primary mx-2" (click)="filterData('day')">Today</button>
-              <button class="btn btn-primary mx-2" (click)="filterData('month')">This Month</button>
-              <button class="btn btn-primary mx-2" (click)="filterData('year')">This Year</button>
-            </div>
-
-            <!-- Charts Section -->
-            <div class="charts-section row">
-              <!-- Bar Chart (Users per Role) - À Gauche -->
-              <div class="col-md-5 chart-container">
-                <canvas id="userStatsChart"></canvas>
-              </div>
-
-              <!-- Pie Chart (Active Users) - À Droite -->
-              <div class="col-md-4 chart-container">
-                <canvas id="activeUsersChart"></canvas>
-              </div>
-            </div>
-
+  <!-- Navigation entre sections -->
+  <div class="row mb-3">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary" 
+              [class.active]="activeSection === 'users'"
+              (click)="setActiveSection('users')">
+              <i class="bi bi-people me-2"></i>Utilisateurs
+            </button>
+            <button type="button" class="btn btn-outline-primary" 
+              [class.active]="activeSection === 'credits'"
+              (click)="setActiveSection('credits')">
+              <i class="bi bi-credit-card me-2"></i>Crédits & Transactions
+            </button>
+            <button type="button" class="btn btn-outline-primary" 
+              [class.active]="activeSection === 'pumps'"
+              (click)="setActiveSection('pumps')">
+              <i class="bi bi-fuel-pump me-2"></i>Pompes & Revenus
+            </button>
+          </div>
+          
+          <div class="d-flex align-items-center">
+            <label class="me-2">Devise:</label>
+            <select class="form-select form-select-sm" style="width: 80px;" 
+              [(ngModel)]="selectedCurrency" (change)="updateCharts()">
+              <option value="TND">TND</option>
+              <option value="EUR">EUR</option>
+              <option value="USD">USD</option>
+            </select>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <section *ngIf="activeSection === 'users'" class="section">
+    <!-- Cartes Statistiques Utilisateurs -->
+    <div class="row g-3">  <!-- Ajout de g-3 pour l'espacement uniforme -->
+      <!-- Carte Total Utilisateurs -->
+      <div class="col-xl-2 col-lg-3 col-md-6">  <!-- Ajustement des breakpoints -->
+        <div class="card info-card h-100">  <!-- h-100 pour hauteur égale -->
+          <div class="card-body">
+            <h5 class="card-title">Total</h5>  <!-- Titre plus court -->
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary">
+                <i class="bi bi-people-fill"></i>
+              </div>
+              <div class="ps-3">
+                <h6>{{ dashboardData.userStats?.total_users || 0 }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Comptes Activés -->
+      <div class="col-xl-2 col-lg-3 col-md-6">
+        <div class="card info-card h-100">
+          <div class="card-body">
+            <h5 class="card-title">Activés</h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success">
+                <i class="bi bi-person-check-fill"></i>
+              </div>
+              <div class="ps-3">
+                <h6>{{ dashboardData.userStats?.active_users || 0 }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Comptes Désactivés -->
+      <div class="col-xl-2 col-lg-3 col-md-6">
+        <div class="card info-card h-100">
+          <div class="card-body">
+            <h5 class="card-title">Désactivés</h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-danger">
+                <i class="bi bi-person-x-fill"></i>
+              </div>
+              <div class="ps-3">
+                <h6>{{ dashboardData.userStats?.inactive_users || 0 }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Clients -->
+      <div class="col-xl-2 col-lg-3 col-md-6">
+        <div class="card info-card h-100">
+          <div class="card-body">
+            <h5 class="card-title">Clients</h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info">
+                <i class="bi bi-person-badge-fill"></i>
+              </div>
+              <div class="ps-3">
+                <h6>{{ dashboardData.userStats?.clients || 0 }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte Pompistes -->
+      <div class="col-xl-2 col-lg-3 col-md-6">
+        <div class="card info-card h-100">
+          <div class="card-body">
+            <h5 class="card-title">Pompistes</h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning">
+                <i class="bi bi-fuel-pump-fill"></i>
+              </div>
+              <div class="ps-3">
+                <h6>{{ dashboardData.userStats?.pompistes || 0 }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    
+    </div><br>
+
+  
+
+
+    <!-- Graphiques Utilisateurs -->
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="card-title mb-0">Statut des Comptes</h5>
+              <div class="btn-group" role="group">
+               <!-- Buttons for "Aujourd'hui", "Mois", "Année" -->
+<button type="button" class="btn btn-sm btn-outline-primary" 
+[class.active]="userChartFilter.type === 'day'"
+(click)="updateUserChartFilter('day')">Aujourd'hui</button>
+<button type="button" class="btn btn-sm btn-outline-primary" 
+[class.active]="userChartFilter.type === 'month'"
+(click)="updateUserChartFilter('month')">Mois</button>
+<button type="button" class="btn btn-sm btn-outline-primary" 
+[class.active]="userChartFilter.type === 'year'"
+(click)="updateUserChartFilter('year')">Année</button>
+
+              </div>
+            </div>
+            
+            <div *ngIf="userChartFilter.type === 'month'" class="row g-2 mb-3">
+              <div class="col-md-6">
+                <select class="form-select form-select-sm" 
+                  [(ngModel)]="userChartFilter.month" 
+                  (change)="onUserFilterChange()">
+                  <option *ngFor="let month of months" [value]="month.value">{{month.name}}</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <select class="form-select form-select-sm" 
+                  [(ngModel)]="userChartFilter.year" 
+                  (change)="onUserFilterChange()">
+                  <option *ngFor="let year of years" [value]="year">{{year}}</option>
+                </select>
+              </div>
+            </div>
+            
+            <div *ngIf="userChartFilter.type === 'year'" class="mb-3">
+              <select class="form-select form-select-sm" 
+                [(ngModel)]="userChartFilter.year" 
+                (change)="onUserFilterChange()">
+                <option *ngFor="let year of years" [value]="year">{{year}}</option>
+              </select>
+            </div>
+            
+            <div class="chart-container" style="height: 300px;">
+              <canvas id="accountStatusChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Répartition des Rôles</h5>
+            <div class="chart-container" style="height: 350px;">
+              <canvas id="userRolesChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Crédits & Transactions -->
+  <section *ngIf="activeSection === 'credits'" class="section">
+    <!-- Cartes Statistiques Crédits -->
+    <div class="row">
+      <div class="col-lg-3 col-md-6">
+        <div class="card info-card">
+          <div class="card-body">
+            <h5 class="card-title">Crédits Actifs</h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info">
+                <i class="bi bi-credit-card"></i>
+              </div>
+              <div class="ps-3">
+                <h6>{{ dashboardData.creditStats?.credits_actifs || 0 }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="card info-card">
+          <div class="card-body">
+            <h5 class="card-title">Transactions</h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning">
+                <i class="bi bi-cash"></i>
+              </div>
+              <div class="ps-3">
+                <h6>{{ filteredData.filteredTransactions?.length || 0 }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphiques Crédits -->
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Statut des Crédits</h5>
+            <div class="chart-container" style="height: 350px;">
+              <canvas id="creditStatusChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="card-title mb-0">Transactions Récentes</h5>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-sm btn-outline-primary" 
+                  [class.active]="transactionChartFilter.type === 'day'"
+                  (click)="updateTransactionChartFilter('day')">Aujourd'hui</button>
+                <button type="button" class="btn btn-sm btn-outline-primary" 
+                  [class.active]="transactionChartFilter.type === 'month'"
+                  (click)="updateTransactionChartFilter('month')">Mois</button>
+                <button type="button" class="btn btn-sm btn-outline-primary" 
+                  [class.active]="transactionChartFilter.type === 'year'"
+                  (click)="updateTransactionChartFilter('year')">Année</button>
+              </div>
+            </div>
+            
+            <div *ngIf="transactionChartFilter.type === 'month'" class="row g-2 mb-3">
+              <div class="col-md-6">
+                <select class="form-select form-select-sm" 
+                  [(ngModel)]="transactionChartFilter.month" 
+                  (change)="onTransactionFilterChange()">
+                  <option *ngFor="let month of months" [value]="month.value">{{month.name}}</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <select class="form-select form-select-sm" 
+                  [(ngModel)]="transactionChartFilter.year" 
+                  (change)="onTransactionFilterChange()">
+                  <option *ngFor="let year of years" [value]="year">{{year}}</option>
+                </select>
+              </div>
+            </div>
+            
+            <div *ngIf="transactionChartFilter.type === 'year'" class="mb-3">
+              <select class="form-select form-select-sm" 
+                [(ngModel)]="transactionChartFilter.year" 
+                (change)="onTransactionFilterChange()">
+                <option *ngFor="let year of years" [value]="year">{{year}}</option>
+              </select>
+            </div>
+            
+            <div class="chart-container" style="height: 300px;">
+              <canvas id="transactionsChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableaux Crédits -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Crédits avec Véhicules Associés</h5>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Solde</th>
+                    <th>Utilisé</th>
+                    <th>Véhicules</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let credit of dashboardData.creditsWithVehicules">
+                    <td>{{ credit.id }}</td>
+                    <td>{{ credit.type_credit }}</td>
+                    <td>{{ formatCurrency(credit.solde_credit) }}</td>
+                    <td>{{ formatCurrency(credit.credit_utilise) }}</td>
+                    <td>{{ credit.vehicules || 'Aucun' }} ({{ credit.nombre_vehicules }})</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Pompes & Revenus -->
+  <section *ngIf="activeSection === 'pumps'" class="section">
+    <!-- Cartes Statistiques Pompes -->
+    <div class="row">
+      <div class="col-lg-3 col-md-6">
+        <div class="card info-card">
+          <div class="card-body">
+            <h5 class="card-title">Pompes Actives</h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-danger">
+                <i class="bi bi-fuel-pump"></i>
+              </div>
+              <div class="ps-3">
+                <h6>{{ dashboardData.pompeStats?.length || 0 }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-10">
+        <div class="card info-card">
+          <div class="card-body">
+            <h5 class="card-title">Revenus      Totaux</h5>
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success">
+                <i class="bi bi-currency-euro"></i>
+              </div>
+              <div class="ps-3">
+                <h6>{{ formatCurrency(getTotalRevenue()) }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphiques Pompes -->
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Statistiques des Pompes</h5>
+            <div class="chart-container" style="height: 350px;">
+              <canvas id="pompeStatsChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="card-title mb-0">Revenus Journaliers</h5>
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-sm btn-outline-primary" 
+                  [class.active]="revenueChartFilter.type === 'day'"
+                  (click)="updateRevenueChartFilter('day')">Aujourd'hui</button>
+                <button type="button" class="btn btn-sm btn-outline-primary" 
+                  [class.active]="revenueChartFilter.type === 'month'"
+                  (click)="updateRevenueChartFilter('month')">Mois</button>
+                <button type="button" class="btn btn-sm btn-outline-primary" 
+                  [class.active]="revenueChartFilter.type === 'year'"
+                  (click)="updateRevenueChartFilter('year')">Année</button>
+              </div>
+            </div>
+            
+            <div *ngIf="revenueChartFilter.type === 'month'" class="row g-2 mb-3">
+              <div class="col-md-6">
+                <select class="form-select form-select-sm" 
+                  [(ngModel)]="revenueChartFilter.month" 
+                  (change)="onRevenueFilterChange()">
+                  <option *ngFor="let month of months" [value]="month.value">{{month.name}}</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <select class="form-select form-select-sm" 
+                  [(ngModel)]="revenueChartFilter.year" 
+                  (change)="onRevenueFilterChange()">
+                  <option *ngFor="let year of years" [value]="year">{{year}}</option>
+                </select>
+              </div>
+            </div>
+            
+            <div *ngIf="revenueChartFilter.type === 'year'" class="mb-3">
+              <select class="form-select form-select-sm" 
+                [(ngModel)]="revenueChartFilter.year" 
+                (change)="onRevenueFilterChange()">
+                <option *ngFor="let year of years" [value]="year">{{year}}</option>
+              </select>
+            </div>
+            
+            <div class="chart-container" style="height: 300px;">
+              <canvas id="dailyRevenuesChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tableaux Pompes -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Pompes & Pistolets</h5>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Pompe</th>
+                    <th>Type</th>
+                    <th>Statut</th>
+                    <th>Pistolets</th>
+                    <th>Disponible</th>
+                    <th>En Mainteance</th>
+                    <th>Indisponible</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let pompe of dashboardData.pompeStats">
+                    <td>{{ pompe.numero_pompe }}</td>
+                    <td>{{ pompe.type_pompe }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="{
+                        'bg-success': pompe.statut === 'reserve',
+                        'bg-danger': pompe.statut === 'hors_service_temporaire'
+                      }">
+                        {{ pompe.statut }}
+                      </span>
+                    </td>
+                    <td>{{ pompe.numeros_pistolets}} ({{ pompe.nombre_pistolets }})</td>
+                    <td>{{ pompe.pistolets_disponibles }}</td>
+                   
+                    <td>{{ pompe.pistolets_maintenance }}</td>
+                    <td>{{ pompe.pistolets_indisponibles }}</td>
+                  </tr>
+                </tbody>
+                </table>
+                </div>
+                </div></div></div></div>
+    <!-- Détails des Revenus -->
+    <div class="row mt-4" *ngIf="filteredData.filteredDailyRevenues?.length">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Détails des Revenus</h5>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Produit</th>
+                    <th>Quantité (L)</th>
+                    <th>Prix Unitaire</th>
+                    <th>Montant</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let revenue of filteredData.filteredDailyRevenues ">
+                    <td>{{ revenue.date | date:'shortDate' }}</td>
+                    <td>{{ revenue.nom_produit || 'Non spécifié' }}</td>
+                    <td>{{ revenue.quantite | number:'1.2-2' }}</td>
+                    <td>{{ formatCurrency(revenue.prix_unitaire) }}</td>
+                    <td>{{ formatCurrency(revenue.montant) }}</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr class="table-primary">
+                    <td colspan="4" class="text-end"><strong>Total</strong></td>
+                    <td><strong>{{ formatCurrency(getTotalRevenue()) }}</strong></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <app-footer></app-footer>
-
-<a href="#" class="back-to-top d-flex align-items-center justify-content-center">
-  <i class="bi bi-arrow-up-short"></i>
-</a>

@@ -2,22 +2,32 @@
 <app-sidebar></app-sidebar>
 
 <main id="main" class="main">
-  <div class="container">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-          <i class="bi bi-house-door-fill"></i>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">Gestion des Utilisateurs</li>
-      </ol>
-    </nav>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <!-- Breadcrumb -->
+            <div class="breadcrumb-container">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="#"><i class="bi bi-house-door"></i> Accueil</a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Gestion des Utilisateurs</li>
+                </ol>
+              </nav>
+            </div>
 
-    <div class="pagetitle d-flex justify-content-between align-items-center">
-      <h2 style="color: rgb(7, 7, 128);">Gestion des Utilisateurs</h2>
-      <a routerLink="/ajouter-utilisateur" class="btn btn-success">
-        <i class="bi bi-person-plus"></i> Ajouter Utilisateur
-      </a>
-    </div>
+            <!-- Page Title and Add Button -->
+            <div class="page-header d-flex justify-content-between align-items-center mb-4">
+              <h1 class="page-title">
+                <i class="bi bi-people-fill me-2"></i>Gestion des Utilisateurs
+              </h1>
+              <a routerLink="/ajouter-utilisateur" class="btn btn-success">
+                <i class="bi bi-person-plus"></i> Ajouter Utilisateur
+              </a>
+            </div>
 
     <!-- Filtres -->
     <div class="row mb-3">
@@ -56,7 +66,7 @@
         <tr *ngFor="let user of filteredUsers">
           <td>
             <div class="user-photo-container">
-              <img *ngIf="user.photo" [src]="user.photo" alt="Photo" class="user-photo">
+              <img *ngIf="user.photo" [src]="'http://localhost:3000' + user.photo" alt="Photo" class="user-photo">
               <div *ngIf="!user.photo" class="default-icon">
                 <i class="bi bi-person-circle"></i>
               </div>
@@ -67,18 +77,34 @@
           <td>{{ user.numero_telephone }}</td>
           <td>
             <div class="dropdown" [class.show]="showRoleDropdown[user.id]">
-              <button class="btn btn-outline-secondary dropdown-toggle" 
+              <button class="btn btn-sm btn-role dropdown-toggle" 
                       type="button" 
-                      (click)="toggleRoleDropdown(user.id)">
-                {{ user.role }}
+                      (click)="toggleRoleDropdown(user.id)"
+                      [ngClass]="{
+                        'btn-outline-primary': user.role === 'client',
+                        'btn-outline-success': user.role === 'pompiste',
+                        'btn-outline-info': user.role === 'caissier',
+                        'btn-outline-warning': user.role === 'cogerant'
+                      }">
+                <i class="bi me-1" 
+                   [class.bi-person]="user.role === 'client'"
+                   [class.bi-fuel-pump]="user.role === 'pompiste'"
+                   [class.bi-cash-coin]="user.role === 'caissier'"
+                   [class.bi-person-gear]="user.role === 'cogerant'"></i>
+                {{ user.role | titlecase }}
               </button>
-              <div class="dropdown-menu" [class.show]="showRoleDropdown[user.id]">
-                <a class="dropdown-item" 
-                   *ngFor="let role of roles" 
-                   (click)="changeUserRole(user, role)">
-                  {{ role }}
-                </a>
-              </div>
+              <ul class="dropdown-menu" [class.show]="showRoleDropdown[user.id]">
+                <li *ngFor="let role of roles">
+                  <a class="dropdown-item d-flex align-items-center" (click)="changeUserRole(user, role)">
+                    <i class="bi me-2" 
+                       [class.bi-person]="role === 'client'"
+                       [class.bi-fuel-pump]="role === 'pompiste'"
+                       [class.bi-cash-coin]="role === 'caissier'"
+                       [class.bi-person-gear]="role === 'cogerant'"></i>
+                    {{ role | titlecase }}
+                  </a>
+                </li>
+              </ul>
             </div>
           </td>
           <td>
@@ -151,6 +177,7 @@
       </div>
     </div>
   </div>
+  </div></div></div></div>
 </main>
 
 <app-footer></app-footer>
