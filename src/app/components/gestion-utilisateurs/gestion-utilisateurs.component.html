@@ -12,9 +12,9 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="#"><i class="bi bi-house-door"></i> Accueil</a>
+                    <a href="#"><i class="bi bi-house-door"></i></a>
                   </li>
-                  <li class="breadcrumb-item active" aria-current="page">Gestion des Utilisateurs</li>
+                  <li class="breadcrumb-item active" aria-current="page">Liste des Utilisateurs</li>
                 </ol>
               </nav>
             </div>
@@ -154,7 +154,7 @@
       <div class="modal-body">
         <p>Veuillez entrer une raison pour la désactivation :</p>
         <textarea class="form-control" [(ngModel)]="deactivationReason" rows="4"></textarea>
-      </div>
+      </div><br>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary me-2" (click)="closeDeactivateModal()">Annuler</button>
         <button type="button" class="btn btn-primary" (click)="deactivateUser()">Confirmer</button>
