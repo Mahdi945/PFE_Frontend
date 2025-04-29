@@ -92,7 +92,7 @@ export class LoginComponent {
   
           if (role === 'gerant') {
             this.router.navigate(['/dashboard-gerant']);
-          } else if (role === 'cogerant') {
+          } else if (role === 'Cogerant') {
             this.router.navigate(['/dashboard-cogerant']);
           } else if (role === 'pompiste') {
             this.router.navigate(['/dashboard-pompiste']);
