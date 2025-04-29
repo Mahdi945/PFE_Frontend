@@ -96,14 +96,14 @@
                 <div class="card-body">
                   <form (ngSubmit)="submitTransaction()">
                     <div class="mb-3">
-                      <label for="amount" class="form-label">Montant total (MAD)</label>
+                      <label for="amount" class="form-label">Montant total (DT)</label>
                       <input type="number" step="0.01" min="0.01" class="form-control" id="amount" 
                             [(ngModel)]="transaction.amount" name="amount" required
                             (input)="calculateQuantity()">
                     </div>
 
                     <div class="mb-3">
-                      <label for="pricePerLiter" class="form-label">Prix par litre (MAD)</label>
+                      <label for="pricePerLiter" class="form-label">Prix par litre (DT)</label>
                       <input type="number" step="0.01" min="0.01" class="form-control" id="pricePerLiter" 
                             [(ngModel)]="transaction.pricePerLiter" name="pricePerLiter" required
                             (input)="calculateQuantity()">

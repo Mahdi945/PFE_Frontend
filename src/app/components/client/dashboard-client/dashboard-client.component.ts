@@ -8,6 +8,7 @@ import { NavbarComponent } from '../../navbar/navbar.component';
 import { SidebarComponent } from '../../sidebar/sidebar.component';
 import { FooterComponent } from '../../footer/footer.component';
 import { ToastrService } from 'ngx-toastr';
+import { FormsModule } from '@angular/forms';
 
 Chart.register(...registerables);
 
@@ -17,6 +18,7 @@ interface DashboardData {
     credits_expires: number;
     credits_rembourses: number;
     solde_restant: number;
+    total_solde: number;
   };
   paymentStats?: {
     total_paye: number;
@@ -35,7 +37,8 @@ interface DashboardData {
     RouterModule,
     NavbarComponent,
     SidebarComponent,
-    FooterComponent
+    FooterComponent,
+    FormsModule
   ],
   templateUrl: './dashboard-client.component.html',
   styleUrls: ['./dashboard-client.component.css']
@@ -56,6 +59,11 @@ export class DashboardClientComponent implements OnInit {
   credits: any[] = [];
   user: any;
   isLoading = false;
+  selectedCurrency: string = 'TND';
+  exchangeRates: any = {
+    'EUR': 0.3,  // 1 TND = 0.3 EUR (exemple)
+    'USD': 0.33   // 1 TND = 0.33 USD (exemple)
+  };
 
   private creditChart?: Chart;
   private paymentChart?: Chart;
@@ -100,6 +108,35 @@ export class DashboardClientComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  onCurrencyChange(): void {
+    this.updatePaymentChart();
+  }
+
+  convertCurrency(amount: number): number {
+    if (this.selectedCurrency === 'TND') {
+      return amount;
+    }
+    return amount * this.exchangeRates[this.selectedCurrency];
+  }
+
+  formatCurrency(value: number): string {
+    if (this.selectedCurrency === 'TND') {
+      return new Intl.NumberFormat('fr-TN', { style: 'currency', currency: 'TND' }).format(value);
+    } else if (this.selectedCurrency === 'EUR') {
+      return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(this.convertCurrency(value));
+    } else {
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.convertCurrency(value));
+    }
+  }
+
+  getCurrencySymbol(): string {
+    switch (this.selectedCurrency) {
+      case 'EUR': return '€';
+      case 'USD': return '$';
+      default: return 'DT';
+    }
   }
 
   private initCharts(): void {
@@ -164,11 +201,13 @@ export class DashboardClientComponent implements OnInit {
     const data = {
       labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
       datasets: [{
-        label: 'Paiements (DT)',
+        label: `Paiements (${this.getCurrencySymbol()})`,
         backgroundColor: '#4e73df',
         hoverBackgroundColor: '#2e59d9',
         borderColor: '#4e73df',
-        data: [4215, 5312, 6251, 7841, 9821, 14984, 4215, 5312, 6251, 7841, 9821, 14984].slice(0, new Date().getMonth() + 1)
+        data: [4215, 5312, 6251, 7841, 9821, 14984, 4215, 5312, 6251, 7841, 9821, 14984]
+          .slice(0, new Date().getMonth() + 1)
+          .map(amount => this.convertCurrency(amount))
       }]
     };
 
@@ -181,22 +220,22 @@ export class DashboardClientComponent implements OnInit {
         },
         y: {
           ticks: {
-            callback: (value) => `${value} DT`,
+            callback: (value) => `${value} ${this.getCurrencySymbol()}`,
             maxTicksLimit: 5
           },
           grid: {
             color: "rgb(234, 236, 244)",
-        drawBorder: false,
-        drawTicks: false,
-        lineWidth: 1
-      } as any // Utilisation de 'as any' pour contourner le typage strict
+            drawBorder: false,
+            drawTicks: false,
+            lineWidth: 1
+          } as any
         }
       },
       plugins: {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: (context) => `${context.raw} DT`
+            label: (context) => `${context.raw} ${this.getCurrencySymbol()}`
           }
         }
       }
@@ -209,8 +248,25 @@ export class DashboardClientComponent implements OnInit {
     });
   }
 
-  formatCurrency(value: number): string {
-    return new Intl.NumberFormat('fr-TN', { style: 'currency', currency: 'TND' }).format(value);
+  private updatePaymentChart(): void {
+    if (this.paymentChart) {
+      this.paymentChart.data.datasets[0].label = `Paiements (${this.getCurrencySymbol()})`;
+      this.paymentChart.data.datasets[0].data = [4215, 5312, 6251, 7841, 9821, 14984, 4215, 5312, 6251, 7841, 9821, 14984]
+        .slice(0, new Date().getMonth() + 1)
+        .map(amount => this.convertCurrency(amount));
+      
+      if (this.paymentChart.options.scales?.['y']) {
+        (this.paymentChart.options.scales['y'].ticks as any).callback = (value: number) => 
+          `${value} ${this.getCurrencySymbol()}`;
+      }
+
+      if (this.paymentChart.options.plugins?.tooltip?.callbacks) {
+        this.paymentChart.options.plugins.tooltip.callbacks.label = (context) => 
+          `${context.raw} ${this.getCurrencySymbol()}`;
+      }
+
+      this.paymentChart.update();
+    }
   }
 
   formatDate(dateString: string): string {
