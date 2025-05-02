@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class GestionCreditsService {
   private baseUrl = 'http://localhost:3000/api/Credit'; // Base URL pour toutes les routes
+  private apiUrl = 'http://localhost:3000/api'; // Base URL pour toutes les routes
 
   constructor(private http: HttpClient) { }
 
@@ -41,6 +42,13 @@ export class GestionCreditsService {
 
   deleteCredit(id_credit: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/credits/${id_credit}`);
+  }
+  renewCredit(creditData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/credits/renew`, creditData);
+  }
+  // Récupérer tous les utilisateurs
+    getAllUsers(): Observable<any> {
+      return this.http.get(`${this.apiUrl}/users`);
   }
 
   // ==================== VÉHICULES ====================
@@ -146,9 +154,6 @@ export class GestionCreditsService {
     return this.http.get(`${this.baseUrl}/dashboard/gerant`, { params });
   }
   // ==================== UTILISATEURS ====================
-  getAllUsers(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/users`);
-  }
 
   getUserById(id_utilisateur: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/users/${id_utilisateur}`);

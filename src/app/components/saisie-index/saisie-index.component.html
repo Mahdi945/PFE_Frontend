@@ -35,7 +35,7 @@
               <select id="pistolet_id" class="form-select" formControlName="pistolet_id" (change)="onPistoletChange()">
                 <option value="">Sélectionner un pistolet</option>
                 <option *ngFor="let p of pistolets" [value]="p.id">
-                  {{ p.numero_pistolet }} - {{ p.nom_produit }} ({{ p.prix_unitaire | currency:'EUR':'symbol':'1.2-2' }})
+                  {{ p.numero_pistolet }} - {{ p.nom_produit }} ({{ p.prix_unitaire +' DT' }})
                 </option>
               </select>
               <div *ngIf="loadingPistolets" class="mt-2">
@@ -72,11 +72,11 @@
             </div>
             <div class="col-md-4" *ngIf="selectedPistolet">
               <p class="mb-1">Prix unitaire:</p>
-              <h5>{{ selectedPistolet.prix_unitaire | currency:'EUR':'symbol':'1.2-2' }}</h5>
+              <h5>{{ selectedPistolet.prix_unitaire +' DT' }}</h5>
             </div>
             <div class="col-md-4">
               <p class="mb-1">Montant total:</p>
-              <h5>{{ montantTotal | currency:'EUR':'symbol':'1.2-2' }}</h5>
+              <h5>{{ montantTotal +' DT' }}</h5>
             </div>
           </div>
 
@@ -109,7 +109,7 @@
               <li class="list-group-item">Index ouverture: {{indexForm.get('index_ouverture')?.value | number:'1.2-2'}}</li>
               <li class="list-group-item">Index fermeture: {{indexForm.get('index_fermeture')?.value | number:'1.2-2'}}</li>
               <li class="list-group-item">Quantité vendue: {{quantiteVendue | number:'1.2-2'}} L</li>
-              <li class="list-group-item">Montant total: {{montantTotal | currency:'EUR':'symbol':'1.2-2'}}</li>
+              <li class="list-group-item">Montant total: {{montantTotal +' DT'}}</li>
             </ul>
           </div>
         </div>

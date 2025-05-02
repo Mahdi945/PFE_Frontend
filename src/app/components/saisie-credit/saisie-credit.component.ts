@@ -121,7 +121,7 @@ export class SaisieCreditComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isScannerActive) {
       this.stopScanner();
       this.isScannerActive = false;
-      this.lastScannedData = null; // Reset on scanner stop
+      this.lastScannedData = null;
     } else {
       if (this.isCameraInitialized && this.devices.length > 0) {
         this.isScannerActive = true;
@@ -182,12 +182,10 @@ export class SaisieCreditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onScanSuccess(result: string): void {
-    // Ignorer si déjà en traitement ou si même QR code
     if (this.isProcessingScan || result === this.lastScannedData) {
       return;
     }
 
-    // Délai anti-rebond (debounce)
     if (this.scanDebounceTimer) {
       clearTimeout(this.scanDebounceTimer);
     }
@@ -199,7 +197,7 @@ export class SaisieCreditComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isScannerActive = false;
       this.processScannedData(result);
       this.scanDebounceTimer = null;
-    }, 300); // 300ms de délai
+    }, 300);
   }
 
   private processScannedData(data: string): void {
@@ -218,7 +216,7 @@ export class SaisieCreditComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.loadVehicleData(immatriculation);
     } catch (error) {
-      this.lastScannedData = null; // Réinitialiser en cas d'erreur
+      this.lastScannedData = null;
       this.handleScanError(error);
     }
   }
@@ -227,7 +225,7 @@ export class SaisieCreditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.gestionCreditsService.getVehiculeByImmatriculation(immatriculation).subscribe({
       next: (response: any) => {
         if (!response?.success || !response?.data) {
-          this.lastScannedData = null; // Réinitialiser si échec
+          this.lastScannedData = null;
           throw new Error(response?.message || 'Données véhicule non reçues');
         }
 
@@ -267,13 +265,11 @@ export class SaisieCreditComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.creditInfo = creditResponse;
         
-        // Conversion des valeurs string en number et gestion des NULL
         this.creditInfo.solde_credit = parseFloat(this.creditInfo.solde_credit) || 0;
         this.creditInfo.credit_utilise = this.creditInfo.credit_utilise !== null 
           ? parseFloat(this.creditInfo.credit_utilise) 
           : 0;
         
-        // Calcul du solde disponible
         this.creditInfo.solde_disponible = this.creditInfo.solde_credit - this.creditInfo.credit_utilise;
         
         console.log('Credit info traité:', this.creditInfo);
@@ -347,7 +343,6 @@ export class SaisieCreditComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const transactionData = {
       id_vehicule: this.scannedVehicule.id,
-      id_utilisateur: this.scannedVehicule.id_utilisateur,
       id_credit: this.scannedVehicule.id_credit,
       quantite: this.transaction.quantity,
       montant: this.transaction.amount,
@@ -396,7 +391,7 @@ export class SaisieCreditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.transaction = {
       quantity: null,
       amount: null,
-      pricePerLiter: 2.50
+      pricePerLiter: 10.50
     };
     this.scannedVehicule = null;
     this.creditInfo = null;

@@ -144,9 +144,9 @@ export class VisualiserRevenuesComponent implements OnInit {
     const groupedData: {[key: string]: any} = {};
 
     data.forEach(item => {
-      // Conversion en DT
-      const montant = (parseFloat(item.montant) || 0) * this.tauxConversion;
-      const prixUnitaire = (parseFloat(item.prix_unitaire) || 0) * this.tauxConversion;
+      // Utilisation directe des valeurs sans conversion
+      const montant = parseFloat(item.montant) || 0;
+      const prixUnitaire = parseFloat(item.prix_unitaire) || 0;
       const quantite = parseFloat(item.quantite) || 0;
 
       const dateKey = item.date.split('T')[0];
@@ -182,7 +182,6 @@ export class VisualiserRevenuesComponent implements OnInit {
 
     return Object.values(groupedData);
   }
-
   generateReport(): void {
     if (!this.reportForm.valid) {
       this.showError('Veuillez sélectionner une date valide');

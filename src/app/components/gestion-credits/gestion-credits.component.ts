@@ -16,33 +16,51 @@ import { GestionCreditsService } from '../../services/gestion-credits.service';
   styleUrls: ['./gestion-credits.component.css']
 })
 export class GestionCreditsComponent implements OnInit {
-  credits: any[] = []; // Liste complète des crédits
-  filteredCredits: any[] = []; // Liste filtrée des crédits
-  searchTerm: string = ''; // Terme de recherche (nom ou ID crédit)
-  selectedType: string = ''; // Filtre par type de crédit
-  selectedEtat: string = ''; // Filtre par état
-  currentPage: number = 1; // Page actuelle pour la pagination
-  pageSize: number = 10; // Nombre d'éléments par page
-  totalPages: number = 1; // Nombre total de pages
+  credits: any[] = [];
+  filteredCredits: any[] = [];
+  searchTerm: string = '';
+  selectedType: string = '';
+  selectedEtat: string = '';
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalPages: number = 1;
 
-  // Variables pour la gestion des crédits
-  selectedCredit: any = {}; // Crédit sélectionné pour l'ajout
-  isModalOpen: boolean = false; // État du modal d'ajout
-  errorMessage: string = ''; // Message d'erreur
+  // Variables pour les modals
+  selectedCredit: any = {};
+  isModalOpen: boolean = false;
+  isRenewModalOpen: boolean = false;
+  errorMessage: string = '';
+  
+  // Variables pour l'autocomplétion
+  clients: any[] = [];
+  filteredClients: any[] = [];
+  showClientDropdown: boolean = false;
+  clientSearchTerm: string = '';
 
-  constructor(private GestionCreditsService: GestionCreditsService) {}
+  constructor(private gestionCreditsService: GestionCreditsService) {}
 
   ngOnInit(): void {
-    this.fetchCredits(); // Charger les crédits au démarrage
+    this.fetchCredits();
+    this.fetchClients();
   }
 
-  // Récupérer tous les crédits depuis le service
+  fetchClients(): void {
+    this.gestionCreditsService.getAllUsers().subscribe(
+      (data: any) => {
+        this.clients = data.filter((user: any) => user.role === 'client');
+      },
+      (error) => {
+        console.error('Erreur lors du chargement des clients', error);
+      }
+    );
+  }
+
   fetchCredits(): void {
-    this.GestionCreditsService.getAllCredits().subscribe(
+    this.gestionCreditsService.getAllCredits().subscribe(
       (data) => {
         this.credits = data;
         this.totalPages = Math.ceil(this.credits.length / this.pageSize);
-        this.updateFilteredCredits(); // Mettre à jour la liste filtrée
+        this.updateFilteredCredits();
       },
       (error) => {
         console.error('Erreur lors du chargement des crédits', error);
@@ -50,53 +68,99 @@ export class GestionCreditsComponent implements OnInit {
     );
   }
 
-  // Mettre à jour la liste filtrée des crédits
   updateFilteredCredits(): void {
     this.filteredCredits = this.credits
       .filter(credit => {
-        // Filtre par nom ou ID crédit
         const matchesSearchTerm = this.searchTerm === '' ||
           credit.utilisateur.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
           credit.id === parseInt(this.searchTerm);
-
-        // Filtre par type de crédit
         const matchesType = this.selectedType === '' || credit.type_credit === this.selectedType;
-
-        // Filtre par état
         const matchesEtat = this.selectedEtat === '' || credit.etat === this.selectedEtat;
-
         return matchesSearchTerm && matchesType && matchesEtat;
       })
-      .slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize); // Gestion de la pagination
+      .slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
   }
 
-  // Filtrer les crédits en fonction des critères
   filterCredits(): void {
-    this.currentPage = 1; // Réinitialiser à la première page
+    this.currentPage = 1;
     this.updateFilteredCredits();
   }
 
-  // Ouvrir le modal d'ajout de crédit
+  // Gestion de l'autocomplétion des clients
+  filterClientList(event: any): void {
+    this.clientSearchTerm = event.target.value;
+    if (this.clientSearchTerm.length > 0) {
+      this.filteredClients = this.clients.filter(client =>
+        client.username.toLowerCase().includes(this.clientSearchTerm.toLowerCase())
+      );
+      this.showClientDropdown = this.filteredClients.length > 0;
+    } else {
+      this.filteredClients = [];
+      this.showClientDropdown = false;
+    }
+  }
+
+  selectClient(client: any): void {
+    this.selectedCredit.utilisateur = client.username;
+    this.clientSearchTerm = client.username;
+    this.showClientDropdown = false;
+  }
+
+  // Modal d'ajout
   openAddModal(): void {
+    this.selectedCredit = {};
+    this.clientSearchTerm = '';
+    this.filteredClients = [];
+    this.showClientDropdown = false;
     this.isModalOpen = true;
   }
 
-  // Fermer le modal d'ajout de crédit
   closeModal(): void {
     this.isModalOpen = false;
-    this.errorMessage = ''; // Réinitialiser le message d'erreur
+    this.errorMessage = '';
+    this.clientSearchTerm = '';
+    this.filteredClients = [];
+    this.showClientDropdown = false;
   }
 
-  // Ajouter un crédit
+ // Modal de renouvellement
+ openRenewModal(credit: any): void {
+  if (credit.etat !== 'remboursé' && credit.etat !== 'expiré') {
+    alert('Seuls les crédits remboursés ou expirés peuvent être renouvelés');
+    return;
+  }
+  
+  
+  this.selectedCredit = {
+    id: credit.id,
+    utilisateur: credit.utilisateur,
+    type_credit: credit.type_credit,
+    solde_credit: credit.solde_credit,
+    duree_credit: credit.duree_credit,
+    date_debut: new Date().toISOString().split('T')[0] // Date du jour par défaut
+  };
+  this.isRenewModalOpen = true;
+}
+  closeRenewModal(): void {
+    this.isRenewModalOpen = false;
+    this.errorMessage = '';
+  }
+
   addCredit(): void {
-    this.GestionCreditsService.addCredit(this.selectedCredit).subscribe(
+    // Vérifier que le nom du client correspond à un client existant
+    const selectedClient = this.clients.find(c => c.username === this.selectedCredit.utilisateur);
+    if (!selectedClient) {
+      this.errorMessage = 'Veuillez sélectionner un client valide dans la liste';
+      return;
+    }
+
+    this.gestionCreditsService.addCredit(this.selectedCredit).subscribe(
       (response) => {
         console.log('Crédit ajouté avec succès', response);
-        this.fetchCredits(); // Récupérer les crédits après l'ajout
+        this.fetchCredits();
         this.closeModal();
       },
       (error) => {
-        // Gérer les erreurs lors de l'ajout
         if (error.status === 404) {
           this.errorMessage = 'Client non trouvé.';
         } else {
@@ -107,7 +171,25 @@ export class GestionCreditsComponent implements OnInit {
     );
   }
 
-  // Changer de page pour la pagination
+  renewCredit(): void {
+    this.gestionCreditsService.renewCredit({
+      id_credit: this.selectedCredit.id,
+      solde_credit: this.selectedCredit.solde_credit,
+      date_debut: this.selectedCredit.date_debut,
+      duree_credit: this.selectedCredit.duree_credit
+    }).subscribe(
+      (response) => {
+        console.log('Crédit renouvelé avec succès', response);
+        this.fetchCredits();
+        this.closeRenewModal();
+      },
+      (error) => {
+        console.error('Erreur lors du renouvellement du crédit', error);
+        this.errorMessage = error.error?.error || 'Une erreur s\'est produite. Veuillez réessayer plus tard.';
+      }
+    );
+  }
+
   changePage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
@@ -115,7 +197,6 @@ export class GestionCreditsComponent implements OnInit {
     }
   }
 
-  // Changer la taille de la page (nombre d'éléments par page)
   changePageSize(): void {
     const parsedSize = parseInt(this.pageSize.toString(), 10);
     if (!isNaN(parsedSize) && parsedSize > 0) {

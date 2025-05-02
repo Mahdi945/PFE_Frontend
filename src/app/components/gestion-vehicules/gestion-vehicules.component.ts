@@ -26,10 +26,17 @@ import { GestionCreditsService } from '../../services/gestion-credits.service';
 export class GestionVehiculesComponent implements OnInit {
   vehicules: any[] = [];
   filteredVehicules: any[] = [];
-  selectedVehicule: any = {};
+  creditsDisponibles: any[] = [];
+  selectedVehicule: any = {
+    id_credit: null,
+    immatriculation: '',
+    marque: '',
+    type_vehicule: 'voiture'
+  };
   searchTerm: string = '';
   searchCreditId: string = '';
   selectedType: string = '';
+  selectedEtatCredit: string = '';
   isModalOpen: boolean = false;
   isQrCodeModalOpen: boolean = false;
   selectedQrCode: string = '';
@@ -43,43 +50,84 @@ export class GestionVehiculesComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchAllVehicules();
+    this.fetchCreditsActifs();
   }
 
   fetchAllVehicules(): void {
-    this.gestionCreditsService.getAllVehicules().subscribe(
-      (data) => {
-        this.vehicules = data;
-        this.filterVehicules();
+    this.gestionCreditsService.getAllVehicules().subscribe({
+      next: (response: any) => {
+        let vehiculesData = [];
+        
+        if (Array.isArray(response)) {
+          vehiculesData = response;
+        } else if (response && Array.isArray(response.data)) {
+          vehiculesData = response.data;
+        } else if (response && response.success && Array.isArray(response.data)) {
+          vehiculesData = response.data;
+        }
+        
+        this.vehicules = vehiculesData.map((v: any) => ({
+          ...v,
+          username: v.username || 'N/A',
+          immatriculation: v.immatriculation || 'N/A',
+          marque: v.marque || 'N/A',
+          type_vehicule: v.type_vehicule || 'N/A',
+          id_credit: v.id_credit || 'N/A',
+          credit_etat: v.credit_etat || 'N/A', // Ajout de l'état du crédit
+          qr_code: v.qr_code || null
+        }));
+        
+        this.filteredVehicules = [...this.vehicules];
+        this.calculateTotalPages();
+        
+        console.log('Données des véhicules:', this.vehicules); // Pour débogage
       },
-      (error) => {
-        console.error('❌ Erreur de chargement des véhicules', error);
+      error: (error) => {
+        console.error('Erreur de chargement des véhicules', error);
+        this.vehicules = [];
         this.filteredVehicules = [];
+        this.calculateTotalPages();
       }
-    );
+    });
   }
+
+  fetchCreditsActifs(): void {
+    this.gestionCreditsService.getAllCredits().subscribe({
+      next: (credits: any) => {
+        this.creditsDisponibles = Array.isArray(credits) 
+          ? credits.filter((credit: any) => credit.etat === 'actif')
+          : [];
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des crédits', error);
+        this.creditsDisponibles = [];
+      }
+    });
+  }
+
   filterVehicules(): void {
     const term = this.searchTerm.toLowerCase().trim();
     const creditId = this.searchCreditId ? Number(this.searchCreditId) : null;
   
-    this.filteredVehicules = this.vehicules.filter((vehicule) => {
-      // Recherche par terme (immatriculation ou username)
+    this.filteredVehicules = this.vehicules.filter((vehicule: any) => {
       const matchTerm =
         term === '' ||
-        vehicule.immatriculation?.toLowerCase().includes(term) ||
-        vehicule.username?.toLowerCase().includes(term);
-  
-      // Recherche exacte par ID crédit (en tant que nombre)
+        (vehicule.immatriculation?.toLowerCase().includes(term)) ||
+        (vehicule.username?.toLowerCase().includes(term));
+      
       const matchCreditId = creditId === null || vehicule.id_credit === creditId;
-  
-      // Filtre par type
       const matchType = this.selectedType === '' || vehicule.type_vehicule === this.selectedType;
-  
-      return matchTerm && matchCreditId && matchType;
+      const matchEtatCredit = this.selectedEtatCredit === '' || vehicule.credit_etat === this.selectedEtatCredit;
+      
+      return matchTerm && matchCreditId && matchType && matchEtatCredit;
     });
   
-    // Réinitialiser la pagination après le filtrage
-    this.totalPages = Math.ceil(this.filteredVehicules.length / this.itemsPerPage);
+    this.calculateTotalPages();
     this.currentPage = 1;
+  }
+
+  calculateTotalPages(): void {
+    this.totalPages = Math.ceil(this.filteredVehicules.length / this.itemsPerPage) || 1;
   }
 
   paginatedVehicules(): any[] {
@@ -97,6 +145,7 @@ export class GestionVehiculesComponent implements OnInit {
     this.selectedQrCode = qrCodeUrl;
     this.isQrCodeModalOpen = true;
   }
+
   printQrCode(qrCodeElement: HTMLImageElement) {
     const printWindow = window.open('', '_blank', 'width=800,height=800');
   
@@ -166,16 +215,18 @@ export class GestionVehiculesComponent implements OnInit {
       };
     }
   }
-  
-  
-  
 
   closeQrCodeModal(): void {
     this.isQrCodeModalOpen = false;
   }
 
   openAddModal(): void {
-    this.selectedVehicule = {};
+    this.selectedVehicule = {
+      id_credit: null,
+      immatriculation: '',
+      marque: '',
+      type_vehicule: 'voiture'
+    };
     this.isModalOpen = true;
   }
 
@@ -184,15 +235,20 @@ export class GestionVehiculesComponent implements OnInit {
   }
 
   addVehicule(): void {
-    this.gestionCreditsService.addVehicule(this.selectedVehicule).subscribe(
-      (response) => {
-        this.vehicules.push(response.vehicule);
+    if (!this.selectedVehicule.id_credit) {
+      alert('Veuillez sélectionner un crédit');
+      return;
+    }
+
+    this.gestionCreditsService.addVehicule(this.selectedVehicule).subscribe({
+      next: (response: any) => {
         this.fetchAllVehicules();
         this.closeModal();
       },
-      (error) => {
+      error: (error) => {
         console.error('Erreur lors de l\'ajout du véhicule', error);
+        alert(`Erreur: ${error.error?.message || 'Une erreur est survenue'}`);
       }
-    );
+    });
   }
 }

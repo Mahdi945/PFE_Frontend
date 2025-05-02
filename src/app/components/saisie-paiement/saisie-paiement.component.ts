@@ -26,7 +26,6 @@ interface Credit {
   imports: [
     CommonModule,
     FormsModule,
-    RouterLink,
     NavbarComponent,
     SidebarComponent,
     FooterComponent

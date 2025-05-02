@@ -7,7 +7,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
         <li class="breadcrumb-item">Gestion des crédits</li>
-        <li class="breadcrumb-item active">Liste des Vehicules</li>
+        <li class="breadcrumb-item active">Liste des Véhicules</li>
       </ol>
     </nav>
     <div class="pagetitle d-flex justify-content-between align-items-center">
@@ -19,7 +19,7 @@
 
     <!-- Filtres -->
     <div class="row mb-3">
-      <div class="col-md-4">
+      <div class="col-md-3">
         <input
           type="text"
           class="form-control"
@@ -37,7 +37,7 @@
           (input)="filterVehicules()"
         />
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <select class="form-control" [(ngModel)]="selectedType" (change)="filterVehicules()">
           <option value="">Tous les types</option>
           <option value="voiture">Voiture</option>
@@ -46,36 +46,53 @@
           <option value="moto">Moto</option>
         </select>
       </div>
+      <div class="col-md-2">
+        <select class="form-control" [(ngModel)]="selectedEtatCredit" (change)="filterVehicules()">
+          <option value="">Tous les états</option>
+          <option value="actif">Actif</option>
+          <option value="expiré">Expiré</option>
+          <option value="annulé">Annulé</option>
+          <option value="remboursé">Remboursé</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Message si aucun véhicule -->
+    <div *ngIf="filteredVehicules.length === 0" class="alert alert-info">
+      Aucun véhicule trouvé
     </div>
 
     <!-- Tableau des véhicules -->
-    <table class="table table-bordered table-hover">
+    <table *ngIf="filteredVehicules.length > 0" class="table table-bordered table-hover">
       <thead class="table-dark">
         <tr>
           <th>Nom Complet</th>
           <th>Immatriculation</th>
           <th>Marque</th>
           <th>Type</th>
-          
+        
           <th>QR Code</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let vehicule of paginatedVehicules()">
-          <td>{{ vehicule.username }}</td>
-          <td>{{ vehicule.immatriculation }}</td>
-          <td>{{ vehicule.marque }}</td>
-          <td>{{ vehicule.type_vehicule }}</td>
-          
+          <td>{{ vehicule.username || 'N/A' }}</td>
+          <td>{{ vehicule.immatriculation || 'N/A' }}</td>
+          <td>{{ vehicule.marque || 'N/A' }}</td>
+          <td>{{ vehicule.type_vehicule || 'N/A' }}</td>
+      
           <td class="text-center">
-            <button class="btn btn-outline-dark" (click)="viewQrCode(vehicule.qr_code)">Voir</button>
+            <button *ngIf="vehicule.qr_code" class="btn btn-outline-dark" (click)="viewQrCode(vehicule.qr_code)">
+              <i class="bi bi-qr-code"></i> Voir
+            </button>
+            <span *ngIf="!vehicule.qr_code">N/A</span>
           </td>
         </tr>
       </tbody>
     </table>
 
     <!-- Pagination -->
-    <nav *ngIf="totalPages > 1">
+    <nav *ngIf="totalPages > 1 && filteredVehicules.length > 0">
       <ul class="pagination justify-content-center">
         <li class="page-item" [class.disabled]="currentPage === 1">
           <a class="page-link" (click)="changePage(currentPage - 1)">Précédent</a>
@@ -104,20 +121,47 @@
       <div class="modal-body">
         <form (ngSubmit)="addVehicule()">
           <div class="form-group mb-3">
-            <label>ID Crédit :</label>
-            <input type="number" [(ngModel)]="selectedVehicule.id_credit" name="id_credit" class="form-control" required />
+            <label>Crédit :</label>
+            <select 
+              [(ngModel)]="selectedVehicule.id_credit" 
+              name="id_credit" 
+              class="form-control" 
+              required
+            >
+              <option value="">Sélectionner un crédit</option>
+              <option *ngFor="let credit of creditsDisponibles" [value]="credit.id">
+                #{{credit.id}} - {{credit.utilisateur || 'N/A'}} ({{credit.type_credit || 'N/A'}})
+              </option>
+            </select>
           </div>
           <div class="form-group mb-3">
             <label>Immatriculation :</label>
-            <input type="text" [(ngModel)]="selectedVehicule.immatriculation" name="immatriculation" class="form-control" required />
+            <input 
+              type="text" 
+              [(ngModel)]="selectedVehicule.immatriculation" 
+              name="immatriculation" 
+              class="form-control" 
+              required 
+            />
           </div>
           <div class="form-group mb-3">
             <label>Marque :</label>
-            <input type="text" [(ngModel)]="selectedVehicule.marque" name="marque" class="form-control" required />
+            <input 
+              type="text" 
+              [(ngModel)]="selectedVehicule.marque" 
+              name="marque" 
+              class="form-control" 
+              required 
+            />
           </div>
           <div class="form-group mb-3">
             <label>Type :</label>
-            <select [(ngModel)]="selectedVehicule.type_vehicule" name="type_vehicule" class="form-control" required>
+            <select 
+              [(ngModel)]="selectedVehicule.type_vehicule" 
+              name="type_vehicule" 
+              class="form-control" 
+              required
+            >
               <option value="voiture">Voiture</option>
               <option value="camion">Camion</option>
               <option value="bus">Bus</option>
@@ -125,28 +169,31 @@
             </select>
           </div>
           <div class="d-flex justify-content-end mt-3">
+            <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">Annuler</button>
             <button type="submit" class="btn btn-primary">Enregistrer</button>
           </div>
         </form>
       </div>
     </div>
   </div>
-<!-- Modal QR Code -->
-<div *ngIf="isQrCodeModalOpen" class="modal-overlay">
-  <div class="modal-content centered-modal">
-    <div class="modal-header">
-      <h5 class="modal-title">QR Code</h5>
-      <button class="btn-close" (click)="closeQrCodeModal()">X</button>
-    </div>
-    <div class="modal-body text-center">
-      <img #qrCodeRef [src]="selectedQrCode" alt="QR Code" class="img-fluid qr-large" />
-      <div class="mt-3">
-        <button class="btn btn-primary mt-3" (click)="printQrCode(qrCodeRef)">Imprimer</button>
+
+  <!-- Modal QR Code -->
+  <div *ngIf="isQrCodeModalOpen" class="modal-overlay">
+    <div class="modal-content centered-modal">
+      <div class="modal-header">
+        <h5 class="modal-title">QR Code</h5>
+        <button class="btn-close" (click)="closeQrCodeModal()">X</button>
+      </div>
+      <div class="modal-body text-center">
+        <img #qrCodeRef [src]="selectedQrCode" alt="QR Code" class="img-fluid qr-large" />
+        <div class="mt-3">
+          <button class="btn btn-primary mt-3" (click)="printQrCode(qrCodeRef)">
+            <i class="bi bi-printer"></i> Imprimer
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
 </main>
 
 <app-footer></app-footer>

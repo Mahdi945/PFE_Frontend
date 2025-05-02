@@ -13,35 +13,35 @@
 
     <div class="pagetitle d-flex justify-content-between align-items-center">
       <h2 style="color: rgb(7, 7, 128);">Liste des crédits</h2>
-      <!-- Bouton pour afficher le modal d'ajout -->
       <button class="btn btn-success" (click)="openAddModal()">
         <i class="bi bi-plus-circle"></i> Ajouter Crédit
       </button>
     </div>
-   <!-- Filtres -->
-<div class="row mb-3">
-  <div class="col-md-4">
-    <input type="text" class="form-control" placeholder="Rechercher par nom ou ID crédit" [(ngModel)]="searchTerm" (input)="filterCredits()">
-  </div>
-  
-  <div class="col-md-4">
-    <select class="form-control" [(ngModel)]="selectedType" (change)="filterCredits()">
-      <option value="">Tous les types</option>
-      <option value="individuelle">Individuelle</option>
-      <option value="organisationnelle">Organisationnelle</option>
-    </select>
-  </div>
 
-  <div class="col-md-4">
-    <select class="form-control" [(ngModel)]="selectedEtat" (change)="filterCredits()">
-      <option value="">Tous les états</option>
-      <option value="actif">Actif</option>
-      <option value="remboursé">Remboursé</option>
-      <option value="annulé">Annulé</option>
-      <option value="expiré">Expiré</option>
-    </select>
-  </div>
-</div>
+    <!-- Filtres -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <input type="text" class="form-control" placeholder="Rechercher par nom ou ID crédit" [(ngModel)]="searchTerm" (input)="filterCredits()">
+      </div>
+      
+      <div class="col-md-4">
+        <select class="form-control" [(ngModel)]="selectedType" (change)="filterCredits()">
+          <option value="">Tous les types</option>
+          <option value="individuelle">Individuelle</option>
+          <option value="organisationnelle">Organisationnelle</option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <select class="form-control" [(ngModel)]="selectedEtat" (change)="filterCredits()">
+          <option value="">Tous les états</option>
+          <option value="actif">Actif</option>
+          <option value="remboursé">Remboursé</option>
+          <option value="annulé">Annulé</option>
+          <option value="expiré">Expiré</option>
+        </select>
+      </div>
+    </div>
 
     <!-- Tableau des crédits -->
     <table class="table table-bordered table-hover">
@@ -54,7 +54,8 @@
           <th>Date de début</th>
           <th>Durée</th>
           <th>Crédit utilisé</th>
-          <th>État</th> <!-- Nouvelle colonne pour l'état -->
+          <th>État</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -67,10 +68,9 @@
           <td>{{ credit.duree_credit }} jours</td>
           <td>{{ credit.credit_utilise || '0 DT' }}</td>
           <td>
-            <!-- Affichage des états avec des icônes -->
             <span *ngIf="credit.etat === 'actif'" class="badge bg-success">
-                <i class="bi bi-clock"></i> Actif
-              </span>
+              <i class="bi bi-clock"></i> Actif
+            </span>
             <span *ngIf="credit.etat === 'remboursé'" class="badge bg-primary">
               <i class="bi bi-check-circle"></i> Remboursé
             </span>
@@ -81,26 +81,18 @@
               <i class="bi bi-exclamation-circle"></i> Expiré
             </span>
           </td>
+          <td>
+            <button *ngIf="credit.etat === 'remboursé' || credit.etat === 'expiré'" 
+        class="btn btn-sm btn-info" 
+        (click)="openRenewModal(credit)">
+  <i class="bi bi-arrow-repeat"></i> Renouveler
+</button>
+
+          </td>
         </tr>
       </tbody>
     </table>
-    <!-- Pagination 
-    <div class="d-flex justify-content-center mt-4">
-      <ul class="pagination">
-        <li class="page-item" [class.disabled]="currentPage === 1">
-          <button class="page-link" (click)="changePage(currentPage - 1)">Précédent</button>
-        </li>
-        <li *ngFor="let page of [].constructor(totalPages); let i = index" class="page-item" [class.active]="i + 1 === currentPage">
-          <button class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</button>
-        </li>
-        <li class="page-item" [class.disabled]="currentPage === totalPages">
-          <button class="page-link" (click)="changePage(currentPage + 1)">Suivant</button>
-        </li>
-      </ul>
-    </div>
-  </div>
--->
-  
+
     <!-- Pagination -->
     <nav *ngIf="totalPages > 1">
       <ul class="pagination justify-content-center">
@@ -131,9 +123,22 @@
     </div>
     <div class="modal-body">
       <form (ngSubmit)="addCredit()">
-        <div class="form-group mb-3">
+        <div class="form-group mb-3 position-relative">
           <label for="utilisateur">Nom Complet de Client :</label>
-          <input type="text" id="utilisateur" [(ngModel)]="selectedCredit.utilisateur" name="utilisateur" class="form-control" required>
+          <input type="text" id="utilisateur" 
+                 [(ngModel)]="selectedCredit.utilisateur" 
+                 name="utilisateur" 
+                 class="form-control" 
+                 required
+                 (input)="filterClientList($event)"
+                 [value]="clientSearchTerm">
+          <div *ngIf="showClientDropdown && filteredClients.length > 0" class="client-dropdown">
+            <div *ngFor="let client of filteredClients" 
+                 class="dropdown-item"
+                 (click)="selectClient(client)">
+              {{ client.username }}
+            </div>
+          </div>
         </div>
         <div class="form-group mb-3">
           <label for="type_credit">Type de Crédit :</label>
@@ -160,6 +165,51 @@
         </div>
         <div class="d-flex justify-content-end mt-3">
           <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de renouvellement de crédit -->
+<div *ngIf="isRenewModalOpen" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" style="color: rgb(7, 7, 128);">Renouveler Crédit</h5>
+      <button class="btn-close" (click)="closeRenewModal()">X</button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="renewCredit()">
+        <div class="form-group mb-3">
+          <label for="renew_utilisateur">Nom Complet de Client :</label>
+          <input type="text" id="renew_utilisateur" [(ngModel)]="selectedCredit.utilisateur" 
+                 name="renew_utilisateur" class="form-control" readonly>
+        </div>
+        <div class="form-group mb-3">
+          <label for="renew_type_credit">Type de Crédit :</label>
+          <input type="text" id="renew_type_credit" [(ngModel)]="selectedCredit.type_credit" 
+                 name="renew_type_credit" class="form-control" readonly>
+        </div>
+        <div class="form-group mb-3">
+          <label for="renew_solde_credit">Nouveau Solde Crédit : (DT)</label>
+          <input type="number" id="renew_solde_credit" [(ngModel)]="selectedCredit.solde_credit" 
+                 name="renew_solde_credit" class="form-control" required>
+        </div>
+        <div class="form-group mb-3">
+          <label for="renew_date_debut">Nouvelle Date de Début :</label>
+          <input type="date" id="renew_date_debut" [(ngModel)]="selectedCredit.date_debut" 
+                 name="renew_date_debut" class="form-control" required>
+        </div>
+        <div class="form-group mb-3">
+          <label for="renew_duree_credit">Nouvelle Durée (jours) :</label>
+          <input type="number" id="renew_duree_credit" [(ngModel)]="selectedCredit.duree_credit" 
+                 name="renew_duree_credit" class="form-control" required>
+        </div>
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+          {{ errorMessage }}
+        </div>
+        <div class="d-flex justify-content-end mt-3">
+          <button type="submit" class="btn btn-primary">Renouveler</button>
         </div>
       </form>
     </div>

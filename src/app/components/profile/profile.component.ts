@@ -57,7 +57,7 @@ export class ProfileComponent implements OnInit {
   loadAllRoles(): void {
     this.authService.getAllRoles().subscribe({
       next: (roles) => {
-        this.roles = roles?.length ? roles : ['gerant', 'cogerant', 'caissier', 'pompiste', 'client'];
+        this.roles = roles?.length ? roles : ['cogerant', 'caissier', 'pompiste', 'client'];
         if (!this.roles.includes('gerant')) {
           this.roles.unshift('gerant');
         }
@@ -65,7 +65,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         console.error('Roles load error:', err);
-        this.roles = ['gerant', 'cogerant', 'caissier', 'pompiste', 'client'];
+        this.roles = ['cogerant', 'caissier', 'pompiste', 'client'];
         this.loadPermissionsForRole();
       }
     });
