@@ -1,0 +1,23 @@
+.access-denied {
+    padding: 2rem 0;
+  }
+  
+  .error-icon {
+    animation: bounce 2s infinite;
+  }
+  .error-image-container {
+    width: 100%;
+    max-width: 500px; /* Augmentation de la largeur maximale */
+    margin: 0 auto;
+  }
+  .error-image {
+    width: 100%;
+    height: auto;
+    max-height: none; /* Suppression de la limitation de hauteur */
+    object-fit: contain;
+  }
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-20px);}
+    60% {transform: translateY(-10px);}
+  }

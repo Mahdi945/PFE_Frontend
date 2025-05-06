@@ -386,7 +386,7 @@ export class DashbordGerantComponent implements OnInit, AfterViewInit {
     this.createCreditStatusChart();
     this.createTransactionsChart();
     this.createPompeStatsChart();
-    this.createDailyRevenuesChart();
+    this.ccreateDailyRevenuesChart();
     this.createPaymentsChart();
     this.createPaymentsTrendChart();
   }
@@ -598,22 +598,25 @@ export class DashbordGerantComponent implements OnInit, AfterViewInit {
     });
   }
 
-  createDailyRevenuesChart(): void {
+  ccreateDailyRevenuesChart(): void {
     const ctx = document.getElementById('dailyRevenuesChart') as HTMLCanvasElement;
     if (!ctx || !this.filteredData.filteredDailyRevenues || !Array.isArray(this.filteredData.filteredDailyRevenues)) {
-      console.warn('Cannot create chart - missing required data');
+      console.warn('Cannot create daily revenues chart - missing data');
       return;
     }
   
+    // 1. Préparer les données
     const revenueData: {[key: string]: {[key: string]: number}} = {};
+    const products = new Set<string>();
     const dates = new Set<string>();
   
     this.filteredData.filteredDailyRevenues.forEach((item: any) => {
       const date = item.date;
-      const product = item.nom_produit;
+      const product = item.nom_produit || 'Autre';
       const amount = Number(item.montant) || 0;
       
       dates.add(date);
+      products.add(product);
       
       if (!revenueData[date]) {
         revenueData[date] = {};
@@ -622,15 +625,27 @@ export class DashbordGerantComponent implements OnInit, AfterViewInit {
       revenueData[date][product] = (revenueData[date][product] || 0) + amount;
     });
   
+    // 2. Trier les dates et préparer les labels
     const sortedDates = Array.from(dates).sort((a, b) => 
       new Date(a).getTime() - new Date(b).getTime()
     );
   
-    const products = new Set<string>();
-    this.filteredData.filteredDailyRevenues.forEach((item: any) => {
-      products.add(item.nom_produit);
-    });
+    let xLabels: string[];
+    if (this.revenueChartFilter.type === 'month') {
+      xLabels = sortedDates.map(date => {
+        const d = new Date(date);
+        return d.getDate().toString(); // Jour du mois seulement
+      });
+    } else if (this.revenueChartFilter.type === 'year') {
+      xLabels = sortedDates.map(date => {
+        const d = new Date(date);
+        return this.datePipe.transform(d, 'MMM') || ''; // Nom du mois abrégé
+      });
+    } else {
+      xLabels = sortedDates.map(date => this.datePipe.transform(date, 'shortDate') || ''); // Date complète
+    }
   
+    // 3. Préparer les datasets par produit
     const productDatasets = Array.from(products).map(product => {
       return {
         label: product,
@@ -641,14 +656,16 @@ export class DashbordGerantComponent implements OnInit, AfterViewInit {
       };
     });
   
+    // 4. Calculer les totaux par date
     const totals = sortedDates.map(date => 
       Object.values(revenueData[date]).reduce((sum, val) => sum + val, 0)
     );
   
+    // 5. Créer le graphique
     this.charts.dailyRevenues = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: sortedDates.map(date => this.datePipe.transform(date, 'shortDate')),
+        labels: xLabels,
         datasets: [
           {
             label: 'Total',
@@ -667,12 +684,16 @@ export class DashbordGerantComponent implements OnInit, AfterViewInit {
         plugins: {
           title: { 
             display: true, 
-            text: 'Revenus Journaliers', 
+            text: this.getRevenueChartTitle(), 
             font: { size: 16 },
             padding: { top: 20, bottom: 10 }
           },
           tooltip: {
             callbacks: {
+              title: (context) => {
+                const date = sortedDates[context[0].dataIndex];
+                return this.datePipe.transform(date, 'fullDate') || '';
+              },
               label: (context) => {
                 const label = context.dataset.label || '';
                 const value = context.raw || 0;
@@ -691,14 +712,24 @@ export class DashbordGerantComponent implements OnInit, AfterViewInit {
           x: { 
             grid: { display: false },
             ticks: {
-              autoSkip: true,
-              maxRotation: 45,
-              minRotation: 45
+              autoSkip: false
             }
           }
         }
       }
     });
+  }
+  
+  getRevenueChartTitle(): string {
+    if (this.revenueChartFilter.type === 'day') {
+      return `Revenus du ${this.datePipe.transform(new Date(), 'fullDate')}`;
+    } else if (this.revenueChartFilter.type === 'month') {
+      const monthName = this.months.find(m => m.value === this.revenueChartFilter.month)?.name;
+      return `Revenus mensuels - ${monthName} ${this.revenueChartFilter.year}`;
+    } else if (this.revenueChartFilter.type === 'year') {
+      return `Revenus annuels - ${this.revenueChartFilter.year}`;
+    }
+    return 'Revenus journaliers';
   }
 
   createPaymentsChart(): void {

@@ -1,54 +1,82 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:3000/api/'; 
+  private apiUrl = 'http://localhost:3000/api';
 
   constructor(private http: HttpClient) {}
 
-  // Récupérer tous les utilisateurs
+  private getAuthHeaders() {
+    return new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+  }
+
   getAllUsers(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/users`);
+    return this.http.get(`${this.apiUrl}/users`, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    });
   }
 
-  // Récupérer un utilisateur par ID
   getUserById(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/user/${id}`);
+    return this.http.get(`${this.apiUrl}/user/${id}`, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    });
   }
 
-  // Récupérer un utilisateur par email
   getUserByEmail(email: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/user/email/${email}`);
+    return this.http.get(`${this.apiUrl}/user/email/${email}`, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    });
   }
 
-  // Récupérer un utilisateur par username
   getUserByUsername(username: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/user/username/${username}`);
+    return this.http.get(`${this.apiUrl}/user/username/${username}`, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    });
   }
+
   addUser(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userData);
+    return this.http.post(`${this.apiUrl}/register`, userData, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    });
   }
-  // Mettre à jour un utilisateur
+
   updateUser(id: number, userData: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/update/${id}`, userData);
+    return this.http.put(`${this.apiUrl}/update/${id}`, userData, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    });
   }
 
-  // Supprimer un utilisateur
   deleteUser(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/user/${id}`);
+    return this.http.delete(`${this.apiUrl}/user/${id}`, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    });
   }
-  // Désactiver un utilisateur
+
   deactivateUser(id: number, reason: string): Observable<any> {
-  return this.http.put(`${this.apiUrl}/desactiver/${id}`, { reason });
+    return this.http.put(`${this.apiUrl}/desactiver/${id}`, { reason }, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    });
   }
 
-  // Réactiver un utilisateur
   reactivateUser(id: number): Observable<any> {
-  return this.http.put(`${this.apiUrl}/reactiver/${id}`, {});
+    return this.http.put(`${this.apiUrl}/reactiver/${id}`, {}, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    });
   }
-
 }

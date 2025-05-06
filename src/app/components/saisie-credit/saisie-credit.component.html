@@ -15,7 +15,11 @@
       <p>Scanner le QR code du véhicule pour commencer la transaction</p>
     </div>
 
- 
+    <!-- Message d'erreur global -->
+    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
 
     <div class="card">
       <div class="card-body">
@@ -96,14 +100,18 @@
                 <div class="card-body">
                   <form (ngSubmit)="submitTransaction()">
                     <div class="mb-3">
-                      <label for="amount" class="form-label">Montant total (DT)</label>
+                      <label for="amount" class="form-label">
+                        Montant total (DT) <span class="text-danger">*</span>
+                      </label>
                       <input type="number" step="0.01" min="0.01" class="form-control" id="amount" 
                             [(ngModel)]="transaction.amount" name="amount" required
                             (input)="calculateQuantity()">
                     </div>
 
                     <div class="mb-3">
-                      <label for="pricePerLiter" class="form-label">Prix par litre (DT)</label>
+                      <label for="pricePerLiter" class="form-label">
+                        Prix par litre (DT) <span class="text-danger">*</span>
+                      </label>
                       <input type="number" step="0.01" min="0.01" class="form-control" id="pricePerLiter" 
                             [(ngModel)]="transaction.pricePerLiter" name="pricePerLiter" required
                             (input)="calculateQuantity()">
@@ -115,8 +123,30 @@
                             [(ngModel)]="transaction.quantity" name="quantity" readonly>
                     </div>
 
+                    <!-- Photo Proof Section -->
+                    <div class="mb-3">
+                      <label for="proofPhoto" class="form-label">Preuve photo (optionnelle)</label>
+                      <div class="input-group">
+                        <button class="btn btn-outline-secondary" type="button" (click)="openCamera()">
+                          <i class="bi bi-camera"></i> Prendre une photo
+                        </button>
+                        <input type="file" class="form-control" id="proofPhoto" accept="image/*" capture="environment"
+                              (change)="onFileSelected($event)" style="display: none;">
+                        <input type="text" class="form-control" placeholder="Aucun fichier sélectionné" 
+                              [value]="proofPhotoName" readonly>
+                      </div>
+                      <small class="text-muted">Preuve visuelle de la transaction (optionnelle)</small>
+                    </div>
+
+                    <div *ngIf="proofPhotoPreview" class="mb-3 text-center">
+                      <img [src]="proofPhotoPreview" class="img-thumbnail" style="max-height: 200px;">
+                      <button type="button" class="btn btn-sm btn-danger ms-2" (click)="removePhoto()">
+                        <i class="bi bi-trash"></i> Supprimer
+                      </button>
+                    </div>
+
                     <div class="d-grid gap-2">
-                      <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || (creditInfo && transaction.amount && transaction.amount > creditInfo.solde_credit)">
+                      <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || (creditInfo && transaction.amount && transaction.amount > creditInfo.solde_disponible)">
                         <span *ngIf="!isSubmitting">
                           <i class="bi bi-check-circle"></i> Enregistrer
                         </span>
@@ -127,7 +157,7 @@
                       </button>
                     </div>
 
-                    <div *ngIf="creditInfo && transaction.amount && transaction.amount > creditInfo.solde_credit" 
+                    <div *ngIf="creditInfo && transaction.amount && transaction.amount > creditInfo.solde_disponible" 
                          class="alert alert-warning mt-3">
                       <i class="bi bi-exclamation-triangle"></i> Le montant saisi dépasse le solde disponible!
                     </div>
@@ -135,11 +165,7 @@
                 </div>
               </div>
             </div>
-               <!-- Message d'erreur global -->
-    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
-        <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
-      </div>
+
             <ng-template #noVehicleTemplate>
               <div class="text-center no-vehicle p-5">
                 <i class="bi bi-car-front" style="font-size: 5rem; color: #6c757d;"></i>

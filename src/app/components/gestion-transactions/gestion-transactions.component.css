@@ -1,0 +1,83 @@
+/* Ajoutez ce CSS dans votre fichier gestion-transactions.component.css */
+
+/* Style pour le modal */
+.modal-content {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+  }
+  
+  /* Style pour les cartes dans le modal */
+  .card {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  }
+  
+  .card-header {
+    font-weight: 600;
+  }
+  
+  /* Style pour la preuve de transaction */
+  .proof-container {
+    position: relative;
+    max-width: 100%;
+  }
+  
+  .proof-image {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #dee2e6;
+    max-height: 300px;
+  }
+  
+  .proof-image.zoomed {
+    transform: scale(1.5);
+    z-index: 1050;
+  }
+  
+  /* Overlay pour l'image zoomée */
+  .image-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1060;
+    cursor: zoom-out;
+  }
+  
+  .zoomed-image {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+  }
+  
+  /* Style pour les badges */
+  .badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+  }
+  
+  /* Style responsive */
+  @media (max-width: 768px) {
+    .modal-dialog {
+      margin: 0.5rem auto;
+    }
+    
+    .proof-image {
+      max-height: 200px;
+    }
+  }

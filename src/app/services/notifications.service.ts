@@ -1,8 +1,7 @@
-// services/notifications.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, interval } from 'rxjs';
-import { switchMap, startWith, tap, map } from 'rxjs/operators';
+import { switchMap, startWith, tap, map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -24,12 +23,22 @@ export class NotificationsService {
     ).subscribe();
   }
 
+  private getAuthHeaders() {
+    return new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+  }
+
   private refreshNotifications(): Observable<any> {
     if (!this.currentUserId) return new Observable();
     
     return this.getUnreadCount(this.currentUserId).pipe(
       tap(count => this.unreadCountSubject.next(count)),
-      switchMap(() => this.getNotifications(this.currentUserId!))
+      switchMap(() => this.getNotifications(this.currentUserId!)),
+      catchError(error => {
+        console.error('Error refreshing notifications:', error);
+        return [];
+      })
     );
   }
 
@@ -38,22 +47,30 @@ export class NotificationsService {
     this.refreshNotifications().subscribe();
   }
 
-// services/notifications.service.ts
-getNotifications(userId: number): Observable<any[]> {
-  return this.http.get<any>(`${this.baseUrl}/${userId}`).pipe(
-    map(response => response.data || []), // Extraction du tableau de données
-    tap(notifications => this.notificationsSubject.next(notifications))
-  );
-}
+  getNotifications(userId: number): Observable<any[]> {
+    return this.http.get<any>(`${this.baseUrl}/${userId}`, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    }).pipe(
+      map(response => response.data || []),
+      tap(notifications => this.notificationsSubject.next(notifications))
+    );
+  }
 
-getUnreadCount(userId: number): Observable<number> {
-  return this.http.get<any>(`${this.baseUrl}/unread-count/${userId}`).pipe(
-    map(response => response.count || 0) // Extraction du count
-  );
-}
+  getUnreadCount(userId: number): Observable<number> {
+    return this.http.get<any>(`${this.baseUrl}/unread-count/${userId}`, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    }).pipe(
+      map(response => response.count || 0)
+    );
+  }
 
   markNotificationAsRead(id: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/mark-as-read`, { id }).pipe(
+    return this.http.put(`${this.baseUrl}/mark-as-read`, { id }, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    }).pipe(
       tap(() => {
         const currentNotifications = this.notificationsSubject.value;
         const updatedNotifications = currentNotifications.map(notif => 
@@ -69,7 +86,10 @@ getUnreadCount(userId: number): Observable<number> {
 
   markAllAsRead(): Observable<any> {
     if (!this.currentUserId) return new Observable();
-    return this.http.put(`${this.baseUrl}/mark-all-as-read`, { id_utilisateur: this.currentUserId }).pipe(
+    return this.http.put(`${this.baseUrl}/mark-all-as-read`, { id_utilisateur: this.currentUserId }, {
+      headers: this.getAuthHeaders(),
+      withCredentials: true
+    }).pipe(
       tap(() => {
         const currentNotifications = this.notificationsSubject.value;
         const updatedNotifications = currentNotifications.map(notif => ({

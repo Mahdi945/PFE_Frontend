@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PompePistoletService } from '../../services/pompes-pistolets.service';
+import { GestionCreditsService } from '../../services/gestion-credits.service';
 import { CommonModule } from '@angular/common';
+import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -15,6 +17,7 @@ import * as XLSX from 'xlsx';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     RouterModule,
     NavbarComponent,
     SidebarComponent,
@@ -28,14 +31,20 @@ export class VisualiserRevenuesComponent implements OnInit {
   reportForm: FormGroup;
   manualReleveForm: FormGroup;
   manualReportForm: FormGroup;
+  relevesFilterForm: FormGroup;
+  
   revenuesData: any[] = [];
+  paymentsData: any[] = [];
+  filteredPayments: any[] = [];
   pistolets: any[] = [];
   affectations: any[] = [];
+  relevesPostes: any[] = [];
+  
   loading: boolean = false;
+  loadingReleves: boolean = false;
   generatingReport: boolean = false;
   activeTab: string = 'visualisation';
   
-  // Modales
   showSuccessModal: boolean = false;
   showErrorModal: boolean = false;
   showInfoModal: boolean = false;
@@ -43,29 +52,25 @@ export class VisualiserRevenuesComponent implements OnInit {
   countdown: number = 5;
   countdownInterval: any;
 
-  // Taux de conversion Euro vers Dinar Tunisien
-  tauxConversion = 3.24;
-
   constructor(
     private fb: FormBuilder,
-    private pompeService: PompePistoletService
+    private pompeService: PompePistoletService,
+    private creditService: GestionCreditsService
   ) {
     const today = new Date().toISOString().split('T')[0];
     
-    // Formulaire de filtres
     this.filterForm = this.fb.group({
       date_debut: [today],
       date_fin: [today],
       pistolet_id: [''],
-      poste_id: ['']
+      poste_id: [''],
+      payment_date: [today]
     });
 
-    // Formulaire de génération de rapport
     this.reportForm = this.fb.group({
       report_date: [today]
     });
 
-    // Formulaire d'ajout manuel de relevé
     this.manualReleveForm = this.fb.group({
       affectation_id: ['', Validators.required],
       pistolet_id: ['', Validators.required],
@@ -74,19 +79,27 @@ export class VisualiserRevenuesComponent implements OnInit {
       date_heure: [today, Validators.required]
     });
 
-    // Formulaire d'ajout manuel de rapport
     this.manualReportForm = this.fb.group({
       date_rapport: [today, Validators.required],
       pistolet_id: ['', Validators.required],
       total_quantite: ['', [Validators.required, Validators.min(0)]],
       total_montant: ['', [Validators.required, Validators.min(0)]]
     });
+
+    this.relevesFilterForm = this.fb.group({
+      date_debut: [today],
+      date_fin: [today],
+      pistolet_id: [''],
+      statut: ['']
+    });
   }
 
   ngOnInit(): void {
     this.loadPistolets();
     this.loadRevenues();
+    this.loadPayments();
     this.loadAffectations();
+    this.loadRelevesPostes();
   }
 
   loadPistolets(): void {
@@ -108,6 +121,7 @@ export class VisualiserRevenuesComponent implements OnInit {
     this.loading = true;
     // Implémentez cette méthode dans votre service si nécessaire
     // this.pompeService.getAffectations().subscribe(...)
+    this.loading = false;
   }
 
   loadRevenues(): void {
@@ -140,11 +154,77 @@ export class VisualiserRevenuesComponent implements OnInit {
     });
   }
 
+  loadRelevesPostes(): void {
+    this.loadingReleves = true;
+    const filters = this.relevesFilterForm.value;
+
+    this.pompeService.getHistoriqueReleves(
+      filters.pistolet_id || 0,
+      filters.date_debut,
+      filters.date_fin
+    ).subscribe({
+      next: (releves) => {
+        this.relevesPostes = releves || [];
+        
+        // Filtrer par statut si spécifié
+        if (filters.statut) {
+          this.relevesPostes = this.relevesPostes.filter(r => r.statut === filters.statut);
+        }
+        
+        this.loadingReleves = false;
+      },
+      error: (err) => {
+        console.error('Erreur chargement relevés:', err);
+        this.loadingReleves = false;
+        this.showError(err.error?.message || 'Erreur lors du chargement des relevés');
+      }
+    });
+  }
+
+  loadPayments(): void {
+    this.loading = true;
+    const paymentDate = this.filterForm.get('payment_date')?.value;
+
+    this.creditService.getAllPayments().subscribe({
+      next: (response: any) => {
+        this.loading = false;
+        
+        let payments = [];
+        if (Array.isArray(response)) {
+          payments = response;
+        } else if (response && Array.isArray(response.data)) {
+          payments = response.data;
+        }
+
+        this.paymentsData = payments;
+        this.filterPaymentsByDate(paymentDate);
+      },
+      error: (err) => {
+        console.error('Erreur chargement paiements:', err);
+        this.loading = false;
+        this.paymentsData = [];
+        this.filteredPayments = [];
+        this.showError(err.error?.message || 'Erreur lors du chargement des paiements');
+      }
+    });
+  }
+
+  filterPaymentsByDate(date: string): void {
+    if (!date) {
+      this.filteredPayments = [...this.paymentsData];
+      return;
+    }
+
+    const selectedDate = new Date(date).toDateString();
+    this.filteredPayments = this.paymentsData.filter(p => 
+      new Date(p.date_paiement).toDateString() === selectedDate
+    );
+  }
+
   processRevenueData(data: any[]): any[] {
     const groupedData: {[key: string]: any} = {};
 
     data.forEach(item => {
-      // Utilisation directe des valeurs sans conversion
       const montant = parseFloat(item.montant) || 0;
       const prixUnitaire = parseFloat(item.prix_unitaire) || 0;
       const quantite = parseFloat(item.quantite) || 0;
@@ -161,9 +241,9 @@ export class VisualiserRevenuesComponent implements OnInit {
           prix_unitaire: prixUnitaire,
           nom_pompiste: item.nom_pompiste || 'Non spécifié',
           postes: {
-            1: { quantite: 0, montant: 0 }, // Matin
-            2: { quantite: 0, montant: 0 }, // Après-midi
-            3: { quantite: 0, montant: 0 }  // Nuit
+            1: { quantite: 0, montant: 0 },
+            2: { quantite: 0, montant: 0 },
+            3: { quantite: 0, montant: 0 }
           },
           total_quantite: 0,
           total_montant: 0
@@ -182,6 +262,7 @@ export class VisualiserRevenuesComponent implements OnInit {
 
     return Object.values(groupedData);
   }
+
   generateReport(): void {
     if (!this.reportForm.valid) {
       this.showError('Veuillez sélectionner une date valide');
@@ -253,37 +334,85 @@ export class VisualiserRevenuesComponent implements OnInit {
     });
   }
 
-  exportToExcel(): void {
-    const dataToExport = this.revenuesData.map(item => {
-      const excelData: any = {
-        'Date': item.date,
-        'Produit': item.nom_produit,
-        'Pompiste': item.nom_pompiste,
-        'Prix Unitaire (DT)': item.prix_unitaire
-      };
-
-      // Ajout des quantités et montants par poste
-      excelData['Matin (Quantité)'] = item.postes[1].quantite;
-      excelData['Après-midi (Quantité)'] = item.postes[2].quantite;
-      excelData['Nuit (Quantité)'] = item.postes[3].quantite;
-      
-      excelData['Matin (Montant DT)'] = item.postes[1].montant;
-      excelData['Après-midi (Montant DT)'] = item.postes[2].montant;
-      excelData['Nuit (Montant DT)'] = item.postes[3].montant;
-      
-      // Totaux
-      excelData['Total (Quantité)'] = item.total_quantite;
-      excelData['Total (Montant DT)'] = item.total_montant;
-
-      return excelData;
+  updateReleveStatut(releveId: number, newStatut: string): void {
+    this.pompeService.updateStatutReleve(releveId, newStatut).subscribe({
+      next: (response) => {
+        this.showSuccess('Statut du relevé mis à jour avec succès');
+        this.loadRelevesPostes();
+      },
+      error: (err) => {
+        console.error('Erreur mise à jour statut:', err);
+        this.showError(err.error?.message || 'Erreur lors de la mise à jour du statut');
+        // Recharger pour récupérer le statut actuel
+        this.loadRelevesPostes();
+      }
     });
+  }
 
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook: XLSX.WorkBook = { 
-      Sheets: { 'Revenus': worksheet }, 
-      SheetNames: ['Revenus'] 
-    };
-    XLSX.writeFile(workbook, `Revenus_${new Date().toISOString().split('T')[0]}.xlsx`);
+  getPistoletInfo(pistoletId: number): any {
+    return this.pistolets.find(p => p.id === pistoletId);
+  }
+
+  confirmDeleteReleve(releveId: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce relevé ? Cette action est irréversible.')) {
+      this.deleteReleve(releveId);
+    }
+  }
+
+  deleteReleve(releveId: number): void {
+    this.loadingReleves = true;
+    // Pour l'instant, nous allons juste mettre à jour le statut à "annule"
+    this.updateReleveStatut(releveId, 'annule');
+  }
+
+  exportToExcel(): void {
+    // Données des revenus
+    const revenueData = this.revenuesData.map(item => ({
+      'Date': item.date,
+      'Produit': item.nom_produit,
+      'Pompiste': item.nom_pompiste,
+      'Prix Unitaire (DT)': item.prix_unitaire,
+      'Matin (Quantité)': item.postes[1].quantite,
+      'Après-midi (Quantité)': item.postes[2].quantite,
+      'Nuit (Quantité)': item.postes[3].quantite,
+      'Total (Quantité)': item.total_quantite,
+      'Matin (Montant DT)': item.postes[1].montant,
+      'Après-midi (Montant DT)': item.postes[2].montant,
+      'Nuit (Montant DT)': item.postes[3].montant,
+      'Total (Montant DT)': item.total_montant
+    }));
+
+    // Données des paiements
+    const paymentData = this.filteredPayments.map(p => ({
+      'Référence': p.reference_paiement || 'N/A',
+      'Client': p.username || 'Inconnu',
+      'Montant (DT)': p.montant_paye,
+      'Date': new Date(p.date_paiement).toLocaleDateString(),
+      'Mode': this.getPaymentModeLabel(p.mode_paiement)
+    }));
+
+    // Calcul des totaux
+    const totalRevenus = this.getTotalMontant();
+    const totalPaiements = this.getTotalPayments();
+    const totalCaisse = totalRevenus + totalPaiements;
+
+    // Données de résumé
+    const summaryData = [
+      {'Description': 'TOTAL REVENUS PISTOLETS', 'Montant (DT)': totalRevenus},
+      {'Description': 'TOTAL PAIEMENTS CREDITS', 'Montant (DT)': totalPaiements},
+      {'Description': 'TOTAL CAISSE', 'Montant (DT)': totalCaisse}
+    ];
+
+    // Création du workbook
+    const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+    
+    // Ajout des feuilles
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(revenueData), 'Revenus');
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(paymentData), 'Paiements');
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(summaryData), 'Résumé');
+
+    // Export
+    XLSX.writeFile(workbook, `Caisse_${new Date().toISOString().split('T')[0]}.xlsx`);
   }
 
   calculateEcart(item: any): number {
@@ -294,31 +423,37 @@ export class VisualiserRevenuesComponent implements OnInit {
     ];
     return Math.max(...quantites) - Math.min(...quantites);
   }
-  // Calcul des totaux généraux
-getTotalQuantite(): number {
-  return this.revenuesData.reduce((sum, item) => sum + (item.total_quantite || 0), 0);
-}
 
-getTotalMontant(): number {
-  return this.revenuesData.reduce((sum, item) => sum + (item.total_montant || 0), 0);
-}
+  getTotalQuantite(): number {
+    return this.revenuesData.reduce((sum, item) => sum + (item.total_quantite || 0), 0);
+  }
 
-// Calcul des totaux par poste
-getTotalQuantitePoste(posteId: number): number {
-  return this.revenuesData.reduce((sum, item) => sum + (item.postes[posteId]?.quantite || 0), 0);
-}
+  getTotalMontant(): number {
+    return this.revenuesData.reduce((sum, item) => sum + (item.total_montant || 0), 0);
+  }
 
-getTotalMontantPoste(posteId: number): number {
-  return this.revenuesData.reduce((sum, item) => sum + (item.postes[posteId]?.montant || 0), 0);
-}
+  getTotalQuantitePoste(posteId: number): number {
+    return this.revenuesData.reduce((sum, item) => sum + (item.postes[posteId]?.quantite || 0), 0);
+  }
 
-// Calcul de la recette d'aujourd'hui
-getRecetteAujourdhui(): number {
-  const today = new Date().toISOString().split('T')[0];
-  return this.revenuesData
-    .filter(item => item.date === today)
-    .reduce((sum, item) => sum + (item.total_montant || 0), 0);
-}
+  getTotalMontantPoste(posteId: number): number {
+    return this.revenuesData.reduce((sum, item) => sum + (item.postes[posteId]?.montant || 0), 0);
+  }
+
+  getTotalPayments(): number {
+    return this.filteredPayments.reduce((sum, p) => sum + (p.montant_paye || 0), 0);
+  }
+
+  getPaymentModeLabel(mode: string): string {
+    switch(mode) {
+      case 'especes': return 'Espèces';
+      case 'carte': return 'Carte';
+      case 'virement': return 'Virement';
+      case 'cheque': return 'Chèque';
+      default: return mode;
+    }
+  }
+
   showSuccess(message: string): void {
     this.modalMessage = message;
     this.showSuccessModal = true;

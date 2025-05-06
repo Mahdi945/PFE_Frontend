@@ -107,66 +107,73 @@
   </div>
 </main>
 
-<!-- Modal de détails -->
-<div class="modal fade show" [class.show]="showDetailsModal" style="display: block; background-color: rgba(0,0,0,0.5);" *ngIf="showDetailsModal && selectedTransaction">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
+<!-- Modal de détails amélioré -->
+<div class="modal fade show" [class.show]="showDetailsModal" tabindex="-1" role="dialog" 
+     [ngStyle]="{'display': showDetailsModal ? 'block' : 'none', 'background-color': 'rgba(0,0,0,0.7)'}" 
+     *ngIf="showDetailsModal && selectedTransaction">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content shadow-lg">
       <div class="modal-header bg-primary text-white">
         <h5 class="modal-title">Détails de la transaction #{{ selectedTransaction.id }}</h5>
-        <button type="button" class="btn-close btn-close-white" (click)="closeDetails()"></button>
+        <button type="button" class="btn-close btn-close-white" (click)="closeDetails()" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="row">
+        <div class="row g-3">
           <div class="col-md-6">
-            <div class="card mb-3">
+            <div class="card h-100 border-primary">
               <div class="card-header bg-light">
-                <h6>Informations transaction</h6>
+                <h6><i class="bi bi-receipt"></i> Informations transaction</h6>
               </div>
               <div class="card-body">
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">
-                    <strong>Date:</strong> {{ selectedTransaction.date_transaction | date:'dd/MM/yyyy HH:mm' }}
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Date:</strong> 
+                    <span>{{ selectedTransaction.date_transaction | date:'dd/MM/yyyy HH:mm' }}</span>
                   </li>
-                  <li class="list-group-item">
-                    <strong>Quantité:</strong> {{ selectedTransaction.quantite | number:'1.2-2' }} L
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Quantité:</strong> 
+                    <span class="badge bg-primary rounded-pill">{{ selectedTransaction.quantite | number:'1.2-2' }} L</span>
                   </li>
-                  <li class="list-group-item">
-                    <strong>Montant:</strong> {{ selectedTransaction.montant | number:'1.2-2' }} DT
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Montant:</strong> 
+                    <span class="badge bg-success rounded-pill">{{ selectedTransaction.montant | number:'1.2-2' }} DT</span>
                   </li>
                 </ul>
               </div>
             </div>
           </div>
+          
           <div class="col-md-6">
-            <div class="card mb-3">
+            <div class="card h-100 border-primary">
               <div class="card-header bg-light">
-                <h6>Informations utilisateur</h6>
+                <h6><i class="bi bi-person"></i> Informations utilisateur</h6>
               </div>
               <div class="card-body">
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
-                    <strong>Nom complet du Client:</strong> {{ selectedTransaction.username }}
+                    <strong>Nom complet:</strong> {{ selectedTransaction.username }}
                   </li>
                   <li class="list-group-item">
                     <strong>Email:</strong> {{ selectedTransaction.email }}
                   </li>
                   <li class="list-group-item">
-                    <strong>Numero de Telephone:</strong> {{ selectedTransaction.numero_telephone }}
+                    <strong>Téléphone:</strong> {{ selectedTransaction.numero_telephone }}
                   </li>
-                
                 </ul>
               </div>
             </div>
           </div>
+          
           <div class="col-md-6">
-            <div class="card mb-3">
+            <div class="card h-100 border-primary">
               <div class="card-header bg-light">
-                <h6>Informations véhicule</h6>
+                <h6><i class="bi bi-car-front"></i> Informations véhicule</h6>
               </div>
               <div class="card-body">
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
-                    <strong>Immatriculation:</strong> {{ selectedTransaction.immatriculation }}
+                    <strong>Immatriculation:</strong> 
+                    <span class="badge bg-dark">{{ selectedTransaction.immatriculation }}</span>
                   </li>
                   <li class="list-group-item">
                     <strong>Marque:</strong> {{ selectedTransaction.marque }}
@@ -178,36 +185,80 @@
               </div>
             </div>
           </div>
+          
           <div class="col-md-6">
-            <div class="card">
+            <div class="card h-100 border-primary">
               <div class="card-header bg-light">
-                <h6>Informations crédit</h6>
+                <h6><i class="bi bi-credit-card"></i> Informations crédit</h6>
               </div>
               <div class="card-body">
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">
-                    <strong>ID Crédit:</strong> {{ selectedTransaction.id_credit }}
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>ID Crédit:</strong> 
+                    <span class="badge bg-info">{{ selectedTransaction.id_credit }}</span>
                   </li>
-                  <li class="list-group-item">
-                    <strong>Solde crédit:</strong> {{ selectedTransaction.solde_credit | number:'1.2-2' }} DT
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Solde crédit:</strong> 
+                    <span>{{ selectedTransaction.solde_credit | number:'1.2-2' }} DT</span>
                   </li>
-                  <li class="list-group-item">
-                    <strong>Crédit utilisé:</strong> {{ selectedTransaction.credit_utilise | number:'1.2-2' }} DT
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Crédit utilisé:</strong> 
+                    <span class="text-danger">{{ selectedTransaction.credit_utilise | number:'1.2-2' }} DT</span>
                   </li>
-                  <li class="list-group-item">
-                    <strong>Montant restant:</strong> {{ selectedTransaction.montant_restant | number:'1.2-2' }} DT
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Montant restant:</strong> 
+                    <span class="text-success">{{ selectedTransaction.montant_restant | number:'1.2-2' }} DT</span>
                   </li>
                 </ul>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Section Preuve de transaction -->
+          <div class="col-12">
+            <div class="card border-primary">
+              <div class="card-header bg-light">
+                <h6><i class="bi bi-image"></i> Preuve de transaction</h6>
+              </div>
+              <div class="card-body text-center">
+                <div *ngIf="selectedTransaction.preuve; else noProof" class="proof-container">
+                  <img [src]="selectedTransaction.preuve" 
+                       alt="Preuve de transaction" 
+                       class="img-fluid proof-image rounded shadow-sm"
+                       [class.zoomed]="isImageZoomed"
+                       (click)="toggleImageZoom()">
+                  <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-primary" (click)="toggleImageZoom()">
+                      <i class="bi" [class.bi-zoom-in]="!isImageZoomed" [class.bi-zoom-out]="isImageZoomed"></i>
+                      {{ isImageZoomed ? 'Réduire' : 'Agrandir' }}
+                    </button>
+                    <a [href]="selectedTransaction.preuve" download class="btn btn-sm btn-outline-success ms-2">
+                      <i class="bi bi-download"></i> Télécharger
+                    </a>
+                  </div>
+                </div>
+                <ng-template #noProof>
+                  <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> Aucune preuve de transaction disponible
+                  </div>
+                </ng-template>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeDetails()">Fermer</button>
+        <button type="button" class="btn btn-secondary" (click)="closeDetails()">
+          <i class="bi bi-x-circle"></i> Fermer
+        </button>
       </div>
     </div>
   </div>
+</div>
+
+<!-- Overlay pour l'image zoomée -->
+<div class="image-overlay" *ngIf="isImageZoomed" (click)="toggleImageZoom()">
+  <img [src]="selectedTransaction?.preuve" class="zoomed-image">
 </div>
 
 <app-footer></app-footer>

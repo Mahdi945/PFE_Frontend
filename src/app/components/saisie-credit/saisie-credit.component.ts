@@ -58,6 +58,11 @@ export class SaisieCreditComponent implements OnInit, AfterViewInit, OnDestroy {
     pricePerLiter: 10.50
   };
 
+  // Photo proof
+  proofPhoto: File | null = null;
+  proofPhotoName: string = '';
+  proofPhotoPreview: string | null = null;
+
   constructor(
     private gestionCreditsService: GestionCreditsService,
     private toastr: ToastrService,
@@ -80,6 +85,36 @@ export class SaisieCreditComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // Photo proof methods
+  openCamera(): void {
+    const fileInput = document.getElementById('proofPhoto') as HTMLInputElement;
+    fileInput.click();
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.proofPhoto = input.files[0];
+      this.proofPhotoName = this.proofPhoto.name;
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.proofPhotoPreview = e.target.result;
+      };
+      reader.readAsDataURL(this.proofPhoto);
+    }
+  }
+
+  removePhoto(): void {
+    this.proofPhoto = null;
+    this.proofPhotoName = '';
+    this.proofPhotoPreview = null;
+    const fileInput = document.getElementById('proofPhoto') as HTMLInputElement;
+    fileInput.value = '';
+  }
+
+  // Scanner methods
   initializeScanner(): void {
     if (this.scanner) {
       this.scanner.camerasFound.subscribe((devices: MediaDeviceInfo[]) => {
@@ -334,22 +369,25 @@ export class SaisieCreditComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const soldeDisponible = this.soldeDisponible;
     if (this.transaction.amount > soldeDisponible) {
-      this.errorMessage = `Le montant saisi (${this.transaction.amount} MAD) dépasse le solde disponible (${soldeDisponible} MAD)`;
+      this.errorMessage = `Le montant saisi (${this.transaction.amount} DT) dépasse le solde disponible (${soldeDisponible} DT)`;
       this.toastr.error(this.errorMessage, 'Erreur');
       return;
     }
 
     this.isSubmitting = true;
 
-    const transactionData = {
-      id_vehicule: this.scannedVehicule.id,
-      id_credit: this.scannedVehicule.id_credit,
-      quantite: this.transaction.quantity,
-      montant: this.transaction.amount,
-      prix_litre: this.transaction.pricePerLiter
-    };
+    const formData = new FormData();
+    formData.append('id_vehicule', this.scannedVehicule.id);
+    formData.append('id_credit', this.scannedVehicule.id_credit);
+    formData.append('quantite', this.transaction.quantity?.toString() || '0');
+    formData.append('montant', this.transaction.amount?.toString() || '0');
+    formData.append('prix_litre', this.transaction.pricePerLiter.toString());
+    
+    if (this.proofPhoto) {
+      formData.append('preuve', this.proofPhoto);
+    }
 
-    this.gestionCreditsService.createTransaction(transactionData).subscribe({
+    this.gestionCreditsService.createTransaction(formData).subscribe({
       next: () => {
         this.isSubmitting = false;
         this.showSuccessModal = true;
@@ -398,5 +436,6 @@ export class SaisieCreditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isProcessingScan = false;
     this.errorMessage = '';
     this.lastScannedData = null;
+    this.removePhoto();
   }
 }

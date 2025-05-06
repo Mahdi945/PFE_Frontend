@@ -25,6 +25,7 @@ interface Transaction {
   montant_restant: number;
   numero_telephone: number;
   email: string;
+  preuve: string; // Ajout de l'URL de la preuve
 }
 
 @Component({
@@ -46,8 +47,9 @@ export class GestionTransactionsComponent implements OnInit {
   isLoading: boolean = false;
   showDetailsModal: boolean = false;
   selectedTransaction: Transaction | null = null;
+  isImageZoomed: boolean = false;
 
-  // Filtres simplifiés
+  // Filtres
   searchTerm: string = '';
   selectedCredit: number | null = null;
   selectedUser: number | null = null;
@@ -78,7 +80,8 @@ export class GestionTransactionsComponent implements OnInit {
       next: (data: any) => {
         this.transactions = Array.isArray(data) ? data.map(t => ({
           ...t,
-          montant_restant: t.solde_credit - t.credit_utilise
+          montant_restant: t.solde_credit - t.credit_utilise,
+          preuve: t.preuve || 'assets/imag/img1.jpg' // Chemin par défaut si aucune image
         })) : [];
         this.filterTransactions();
         this.isLoading = false;
@@ -164,11 +167,24 @@ export class GestionTransactionsComponent implements OnInit {
   openDetails(transaction: Transaction): void {
     this.selectedTransaction = transaction;
     this.showDetailsModal = true;
+    this.isImageZoomed = false; // Réinitialiser le zoom
+    document.body.style.overflow = 'hidden'; // Empêcher le défilement de la page
   }
 
   closeDetails(): void {
     this.showDetailsModal = false;
     this.selectedTransaction = null;
+    this.isImageZoomed = false;
+    document.body.style.overflow = ''; // Rétablir le défilement
+  }
+
+  toggleImageZoom(): void {
+    this.isImageZoomed = !this.isImageZoomed;
+    if (this.isImageZoomed) {
+      document.body.style.overflow = 'hidden'; // Empêcher le défilement quand l'image est zoomée
+    } else {
+      document.body.style.overflow = ''; // Rétablir le défilement
+    }
   }
 
   exportToExcel(): void {
@@ -188,7 +204,6 @@ export class GestionTransactionsComponent implements OnInit {
       'Immatriculation': t.immatriculation,
       'Quantité (L)': t.quantite,
       'Montant (DT)': t.montant,
-      'Solde Crédit': t.solde_credit,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(data);
