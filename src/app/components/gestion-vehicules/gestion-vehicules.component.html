@@ -1,0 +1,663 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <div class="container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item">Crédits</li>
+        <li class="breadcrumb-item active">Enregistrer Véhicule</li>
+      </ol>
+    </nav>
+
+    <!-- Titre de page amélioré -->
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+      <div class="title-text-content">
+        <h1 class="title-main">Liste des Véhicules</h1>
+      </div>
+
+      <button
+        class="btn btn-success"
+        (click)="openAddModal()"
+      >
+        <i class="bi bi-plus-circle"></i> Ajouter Véhicule
+      </button>
+    </div>
+
+    <!-- Filtres améliorés avec icônes et espacement égal -->
+    <div class="row mb-4 g-3">
+      <!-- Recherche par immatriculation/propriétaire -->
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-car-front"></i></span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Immatriculation ou propriétaire"
+            [(ngModel)]="searchTerm"
+            (input)="filterVehicules()"
+          />
+        </div>
+      </div>
+
+      <!-- Recherche par ID Crédit -->
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+          <input
+            type="number"
+            class="form-control"
+            placeholder="ID Crédit"
+            [(ngModel)]="searchCreditId"
+            (input)="filterVehicules()"
+          />
+        </div>
+      </div>
+
+      <!-- Filtre par type de véhicule -->
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-gear"></i></span>
+          <select
+            class="form-select"
+            [(ngModel)]="selectedType"
+            (change)="filterVehicules()"
+          >
+            <option value="">Tous les types</option>
+            <option value="voiture">Voiture</option>
+            <option value="camion">Camion</option>
+            <option value="bus">Bus</option>
+            <option value="moto">Moto</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Filtre par état du crédit -->
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-info-circle"></i></span>
+          <select
+            class="form-select"
+            [(ngModel)]="selectedEtatCredit"
+            (change)="filterVehicules()"
+          >
+            <option value="">Tous les états</option>
+            <option value="actif">Actif</option>
+            <option value="expiré">Expiré</option>
+            <option value="annulé">Annulé</option>
+            <option value="remboursé">Remboursé</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau des véhicules -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Propriétaire</th>
+            <th>Immatriculation</th>
+            <th>Marque</th>
+            <th>Type</th>
+            <th>État Crédit</th>
+            <th>QR Code</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="isLoading">
+            <td
+              colspan="7"
+              class="text-center"
+            >
+              <div
+                class="spinner-border text-primary"
+                role="status"
+              ></div>
+            </td>
+          </tr>
+          <tr *ngIf="!isLoading && filteredVehicules.length === 0">
+            <td
+              colspan="7"
+              class="text-center"
+            >
+              Aucun véhicule trouvé
+            </td>
+          </tr>
+          <tr
+            *ngFor="let vehicule of paginatedVehicules()"
+            class="clickable-row"
+            (click)="showVehiculeDetails(vehicule)"
+          >
+            <td>{{ vehicule.username || 'N/A' }}</td>
+            <td>{{ vehicule.immatriculation || 'N/A' }}</td>
+            <td>{{ vehicule.marque || 'N/A' }}</td>
+            <td>
+              <span
+                class="badge"
+                [class]="getTypeBadgeClass(vehicule.type_vehicule)"
+              >
+                <i [class]="getTypeIcon(vehicule.type_vehicule)"></i>
+                {{ vehicule.type_vehicule || 'N/A' }}
+              </span>
+            </td>
+            <td>
+              <span
+                [class]="getBadgeClass(vehicule.credit_etat)"
+                class="badge"
+              >
+                <i [class]="getEtatIcon(vehicule.credit_etat)"></i>
+                {{ vehicule.credit_etat || 'N/A' }}
+              </span>
+            </td>
+            <td (click)="$event.stopPropagation()">
+              <img
+                *ngIf="vehicule.qr_code"
+                [src]="vehicule.qr_code"
+                class="qr-code-table"
+                alt="QR Code"
+                (click)="onQrCodeClick($event, vehicule)"
+                title="Cliquer pour imprimer"
+              />
+              <span
+                *ngIf="!vehicule.qr_code"
+                class="text-muted"
+                >N/A</span
+              >
+            </td>
+            <td (click)="$event.stopPropagation()">
+              <button
+                class="btn-action-view me-2"
+                (click)="showVehiculeDetails(vehicule)"
+                title="Voir détails"
+              >
+                <i class="bi bi-eye"></i>
+              </button>
+              <button
+                *ngIf="vehicule.credit_etat === 'remboursé' || vehicule.credit_etat === 'expiré'"
+                class="btn-action-renew"
+                (click)="openRenewModal(vehicule)"
+                title="Renouveler"
+              >
+                <i class="bi bi-arrow-repeat"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav *ngIf="totalPages > 1 && filteredVehicules.length > 0">
+      <ul class="pagination justify-content-center">
+        <li
+          class="page-item"
+          [class.disabled]="currentPage === 1"
+        >
+          <a
+            class="page-link"
+            (click)="changePage(currentPage - 1)"
+            >Précédent</a
+          >
+        </li>
+        <li
+          class="page-item"
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          [class.active]="i + 1 === currentPage"
+        >
+          <a
+            class="page-link"
+            (click)="changePage(i + 1)"
+            >{{ i + 1 }}</a
+          >
+        </li>
+        <li
+          class="page-item"
+          [class.disabled]="currentPage === totalPages"
+        >
+          <a
+            class="page-link"
+            (click)="changePage(currentPage + 1)"
+            >Suivant</a
+          >
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <!-- Modal Détails de véhicule -->
+  <div
+    *ngIf="showDetailsModal"
+    class="modal-overlay"
+    (click)="closeDetailsModal()"
+  >
+    <div
+      class="modal-dialog-vehicule"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-content-vehicule">
+        <div class="modal-header-vehicule">
+          <div class="vehicule-info-header">
+            <div class="vehicule-icon">
+              <i
+                [class]="getTypeIcon(selectedVehicule?.type_vehicule)"
+                class="vehicule-type-icon"
+              ></i>
+            </div>
+            <div class="vehicule-title-info">
+              <h3>{{ selectedVehicule?.immatriculation }}</h3>
+              <p>{{ selectedVehicule?.marque }} - {{ selectedVehicule?.type_vehicule }}</p>
+            </div>
+          </div>
+          <button
+            class="btn-close-vehicule"
+            (click)="closeDetailsModal()"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <div class="modal-body-vehicule">
+          <!-- Représentation visuelle du véhicule -->
+          <div class="vehicule-visual-card">
+            <div class="vehicule-representation">
+              <div class="vehicule-front">
+                <div class="vehicule-plate">
+                  {{ selectedVehicule?.immatriculation }}
+                </div>
+                <div class="vehicule-brand">
+                  {{ selectedVehicule?.marque }}
+                </div>
+              </div>
+              <div class="vehicule-back">
+                <div
+                  *ngIf="selectedVehicule?.qr_code"
+                  class="qr-code-back"
+                >
+                  <img
+                    [src]="selectedVehicule.qr_code"
+                    alt="QR Code"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="vehicule-details-grid">
+            <div class="detail-card">
+              <div class="detail-icon">
+                <i class="bi bi-person-fill"></i>
+              </div>
+              <div class="detail-content">
+                <h4>Propriétaire</h4>
+                <p>{{ selectedVehicule?.username || 'N/A' }}</p>
+                <small>ID Utilisateur: {{ selectedVehicule?.id_utilisateur || 'N/A' }}</small>
+              </div>
+            </div>
+
+            <div class="detail-card">
+              <div class="detail-icon">
+                <i class="bi bi-credit-card-2-front"></i>
+              </div>
+              <div class="detail-content">
+                <h4>Crédit Associé</h4>
+                <p>ID: {{ selectedVehicule?.id_credit || 'N/A' }}</p>
+                <small
+                  >État:
+                  <span
+                    [class]="getBadgeClass(selectedVehicule?.credit_etat)"
+                    class="badge"
+                    >{{ selectedVehicule?.credit_etat || 'N/A' }}</span
+                  ></small
+                >
+              </div>
+            </div>
+
+            <div class="detail-card">
+              <div class="detail-icon">
+                <i [class]="getTypeIcon(selectedVehicule?.type_vehicule)"></i>
+              </div>
+              <div class="detail-content">
+                <h4>Informations Véhicule</h4>
+                <p>{{ selectedVehicule?.marque }} {{ selectedVehicule?.type_vehicule }}</p>
+                <small>Immatriculation: {{ selectedVehicule?.immatriculation }}</small>
+              </div>
+            </div>
+
+            <div
+              class="detail-card"
+              *ngIf="selectedVehicule?.qr_code"
+            >
+              <div class="detail-icon">
+                <i class="bi bi-qr-code"></i>
+              </div>
+              <div class="detail-content">
+                <h4>QR Code</h4>
+                <div class="qr-code-container">
+                  <img
+                    [src]="selectedVehicule.qr_code"
+                    alt="QR Code"
+                    class="qr-code-preview"
+                  />
+                </div>
+                <button
+                  class="btn-print-qr"
+                  (click)="printQrCode()"
+                >
+                  <i class="bi bi-printer"></i> Imprimer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer-vehicule">
+          <button
+            *ngIf="
+              selectedVehicule?.credit_etat === 'remboursé' ||
+              selectedVehicule?.credit_etat === 'expiré'
+            "
+            class="btn-renew-vehicule-footer"
+            (click)="openRenewModal(selectedVehicule)"
+          >
+            <i class="bi bi-arrow-repeat"></i> Renouveler
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal d'ajout de véhicule moderne -->
+  <div
+    *ngIf="isModalOpen"
+    class="modal-overlay"
+    (click)="closeModal()"
+  >
+    <div
+      class="modal-dialog-custom"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-content-custom">
+        <div class="modal-header-modern add-vehicle-header">
+          <div class="modal-header-content">
+            <div class="modal-icon-header">
+              <i class="bi bi-car-front-fill"></i>
+            </div>
+            <div>
+              <h3 class="modal-title">Ajouter Véhicule</h3>
+              <p>Enregistrer un nouveau véhicule</p>
+            </div>
+          </div>
+          <button
+            class="btn-close-modern"
+            (click)="closeModal()"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <div class="modal-body-modern">
+          <form (ngSubmit)="addVehicule()">
+            <div class="form-group-modern mb-4 position-relative">
+              <label class="form-label-modern">
+                <i class="bi bi-credit-card me-2"></i>Crédit
+              </label>
+              <input
+                type="text"
+                class="form-control-modern"
+                [(ngModel)]="creditSearchTerm"
+                name="creditSearch"
+                (input)="filterCreditList($event)"
+                placeholder="Rechercher par ID ou nom client"
+                required
+              />
+              <div
+                *ngIf="showCreditDropdown && filteredCredits.length > 0"
+                class="credit-dropdown"
+              >
+                <div
+                  *ngFor="let credit of filteredCredits"
+                  class="dropdown-item"
+                  (click)="selectCredit(credit)"
+                >
+                  #{{ credit.id }} - {{ credit.utilisateur || 'N/A' }} ({{
+                    credit.type_credit || 'N/A'
+                  }})
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group-modern mb-4">
+              <label class="form-label-modern">
+                <i class="bi bi-card-text me-2"></i>Immatriculation
+              </label>
+              <input
+                type="text"
+                [(ngModel)]="selectedVehicule.immatriculation"
+                name="immatriculation"
+                class="form-control-modern"
+                placeholder="Ex: 123 TUN 456"
+                required
+              />
+            </div>
+
+            <div class="form-group-modern mb-4">
+              <label class="form-label-modern"> <i class="bi bi-award me-2"></i>Marque </label>
+              <input
+                type="text"
+                [(ngModel)]="selectedVehicule.marque"
+                name="marque"
+                class="form-control-modern"
+                placeholder="Ex: Toyota, Mercedes, etc."
+                required
+              />
+            </div>
+
+            <div class="form-group-modern mb-4">
+              <label class="form-label-modern">
+                <i class="bi bi-gear me-2"></i>Type de véhicule
+              </label>
+              <select
+                [(ngModel)]="selectedVehicule.type_vehicule"
+                name="type_vehicule"
+                class="form-control-modern"
+                required
+              >
+                <option value="">Sélectionner le type</option>
+                <option value="voiture">Voiture</option>
+                <option value="camion">Camion</option>
+                <option value="bus">Bus</option>
+                <option value="moto">Moto</option>
+              </select>
+            </div>
+            <div class="modal-actions">
+              <button
+                type="button"
+                class="btn-cancel"
+                (click)="closeModal()"
+              >
+                <i class="bi bi-x-circle"></i>
+                Annuler
+              </button>
+              <button
+                type="submit"
+                class="btn-save-green"
+              >
+                <i class="bi bi-check-circle"></i>
+                Enregistrer
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de renouvellement moderne -->
+  <div
+    *ngIf="isRenewModalOpen"
+    class="modal-overlay"
+    (click)="closeRenewModal()"
+  >
+    <div
+      class="modal-dialog-custom"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-content-custom">
+        <div class="modal-header-modern modal-header-renewal">
+          <div class="modal-header-content">
+            <div class="modal-icon-header">
+              <i class="bi bi-arrow-repeat"></i>
+            </div>
+            <div>
+              <h3 class="modal-title">Renouveler Véhicule</h3>
+              <p>Associer à un nouveau crédit</p>
+            </div>
+          </div>
+          <button
+            class="btn-close-modern"
+            (click)="closeRenewModal()"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <div class="modal-body-modern">
+          <div class="vehicule-info-display mb-4">
+            <div class="vehicule-card-preview">
+              <div
+                class="vehicule-icon-large"
+                style="background: linear-gradient(135deg, #ff8c00, #ff6f00)"
+              >
+                <i
+                  [class]="getTypeIcon(selectedVehicule?.type_vehicule)"
+                  style="color: white"
+                ></i>
+              </div>
+              <div class="vehicule-details-preview">
+                <h4>{{ selectedVehicule?.immatriculation }}</h4>
+                <p>{{ selectedVehicule?.marque }} - {{ selectedVehicule?.type_vehicule }}</p>
+              </div>
+            </div>
+          </div>
+
+          <form (ngSubmit)="renewVehicule()">
+            <div class="form-group-modern mb-4 position-relative">
+              <label class="form-label-modern">
+                <i class="bi bi-credit-card me-2"></i>Nouveau Crédit
+              </label>
+              <input
+                type="text"
+                class="form-control-modern"
+                [(ngModel)]="creditSearchTerm"
+                name="creditSearch"
+                (input)="filterCreditList($event)"
+                placeholder="Rechercher par ID ou nom client"
+                required
+              />
+              <div
+                *ngIf="showCreditDropdown && filteredCredits.length > 0"
+                class="credit-dropdown"
+              >
+                <div
+                  *ngFor="let credit of filteredCredits"
+                  class="dropdown-item"
+                  (click)="selectCredit(credit)"
+                >
+                  #{{ credit.id }} - {{ credit.utilisateur || 'N/A' }} ({{
+                    credit.type_credit || 'N/A'
+                  }})
+                </div>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button
+                type="button"
+                class="btn-cancel-purple"
+                (click)="closeRenewModal()"
+              >
+                <i class="bi bi-x-circle"></i>
+                Annuler
+              </button>
+              <button
+                type="submit"
+                class="btn-confirm-purple"
+              >
+                <i class="bi bi-arrow-repeat"></i>
+                Renouveler
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de succès moderne -->
+  <div
+    *ngIf="showSuccessModal"
+    class="modal-overlay success-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom success-modal-custom">
+      <div class="modal-content-custom">
+        <div
+          class="modal-icon"
+          style="background: linear-gradient(135deg, #28a745, #20c997); color: white"
+        >
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <h3 class="modal-title">Succès</h3>
+        <p class="modal-text">{{ successMessage }}</p>
+        <button
+          class="btn-close-modal"
+          style="background: linear-gradient(135deg, #28a745, #20c997); border: none"
+          (click)="closeSuccessModal()"
+        >
+          <i class="bi bi-check"></i>
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal d'erreur moderne -->
+  <div
+    *ngIf="showErrorModal"
+    class="modal-overlay error-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom error-modal-custom">
+      <div class="modal-content-custom">
+        <div
+          class="modal-icon"
+          style="background: linear-gradient(135deg, #dc3545, #c82333); color: white"
+        >
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <h3 class="modal-title">Erreur</h3>
+        <p class="modal-text">{{ errorModalMessage }}</p>
+        <button
+          class="btn-close-modal"
+          style="background: linear-gradient(135deg, #dc3545, #c82333); border: none"
+          (click)="closeErrorModal()"
+        >
+          <i class="bi bi-x"></i>
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>
+<a
+  href="#"
+  class="back-to-top d-flex align-items-center justify-content-center"
+>
+  <i class="bi bi-arrow-up-short"></i>
+</a>

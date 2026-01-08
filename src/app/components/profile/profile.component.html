@@ -1,0 +1,538 @@
+<!-- ==================== STRUCTURE PRINCIPALE ==================== -->
+<!-- Navigation principale et barre latérale -->
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<!-- Contenu principal de la page de profil -->
+<main
+  id="main"
+  class="main"
+>
+  <!-- En-tête de la page avec breadcrumb -->
+  <div class="pagetitle">
+    <h1>Profile</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">Dashboard</li>
+        <li class="breadcrumb-item active">Profile</li>
+      </ol>
+    </nav>
+  </div>
+  <!-- ==================== SECTION PROFIL ==================== -->
+  <section class="section profile">
+    <div class="row">
+      <!-- ==================== CARTE DE PROFIL (GAUCHE) ==================== -->
+      <!-- Affichage des informations utilisateur et gestion de la photo de profil -->
+      <div class="col-xl-4">
+        <div class="card profile-card-modern">
+          <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+            <!-- Conteneur de l'image de profil avec gestion du cas vide -->
+            <div
+              class="profile-img-container"
+              [class.has-preview]="previewImage"
+            >
+              <ng-container *ngIf="previewImage || user.photo; else emptyProfileImage">
+                <img
+                  [src]="previewImage || apiUrl + user.photo"
+                  alt="Profile"
+                  class="profile-img"
+                />
+              </ng-container>
+              <ng-template #emptyProfileImage>
+                <div class="empty-profile-img d-flex align-items-center justify-content-center">
+                  <i class="bi bi-person-circle profile-placeholder-icon"></i>
+                </div>
+              </ng-template>
+            </div>
+
+            <!-- Informations utilisateur -->
+            <div class="user-info-section">
+              <h2 class="user-name">{{ user.username }}</h2>
+              <h3 class="user-role">{{ user.role }}</h3>
+            </div>
+            <!-- Section de téléchargement de photo -->
+            <div class="upload-section">
+              <input
+                type="file"
+                (change)="onFileSelected($event)"
+                accept="image/*"
+                hidden
+                #fileInput
+              />
+              <button
+                mat-raised-button
+                color="primary"
+                class="btn-upload"
+                (click)="fileInput.click()"
+              >
+                <i class="bi bi-camera me-2"></i>Changer la photo
+              </button>
+              <button
+                mat-raised-button
+                color="accent"
+                class="btn-confirm"
+                (click)="uploadPhoto()"
+                [disabled]="!selectedFile"
+              >
+                <i class="bi bi-check-circle me-2"></i>Confirmer
+              </button>
+            </div>
+            <!-- Indicateur de sélection de fichier -->
+            <div
+              *ngIf="selectedFile && previewImage"
+              class="text-center mt-2"
+            >
+              <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                Nouvelle image sélectionnée - Cliquez sur "Confirmer" pour sauvegarder
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ==================== PANNEAU PRINCIPAL (DROITE) ==================== -->
+      <!-- Onglets pour la gestion du profil, permissions et mot de passe -->
+      <div class="col-xl-8">
+        <div class="card main-content-card">
+          <div class="card-body pt-3">
+            <!-- Navigation par onglets -->
+            <ul class="nav nav-tabs nav-tabs-bordered">
+              <li class="nav-item">
+                <button
+                  class="nav-link active"
+                  data-bs-toggle="tab"
+                  data-bs-target="#profile-overview"
+                >
+                  <i class="bi bi-person me-2"></i>Aperçu
+                </button>
+              </li>
+              <li class="nav-item">
+                <button
+                  class="nav-link"
+                  data-bs-toggle="tab"
+                  data-bs-target="#profile-edit"
+                >
+                  <i class="bi bi-pencil me-2"></i>Modifier Profile
+                </button>
+              </li>
+              <li
+                class="nav-item"
+                *ngIf="user.role === 'gerant'"
+              >
+                <button
+                  class="nav-link"
+                  data-bs-toggle="tab"
+                  data-bs-target="#profile-permissions"
+                >
+                  <i class="bi bi-shield-check me-2"></i>Gérer Permissions
+                </button>
+              </li>
+              <li class="nav-item">
+                <button
+                  class="nav-link"
+                  data-bs-toggle="tab"
+                  data-bs-target="#profile-change-password"
+                >
+                  <i class="bi bi-lock me-2"></i>Changer Mot de Passe
+                </button>
+              </li>
+            </ul>
+            <!-- ==================== CONTENU DES ONGLETS ==================== -->
+            <div class="tab-content pt-2">
+              <!-- ==================== ONGLET APERÇU ==================== -->
+              <!-- Affichage en lecture seule des informations du profil -->
+              <div
+                class="tab-pane fade show active profile-overview"
+                id="profile-overview"
+              >
+                <h5 class="card-title"><i class="bi bi-info-circle me-2"></i>Détails du Profil</h5>
+                <div class="profile-details">
+                  <div class="row info-row">
+                    <div class="col-lg-3 col-md-4 label">
+                      <i class="bi bi-person me-2"></i>Nom complet
+                    </div>
+                    <div class="col-lg-9 col-md-8 value">{{ user.username }}</div>
+                  </div>
+                  <div class="row info-row">
+                    <div class="col-lg-3 col-md-4 label"><i class="bi bi-shield me-2"></i>Role</div>
+                    <div class="col-lg-9 col-md-8 value">
+                      <span class="badge bg-primary">{{ user.role }}</span>
+                    </div>
+                  </div>
+                  <div class="row info-row">
+                    <div class="col-lg-3 col-md-4 label">
+                      <i class="bi bi-envelope me-2"></i>Adresse Email
+                    </div>
+                    <div class="col-lg-9 col-md-8 value">{{ user.email }}</div>
+                  </div>
+                  <div class="row info-row">
+                    <div class="col-lg-3 col-md-4 label">
+                      <i class="bi bi-phone me-2"></i>Numéro de Téléphone
+                    </div>
+                    <div class="col-lg-9 col-md-8 value">{{ user.numero_telephone }}</div>
+                  </div>
+                </div>
+              </div>
+              <!-- ==================== ONGLET MODIFICATION PROFIL ==================== -->
+              <!-- Formulaire pour modifier les informations personnelles -->
+              <div
+                class="tab-pane fade profile-edit pt-3"
+                id="profile-edit"
+              >
+                <h5 class="card-title">
+                  <i class="bi bi-pencil-square me-2"></i>Modifier les informations
+                </h5>
+                <form
+                  (ngSubmit)="updateProfile()"
+                  class="profile-form"
+                >
+                  <div class="row mb-3">
+                    <label
+                      for="username"
+                      class="col-md-4 col-lg-3 col-form-label"
+                    >
+                      <i class="bi bi-person me-2"></i>Nom d'utilisateur
+                    </label>
+                    <div class="col-md-8 col-lg-9">
+                      <input
+                        name="username"
+                        type="text"
+                        class="form-control modern-input"
+                        id="username"
+                        [(ngModel)]="user.username"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label
+                      for="email"
+                      class="col-md-4 col-lg-3 col-form-label"
+                    >
+                      <i class="bi bi-envelope me-2"></i>Email
+                    </label>
+                    <div class="col-md-8 col-lg-9">
+                      <input
+                        name="email"
+                        type="email"
+                        class="form-control modern-input"
+                        id="email"
+                        [(ngModel)]="user.email"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label
+                      for="phone"
+                      class="col-md-4 col-lg-3 col-form-label"
+                    >
+                      <i class="bi bi-phone me-2"></i>Téléphone
+                    </label>
+                    <div class="col-md-8 col-lg-9">
+                      <input
+                        name="phone"
+                        type="text"
+                        class="form-control modern-input"
+                        id="phone"
+                        [(ngModel)]="user.numero_telephone"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <button
+                      type="submit"
+                      class="btn btn-primary btn-modern"
+                    >
+                      <i class="bi bi-save me-2"></i>Enregistrer les modifications
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <!-- ==================== ONGLET GESTION PERMISSIONS ==================== -->
+              <!-- Interface pour gérer les permissions des rôles (réservé aux gérants) -->
+              <div
+                class="tab-pane fade pt-3"
+                id="profile-permissions"
+                *ngIf="user.role === 'gerant'"
+              >
+                <h3 class="card-title">
+                  <i class="bi bi-shield-check me-2"></i>Gestion des Permissions
+                </h3>
+                <!-- Sélecteur de rôle -->
+                <div class="mb-4 role-selector">
+                  <label
+                    for="roleSelect"
+                    class="form-label"
+                  >
+                    Rôle :
+                  </label>
+                  <select
+                    id="roleSelect"
+                    class="form-select modern-select"
+                    [(ngModel)]="selectedRole"
+                    (change)="loadPermissionsForRole()"
+                  >
+                    <option
+                      *ngFor="let role of roles"
+                      [value]="role"
+                    >
+                      {{ role | titlecase }}
+                    </option>
+                  </select>
+                </div>
+
+                <!-- Indicateur de chargement -->
+                <div
+                  *ngIf="permissionsLoading"
+                  class="text-center my-4 loading-section"
+                >
+                  <div
+                    class="spinner-border text-primary"
+                    role="status"
+                  >
+                    <span class="visually-hidden">Chargement...</span>
+                  </div>
+                  <p class="mt-2">Chargement des permissions...</p>
+                </div>
+
+                <!-- Interface de gestion des permissions -->
+                <div
+                  *ngIf="!permissionsLoading"
+                  class="permissions-management"
+                >
+                  <div
+                    *ngIf="parentPermissions.length === 0"
+                    class="alert alert-info"
+                  >
+                    <i class="bi bi-info-circle me-2"></i>
+                    Aucune permission configurée pour ce rôle.
+                  </div>
+
+                  <!-- Liste des permissions -->
+                  <div class="permissions-container">
+                    <div
+                      class="permission-category mb-4"
+                      *ngFor="let parent of parentPermissions"
+                    >
+                      <div class="form-check form-switch mb-2 parent-permission">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="parent-{{ parent.element_name }}"
+                          [(ngModel)]="parent.is_visible"
+                          (change)="onPermissionChange(parent, $any($event).target.checked)"
+                        />
+                        <label
+                          class="form-check-label h5"
+                          for="parent-{{ parent.element_name }}"
+                        >
+                          {{ parent.element_name }}
+                        </label>
+                      </div>
+
+                      <!-- Sous-permissions -->
+                      <div
+                        class="sub-permissions ms-4"
+                        *ngIf="getChildPermissions(parent.element_name).length > 0"
+                      >
+                        <div
+                          *ngFor="let child of getChildPermissions(parent.element_name)"
+                          class="form-check form-switch mb-2 child-permission"
+                        >
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="child-{{ child.element_name }}"
+                            [(ngModel)]="child.is_visible"
+                            (change)="onPermissionChange(child, $any($event).target.checked)"
+                          />
+                          <label
+                            class="form-check-label"
+                            for="child-{{ child.element_name }}"
+                          >
+                            {{ child.element_name }}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Actions de sauvegarde -->
+                  <div
+                    class="d-flex justify-content-between align-items-center mt-4 border-top pt-3 save-section"
+                  >
+                    <button
+                      class="btn btn-primary btn-modern"
+                      (click)="savePermissions()"
+                      [disabled]="pendingUpdates === 0"
+                    >
+                      <i class="bi bi-save me-2"></i>
+                      Enregistrer les modifications
+                    </button>
+                    <span
+                      *ngIf="pendingUpdates > 0"
+                      class="badge bg-warning text-dark"
+                    >
+                      <i class="bi bi-clock me-1"></i>
+                      {{ pendingUpdates }} modification(s) en attente
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="tab-pane fade pt-3"
+                id="profile-change-password"
+              >
+                <form (ngSubmit)="updatePassword()">
+                  <div class="row mb-3">
+                    <label
+                      for="newPassword"
+                      class="col-md-4 col-lg-3 col-form-label"
+                      >Nouveau mot de passe</label
+                    >
+                    <div class="col-md-8 col-lg-9">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="newPassword"
+                        [(ngModel)]="newPassword"
+                        name="newPassword"
+                        (input)="checkPasswordStrength(newPassword)"
+                        required
+                      />
+                      <small class="text-muted"
+                        >Le mot de passe doit contenir au moins 8 caractères, une majuscule, un
+                        chiffre et un caractère spécial.</small
+                      >
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label
+                      for="confirmNewPassword"
+                      class="col-md-4 col-lg-3 col-form-label"
+                      >Confirmer le mot de passe</label
+                    >
+                    <div class="col-md-8 col-lg-9">
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="confirmNewPassword"
+                        [(ngModel)]="confirmNewPassword"
+                        name="confirmNewPassword"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="password-strength mt-3">
+                    <ul>
+                      <li [class.text-success]="passwordStrength.minLength">
+                        Au moins 8 caractères
+                      </li>
+                      <li [class.text-success]="passwordStrength.hasUpper">
+                        Au moins une majuscule
+                      </li>
+                      <li [class.text-success]="passwordStrength.hasLower">
+                        Au moins une minuscule
+                      </li>
+                      <li [class.text-success]="passwordStrength.hasNumber">Au moins un chiffre</li>
+                      <li [class.text-success]="passwordStrength.hasSpecial">
+                        Au moins un caractère spécial
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="text-center mt-3">
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        (click)="generateStrongPassword()"
+                      >
+                        Générer un autre mot de passe
+                      </button>
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        [disabled]="!isPasswordValid()"
+                      >
+                        Changer le mot de passe
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MODALES MODERNES ==================== -->
+  <!-- Modal de succès avec design moderne et animations -->
+  <div
+    *ngIf="showSuccessModal"
+    class="modal-overlay success-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom">
+      <div class="modal-content-custom">
+        <div class="modal-icon">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <h3 class="modal-title">{{ modalTitle }}</h3>
+        <p class="modal-text">{{ modalMessage }}</p>
+        <button
+          class="btn-close-modal"
+          (click)="closeModal()"
+        >
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal d'erreur avec design moderne et animations -->
+  <div
+    *ngIf="showErrorModal"
+    class="modal-overlay error-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom">
+      <div class="modal-content-custom">
+        <div class="modal-icon">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <h3 class="modal-title">{{ modalTitle }}</h3>
+        <p class="modal-text">{{ modalMessage }}</p>
+        <button
+          class="btn-close-modal"
+          (click)="closeModal()"
+        >
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal amélioré pour la confirmation de changement de mot de passe -->
+  <div
+    *ngIf="showPasswordModal"
+    class="password-modal-overlay"
+  >
+    <div class="password-modal">
+      <div class="success-icon">
+        <i class="bi bi-shield-check"></i>
+      </div>
+      <div class="modal-content">
+        <h3>Mot de passe modifié avec succès!</h3>
+        <p>
+          Votre mot de passe a été mis à jour. Vous allez être redirigé vers la page de connexion
+          pour vous reconnecter avec votre nouveau mot de passe.
+        </p>
+      </div>
+    </div>
+  </div>
+</main>
+<app-footer></app-footer>

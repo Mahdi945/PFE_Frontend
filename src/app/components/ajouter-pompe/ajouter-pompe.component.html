@@ -1,0 +1,438 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <!-- Breadcrumb positionné tout en haut -->
+  <div class="breadcrumb-container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#"><i class="bi bi-house-door"></i></a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="#">Pompes</a>
+        </li>
+        <li class="breadcrumb-item active">Enregistrer pompe</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Titre séparé en dessous du breadcrumb -->
+  <div class="pagetitle">
+    <div class="title-icon-container">
+      <div class="title-text-content">
+        <h1 class="title-main">Créer nouvelle Pompe et Pistolets</h1>
+      </div>
+    </div>
+  </div>
+  <!-- ==================== SECTION PRINCIPALE ==================== -->
+  <section class="section pump-management">
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="card modern-card">
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-fuel-pump-fill me-2"></i>
+                Informations de la pompe
+              </h5>
+            </div>
+            <div class="card-body">
+              <!-- Formulaire d'ajout de pompe -->
+              <form
+                class="modern-form"
+                (ngSubmit)="onSubmit()"
+                #pompeForm="ngForm"
+              >
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label
+                        for="numero_pompe"
+                        class="form-label"
+                      >
+                        <i class="bi bi-hash me-1"></i>
+                        Numéro de la pompe *
+                      </label>
+                      <input
+                        type="text"
+                        class="form-control modern-input"
+                        id="numero_pompe"
+                        name="numero_pompe"
+                        [(ngModel)]="pompe.numero_pompe"
+                        required
+                        minlength="3"
+                        maxlength="50"
+                        (ngModelChange)="onNumeroPompeChange()"
+                        placeholder="Ex: P001"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label
+                        for="type_pompe"
+                        class="form-label"
+                      >
+                        <i class="bi bi-gear-fill me-1"></i>
+                        Type de pompe *
+                      </label>
+                      <select
+                        class="form-control modern-select"
+                        id="type_pompe"
+                        name="type_pompe"
+                        [(ngModel)]="pompe.type_pompe"
+                        required
+                      >
+                        <option
+                          value="multi-produits"
+                          selected
+                        >
+                          Multi-produits
+                        </option>
+                        <option value="sans plomb">Sans plomb</option>
+                        <option value="gasoil">Gasoil</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label
+                        for="statut"
+                        class="form-label"
+                      >
+                        <i class="bi bi-activity me-1"></i>
+                        Statut de la pompe *
+                      </label>
+                      <select
+                        class="form-control modern-select"
+                        id="statut"
+                        name="statut"
+                        [(ngModel)]="pompe.statut"
+                        required
+                      >
+                        <option
+                          value="reserve"
+                          selected
+                        >
+                          Réservée
+                        </option>
+                        <option value="en_service">En service</option>
+                        <option value="hors_service_temporaire">Hors service temporaire</option>
+                        <option value="maintenance">En maintenance</option>
+                        <option value="hors_service_definitif">Hors service définitif</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label
+                        for="nombre_pistolets"
+                        class="form-label"
+                      >
+                        <i class="bi bi-diagram-3-fill me-1"></i>
+                        Nombre de pistolets *
+                      </label>
+                      <input
+                        type="number"
+                        class="form-control modern-input"
+                        id="nombre_pistolets"
+                        [(ngModel)]="nombrePistolets"
+                        name="nombre_pistolets"
+                        min="1"
+                        max="10"
+                        required
+                        placeholder="Nombre de pistolets"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <button
+                      type="button"
+                      class="btn btn-gradient-secondary"
+                      (click)="genererFormulairePistolets()"
+                    >
+                      <i class="bi bi-plus-circle me-2"></i>
+                      Configurer les pistolets
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Section pour les pistolets -->
+          <div
+            *ngIf="showPistoletsForm"
+            class="card modern-card mt-4"
+          >
+            <div class="card-header">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-list-check me-2"></i>
+                Configuration des pistolets (obligatoire)
+              </h5>
+            </div>
+            <div class="card-body">
+              <div
+                *ngFor="let pistolet of pistolets; let i = index"
+                class="pistolet-card mb-4"
+              >
+                <div class="pistolet-header">
+                  <h6><i class="bi bi-fuel-pump me-2"></i>Pistolet #{{ i + 1 }}</h6>
+                </div>
+                <div class="pistolet-body">
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label class="form-label">Numéro du pistolet *</label>
+                        <input
+                          type="text"
+                          class="form-control modern-input"
+                          [(ngModel)]="pistolet.numero_pistolet"
+                          [name]="'pistolet_numero_' + i"
+                          required
+                          readonly
+                          placeholder="Ex: P001_PSSP9501"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label class="form-label">Produit *</label>
+                        <select
+                          class="form-control modern-select"
+                          [(ngModel)]="pistolet.nom_produit"
+                          [name]="'pistolet_produit_' + i"
+                          (ngModelChange)="onProduitChange(pistolet, $event)"
+                          required
+                        >
+                          <option
+                            value=""
+                            disabled
+                            selected
+                          >
+                            Sélectionner
+                          </option>
+                          <option
+                            *ngFor="let produit of produitsDisponibles"
+                            [value]="produit.code"
+                          >
+                            {{ produit.nom }} ({{ produit.code }})
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label class="form-label">Prix unitaire (DT) *</label>
+                        <input
+                          type="number"
+                          class="form-control modern-input"
+                          [(ngModel)]="pistolet.prix_unitaire"
+                          [name]="'pistolet_prix_' + i"
+                          min="0.01"
+                          step="0.01"
+                          required
+                          placeholder="0.00"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="d-flex justify-content-center gap-3 mt-4">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary px-4"
+                  (click)="resetForm()"
+                >
+                  <i class="bi bi-arrow-clockwise me-2"></i>Réinitialiser
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-gradient-primary px-4"
+                  [disabled]="pompeForm.invalid || !showPistoletsForm || !tousPistoletsValides()"
+                  (click)="onSubmit()"
+                >
+                  <i class="bi bi-check-circle me-2"></i>Enregistrer la pompe
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal de confirmation -->
+  <div
+    class="modal fade"
+    [class.show]="showConfirmationModal"
+    [style.display]="showConfirmationModal ? 'block' : 'none'"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="confirmationModalLabel"
+    aria-hidden="true"
+  >
+    <div
+      class="modal-dialog modal-dialog-centered"
+      role="document"
+    >
+      <div class="modal-content modern-modal">
+        <div class="modal-header confirmation-header">
+          <div class="modal-icon-container">
+            <i class="bi bi-question-circle"></i>
+          </div>
+          <h5
+            class="modal-title"
+            id="confirmationModalLabel"
+          >
+            Confirmer l'enregistrement
+          </h5>
+        </div>
+        <div class="modal-body text-center">
+          <p class="mb-3">
+            Êtes-vous sûr de vouloir enregistrer cette pompe avec
+            <strong>{{ pistolets.length }}</strong> pistolet(s) ?
+          </p>
+          <div class="confirmation-details">
+            <div class="detail-item"><strong>Numéro:</strong> {{ pompe.numero_pompe }}</div>
+            <div class="detail-item"><strong>Type:</strong> {{ pompe.type_pompe }}</div>
+            <div class="detail-item"><strong>Statut:</strong> {{ pompe.statut }}</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="closeConfirmationModal()"
+          >
+            <i class="bi bi-x-circle me-2"></i>Annuler
+          </button>
+          <button
+            type="button"
+            class="btn btn-gradient-primary"
+            (click)="confirmPompeAddition()"
+            [disabled]="isSubmitting"
+          >
+            <i class="bi bi-check-circle me-2"></i>
+            <span *ngIf="!isSubmitting">Confirmer</span>
+            <span *ngIf="isSubmitting">
+              <span class="spinner-border spinner-border-sm me-2"></span>Enregistrement...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de succès -->
+  <div
+    class="modal fade"
+    [class.show]="showSuccessModal"
+    [style.display]="showSuccessModal ? 'block' : 'none'"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="successModalLabel"
+    aria-hidden="true"
+  >
+    <div
+      class="modal-dialog modal-dialog-centered"
+      role="document"
+    >
+      <div class="modal-content modern-modal">
+        <div class="modal-header success-header">
+          <div class="modal-icon-container">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <h5
+            class="modal-title"
+            id="successModalLabel"
+          >
+            Succès
+          </h5>
+        </div>
+        <div class="modal-body text-center">
+          <p class="mb-3">La pompe et ses pistolets ont été enregistrés avec succès !</p>
+          <div class="success-animation">
+            <i class="bi bi-fuel-pump-fill"></i>
+          </div>
+          <p class="countdown-text">
+            Redirection automatique dans <strong>{{ countdown }}</strong> secondes...
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-gradient-primary"
+            (click)="closeSuccessModal()"
+          >
+            <i class="bi bi-arrow-right me-2"></i>Continuer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal d'erreur -->
+  <div
+    class="modal fade"
+    [class.show]="showErrorModal"
+    [style.display]="showErrorModal ? 'block' : 'none'"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="errorModalLabel"
+    aria-hidden="true"
+  >
+    <div
+      class="modal-dialog modal-dialog-centered"
+      role="document"
+    >
+      <div class="modal-content modern-modal">
+        <div class="modal-header error-header">
+          <div class="modal-icon-container">
+            <i class="bi bi-exclamation-triangle"></i>
+          </div>
+          <h5
+            class="modal-title"
+            id="errorModalLabel"
+          >
+            Erreur
+          </h5>
+        </div>
+        <div class="modal-body text-center">
+          <p class="mb-3">Une erreur est survenue lors de l'enregistrement :</p>
+          <div class="error-message">
+            {{ errorMessage }}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-gradient-secondary"
+            (click)="closeErrorModal()"
+          >
+            <i class="bi bi-x-circle me-2"></i>Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Backdrop pour les modals -->
+  <div
+    class="modal-backdrop fade"
+    [class.show]="showConfirmationModal || showSuccessModal || showErrorModal"
+    *ngIf="showConfirmationModal || showSuccessModal || showErrorModal"
+  ></div>
+</main>
+<app-footer></app-footer>

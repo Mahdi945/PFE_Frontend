@@ -1,0 +1,290 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <div class="container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item">Crédits</li>
+        <li class="breadcrumb-item active">Saisie Paiements</li>
+      </ol>
+    </nav>
+
+    <!-- Titre de page amélioré -->
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+      <div class="title-text-content">
+        <h1 class="title-main">Nouveau paiement de crédit</h1>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <form
+          (ngSubmit)="validateForm(paymentForm)"
+          #paymentForm="ngForm"
+        >
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label">Crédit concerné *</label>
+                <div class="autocomplete-container position-relative">
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="searchTerm"
+                    name="credit_search"
+                    placeholder="Rechercher par nom ou ID de crédit..."
+                    (input)="onSearchInput($event)"
+                    (focus)="onInputFocus()"
+                    (blur)="onInputBlur()"
+                    autocomplete="off"
+                    required
+                  />
+                  <button
+                    type="button"
+                    class="clear-btn"
+                    *ngIf="selectedCredit"
+                    (click)="clearSelection()"
+                  >
+                    ×
+                  </button>
+                  
+                  <!-- Dropdown list -->
+                  <div
+                    class="autocomplete-dropdown"
+                    *ngIf="showDropdown && filteredCredits.length > 0"
+                  >
+                    <div
+                      *ngFor="let credit of filteredCredits"
+                      class="autocomplete-item"
+                      (click)="selectCredit(credit)"
+                      [class.selected]="selectedCredit?.id === credit.id"
+                    >
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                          <strong>#{{ credit.id }}</strong> - {{ credit.utilisateur }}
+                        </div>
+                        <small class="text-muted">
+                          Reste: {{ credit.montant_restant}} DT
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- No results message -->
+                  <div
+                    class="autocomplete-dropdown text-center p-3 text-muted"
+                    *ngIf="showDropdown && filteredCredits.length === 0 && searchTerm.trim()"
+                  >
+                    Aucun crédit trouvé
+                  </div>
+                </div>
+                
+                <!-- Hidden input for form validation -->
+                <input
+                  type="hidden"
+                  [(ngModel)]="newPayment.id_credit"
+                  name="id_credit"
+                  required
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label">Montant (DT) *</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="newPayment.montant_paye"
+                  name="montant_paye"
+                  min="0.01"
+                  step="0.01"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label">Mode de paiement *</label>
+                <select
+                  class="form-control"
+                  [(ngModel)]="newPayment.mode_paiement"
+                  name="mode_paiement"
+                  required
+                >
+                  <option
+                    value=""
+                    disabled
+                    selected
+                  >
+                    Sélectionnez un mode
+                  </option>
+                  <option value="especes">Espèces</option>
+                  <option value="carte">Carte bancaire</option>
+                  <option value="virement">Virement</option>
+                  <option value="cheque">Chèque</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label class="form-label">Date du paiement</label>
+                <input
+                  type="datetime-local"
+                  class="form-control"
+                  [(ngModel)]="newPayment.date_paiement"
+                  name="date_paiement"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label">Description</label>
+            <textarea
+              class="form-control"
+              [(ngModel)]="newPayment.description"
+              name="description"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div
+            class="alert alert-danger"
+            *ngIf="errorMessage"
+          >
+            {{ errorMessage }}
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <button
+              type="reset"
+              class="btn btn-secondary px-4"
+            >
+              Vider
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="paymentForm.invalid"
+            >
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal de confirmation -->
+<div
+  class="modal fade show"
+  [class.show]="showConfirmationModal"
+  tabindex="-1"
+  style="display: block; background-color: rgba(0, 0, 0, 0.5)"
+  *ngIf="showConfirmationModal"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Confirmer le paiement</h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="showConfirmationModal = false"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Êtes-vous sûr de vouloir enregistrer ce paiement ?</p>
+        <div class="alert alert-info">
+          <strong>Détails :</strong><br />
+          Montant: {{ newPayment.montant_paye | number: '1.2-2' }} DT<br />
+          Mode: {{ getPaymentModeLabel(newPayment.mode_paiement) }}<br />
+          Date: {{ newPayment.date_paiement | date: 'dd/MM/yyyy HH:mm' }}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="showConfirmationModal = false"
+        >
+          Annuler
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="confirmPayment()"
+        >
+          <span *ngIf="!isSaving">Confirmer</span>
+          <span *ngIf="isSaving">
+            <span
+              class="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            Enregistrement...
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de succès -->
+<div
+  class="modal fade show"
+  [class.show]="showSuccessModal"
+  tabindex="-1"
+  style="display: block; background-color: rgba(0, 0, 0, 0.5)"
+  *ngIf="showSuccessModal"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          Succès
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="closeSuccessModal()"
+          aria-label="Fermer"
+        ></button>
+      </div>
+      <div class="modal-body text-center">
+        <i class="bi bi-check-circle-fill text-success display-4 mb-3"></i>
+        <p class="mb-3">{{ successMessage }}</p>
+        <div class="countdown-container">
+          <small class="text-muted">
+            <i class="bi bi-clock me-1"></i>
+            Fermeture automatique dans 
+            <span class="badge bg-secondary ms-1">{{ countdownSeconds }}</span>
+            seconde{{ countdownSeconds > 1 ? 's' : '' }}
+          </small>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button
+          type="button"
+          class="btn btn-success"
+          (click)="closeSuccessModal()"
+        >
+          <i class="bi bi-check me-1"></i>
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

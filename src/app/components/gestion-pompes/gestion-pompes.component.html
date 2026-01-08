@@ -1,0 +1,772 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+<main
+  id="main"
+  class="main"
+>
+  <div class="container">
+    <!-- Breadcrumb amélioré -->
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item">Pompes</li>
+        <li class="breadcrumb-item active">Liste Pompes</li>
+      </ol>
+    </nav>
+
+    <!-- Titre de page amélioré -->
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+      <div class="title-text-content">
+        <h1 class="title-main">Liste des Pompes</h1>
+      </div>
+
+      <a
+        routerLink="/ajouter-pompe"
+        class="btn btn-success"
+      >
+        <i class="bi bi-plus-circle me-2"></i> Ajouter Pompe
+      </a>
+    </div>
+    <!-- Filtres avec icônes et espacement égal -->
+    <div class="row mb-4 g-3">
+      <!-- Recherche par numéro -->
+      <div class="col-12 col-md-4">
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-123"></i></span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Numéro de pompe"
+            [(ngModel)]="searchTerm"
+            (input)="filterPompes()"
+          />
+        </div>
+      </div>
+      <!-- Filtre par type de carburant -->
+      <div class="col-12 col-md-4">
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-fuel-pump"></i></span>
+          <select
+            class="form-select"
+            [(ngModel)]="filterType"
+            (change)="filterPompes()"
+          >
+            <option value="">Tous les types</option>
+            <option value="sans plomb">Sans Plomb</option>
+            <option value="gasoil">Gasoil</option>
+            <option value="multi-produits">Multi-produits</option>
+          </select>
+        </div>
+      </div>
+      <!-- Filtre par statut -->
+      <div class="col-12 col-md-4">
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-info-circle"></i></span>
+          <select
+            class="form-select"
+            [(ngModel)]="filterStatut"
+            (change)="filterPompes()"
+          >
+            <option value="">Tous les statuts</option>
+            <option value="en_service">En Service</option>
+            <option value="hors_service_temporaire">Hors Service Temporaire</option>
+            <option value="reserve">Réserve</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="hors_service_definitif">Hors Service Définitif</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <!-- Tableau des pompes -->
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Numéro</th>
+            <th>Type</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let pompe of paginatedPompes"
+            class="clickable-row"
+            (click)="openPistoletsModal(pompe)"
+          >
+            <td>{{ pompe.numero_pompe }}</td>
+            <td>
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-primary': pompe.type_pompe === 'sans plomb',
+                  'bg-warning text-dark': pompe.type_pompe === 'gasoil',
+                  'bg-info': pompe.type_pompe === 'multi-produits',
+                }"
+              >
+                <i
+                  class="bi me-1"
+                  [class.bi-droplet]="pompe.type_pompe === 'sans plomb'"
+                  [class.bi-fuel-pump-fill]="pompe.type_pompe === 'gasoil'"
+                  [class.bi-layers-fill]="pompe.type_pompe === 'multi-produits'"
+                ></i>
+                {{ pompe.type_pompe | titlecase }}
+              </span>
+            </td>
+            <td>
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-success': pompe.statut === 'en_service',
+                  'bg-warning text-dark':
+                    pompe.statut === 'hors_service_temporaire' || pompe.statut === 'maintenance',
+                  'bg-info': pompe.statut === 'reserve',
+                  'bg-danger': pompe.statut === 'hors_service_definitif',
+                }"
+              >
+                <i
+                  class="bi me-1"
+                  [class.bi-check-circle]="pompe.statut === 'en_service'"
+                  [class.bi-exclamation-triangle]="
+                    pompe.statut === 'hors_service_temporaire' || pompe.statut === 'maintenance'
+                  "
+                  [class.bi-pause-circle]="pompe.statut === 'reserve'"
+                  [class.bi-x-circle]="pompe.statut === 'hors_service_definitif'"
+                ></i>
+                {{ getStatutLabel(pompe.statut) }}
+              </span>
+            </td>
+            <td>
+              <button
+                class="btn btn-sm text-white me-2"
+                style="
+                  background: linear-gradient(135deg, #2ecc71, #27ae60);
+                  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                  border: none;
+                  border-radius: 6px;
+                  padding: 0.35rem 0.6rem;
+                  transition: all 0.3s ease;
+                  transform: translateY(0);
+                "
+                (click)="openPistoletsModal(pompe); $event.stopPropagation()"
+                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.2)'"
+              >
+                <i class="bi bi-eye-fill me-1"></i>
+                <span style="font-size: 0.8rem">Voir</span>
+              </button>
+
+              <button
+                class="btn btn-sm text-white"
+                style="
+                  background: linear-gradient(135deg, #f39c12, #e67e22);
+                  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                  border: none;
+                  border-radius: 6px;
+                  padding: 0.35rem 0.6rem;
+                  transition: all 0.3s ease;
+                  transform: translateY(0);
+                "
+                (click)="openModificationModal(pompe); $event.stopPropagation()"
+                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.15)'"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.2)'"
+              >
+                <i class="bi bi-pencil-square me-1"></i>
+                <span style="font-size: 0.8rem">Modifier</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav
+      *ngIf="totalPages > 1"
+      class="mt-4"
+    >
+      <ul class="pagination justify-content-center">
+        <li
+          class="page-item"
+          [class.disabled]="currentPage === 1"
+        >
+          <a
+            class="page-link"
+            (click)="changePage(currentPage - 1)"
+            >Précédent</a
+          >
+        </li>
+        <li
+          class="page-item"
+          *ngFor="let page of getPagesArray()"
+          [class.active]="page === currentPage"
+        >
+          <a
+            class="page-link"
+            (click)="changePage(page)"
+            >{{ page }}</a
+          >
+        </li>
+        <li
+          class="page-item"
+          [class.disabled]="currentPage === totalPages"
+        >
+          <a
+            class="page-link"
+            (click)="changePage(currentPage + 1)"
+            >Suivant</a
+          >
+        </li>
+      </ul>
+    </nav>
+  </div>
+</main>
+<!-- ... (contenu précédent inchangé jusqu'au modal des pistolets) ... -->
+
+<!-- ==================== MODAL PISTOLETS MODERNE ==================== -->
+<div
+  *ngIf="isPistoletsModalOpen"
+  class="elegant-modal-overlay"
+  (click)="onModalOverlayClick($event)"
+>
+  <div class="elegant-modal-container">
+    <div class="elegant-modal-content pistolets-modal">
+      <!-- Header élégant -->
+      <div class="elegant-modal-header">
+        <div class="header-main">
+          <div class="modal-icon-wrapper">
+            <div class="modal-icon-bg">
+              <i class="bi bi-fuel-pump-fill"></i>
+            </div>
+          </div>
+          <div class="header-info">
+            <h3 class="modal-title">Gestion des Pistolets</h3>
+            <p class="modal-subtitle">Pompe N° {{ selectedPompe?.numero_pompe }}</p>
+          </div>
+        </div>
+        <button
+          class="elegant-close-btn"
+          (click)="closePistoletsModal()"
+        >
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+
+      <!-- Section informations pompe -->
+      <div class="pump-summary-section">
+        <div class="summary-cards">
+          <div class="summary-card primary">
+            <div class="card-icon">
+              <i class="bi bi-gear-fill"></i>
+            </div>
+            <div class="card-content">
+              <span class="card-label">Type</span>
+              <span class="card-value">{{ selectedPompe?.type_pompe | titlecase }}</span>
+            </div>
+          </div>
+
+          <div
+            class="summary-card success"
+            [ngClass]="{
+              success: selectedPompe?.statut === 'en_service',
+              warning:
+                selectedPompe?.statut === 'hors_service_temporaire' ||
+                selectedPompe?.statut === 'maintenance',
+              info: selectedPompe?.statut === 'reserve',
+              danger: selectedPompe?.statut === 'hors_service_definitif',
+            }"
+          >
+            <div class="card-icon">
+              <i
+                class="bi"
+                [ngClass]="{
+                  'bi-check-circle-fill': selectedPompe?.statut === 'en_service',
+                  'bi-exclamation-triangle-fill':
+                    selectedPompe?.statut === 'hors_service_temporaire' ||
+                    selectedPompe?.statut === 'maintenance',
+                  'bi-pause-circle-fill': selectedPompe?.statut === 'reserve',
+                  'bi-x-circle-fill': selectedPompe?.statut === 'hors_service_definitif',
+                }"
+              ></i>
+            </div>
+            <div class="card-content">
+              <span class="card-label">Statut</span>
+              <span class="card-value">{{ getStatutLabel(selectedPompe?.statut) }}</span>
+            </div>
+          </div>
+
+          <div class="summary-card info">
+            <div class="card-icon">
+              <i class="bi bi-list-ol"></i>
+            </div>
+            <div class="card-content">
+              <span class="card-label">Pistolets</span>
+              <span class="card-value">{{ selectedPompe?.pistolets?.length || 0 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Corps du modal -->
+      <div class="elegant-modal-body">
+        <div
+          *ngIf="loadingPistolets"
+          class="loading-section"
+        >
+          <div class="loader-wrapper">
+            <div class="elegant-loader"></div>
+            <p>Chargement des pistolets...</p>
+          </div>
+        </div>
+
+        <div
+          *ngIf="!loadingPistolets"
+          class="pistolets-content"
+        >
+          <div
+            *ngIf="selectedPompe?.pistolets?.length > 0"
+            class="pistolets-grid"
+          >
+            <div
+              *ngFor="let pistolet of selectedPompe?.pistolets"
+              class="pistolet-card"
+            >
+              <div class="pistolet-header">
+                <div class="pistolet-number">
+                  <i class="bi bi-fuel-pump"></i>
+                  <span>N° {{ pistolet.numero_pistolet }}</span>
+                </div>
+              </div>
+              <div class="pistolet-body">
+                <div class="product-info">
+                  <div class="product-name">
+                    <i class="bi bi-droplet-fill"></i>
+                    <span>{{ pistolet.nom_produit }}</span>
+                  </div>
+                  <div class="product-price">
+                    <i class="bi bi-currency-exchange"></i>
+                    <span>{{ pistolet.prix_unitaire }} DT</span>
+                  </div>
+                </div>
+                <!-- Select de statut simple en bas -->
+                <div class="pistolet-status-selector">
+                  <select
+                    class="simple-status-select"
+                    [(ngModel)]="pistolet.statut_temp"
+                  >
+                    <option value="disponible">Disponible</option>
+                    <option value="indisponible">Indisponible</option>
+                    <option value="maintenance">Maintenance</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            *ngIf="!selectedPompe?.pistolets?.length"
+            class="empty-pistolets"
+          >
+            <div class="empty-icon">
+              <i class="bi bi-fuel-pump"></i>
+            </div>
+            <h4>Aucun pistolet configuré</h4>
+            <p>Cette pompe n'a pas encore de pistolets associés.</p>
+          </div>
+        </div>
+
+        <!-- Bouton d'enregistrement en bas -->
+        <div class="pistol-save-section">
+          <button
+            class="elegant-btn primary pistol-save-btn"
+            (click)="savePistoletsStatuts()"
+            [disabled]="!hasStatusChanges()"
+            [class.success]="hasStatusChanges()"
+          >
+            <i class="bi bi-check-circle"></i>
+            <span>Enregistrer les modifications</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODALES MODERNES ==================== -->
+
+<!-- Modal de consultation moderne -->
+<div
+  *ngIf="isConsultationModalOpen"
+  class="modal-overlay"
+  (click)="onModalOverlayClick($event)"
+>
+  <div
+    class="modal-content"
+    style="position: relative"
+  >
+    <!-- Flèches de navigation -->
+    <div class="modal-navigation">
+      <div
+        class="nav-arrow"
+        (click)="navigateToPrevious()"
+        [class.disabled]="!canNavigatePrevious()"
+      >
+        <i class="bi bi-chevron-up"></i>
+      </div>
+      <div
+        class="nav-arrow"
+        (click)="navigateToNext()"
+        [class.disabled]="!canNavigateNext()"
+      >
+        <i class="bi bi-chevron-down"></i>
+      </div>
+    </div>
+
+    <div class="modal-header">
+      <h5 class="modal-title"><i class="bi bi-eye me-2"></i>Consultation de la pompe</h5>
+      <button
+        class="btn-close"
+        (click)="closeConsultationModal()"
+      >
+        ×
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label"><strong>Numéro de pompe :</strong></label>
+          <p class="form-control-plaintext">{{ selectedPompe?.numero_pompe }}</p>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label"><strong>Type :</strong></label>
+          <p class="form-control-plaintext">{{ selectedPompe?.type_pompe | titlecase }}</p>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label"><strong>Statut :</strong></label>
+          <p class="form-control-plaintext">
+            <span
+              class="badge"
+              [ngClass]="{
+                'bg-success': selectedPompe?.statut === 'en_service',
+                'bg-warning':
+                  selectedPompe?.statut === 'hors_service_temporaire' ||
+                  selectedPompe?.statut === 'maintenance',
+                'bg-info': selectedPompe?.statut === 'reserve',
+                'bg-danger': selectedPompe?.statut === 'hors_service_definitif',
+              }"
+            >
+              {{ getStatutLabel(selectedPompe?.statut) }}
+            </span>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label"><strong>Nombre de pistolets :</strong></label>
+          <p class="form-control-plaintext">{{ selectedPompe?.pistolets?.length || 0 }}</p>
+        </div>
+      </div>
+
+      <!-- Tableau des pistolets associés -->
+      <div
+        *ngIf="selectedPompe?.pistolets?.length > 0"
+        class="mt-4"
+      >
+        <h6><i class="bi bi-fuel-pump me-2"></i>Pistolets associés</h6>
+        <div class="table-responsive">
+          <table class="table table-striped table-sm">
+            <thead>
+              <tr>
+                <th>N° Pistolet</th>
+                <th>Produit</th>
+                <th>Prix</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let pistolet of selectedPompe?.pistolets">
+                <td>{{ pistolet.numero_pistolet }}</td>
+                <td>{{ pistolet.nom_produit }}</td>
+                <td>{{ pistolet.prix_unitaire }} DT</td>
+                <td>
+                  <span
+                    class="badge"
+                    [ngClass]="{
+                      'bg-success': pistolet.statut === 'disponible',
+                      'bg-danger': pistolet.statut === 'indisponible',
+                      'bg-warning': pistolet.statut === 'maintenance',
+                    }"
+                  >
+                    {{ pistolet.statut | titlecase }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-info me-2"
+        (click)="openPistoletsModal(selectedPompe)"
+      >
+        <i class="bi bi-fuel-pump me-1"></i>Gérer les pistolets
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="closeConsultationModal()"
+      >
+        <i class="bi bi-x-circle me-1"></i>Fermer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL MODIFICATION MODERNE ==================== -->
+<div
+  *ngIf="isModificationModalOpen"
+  class="elegant-modal-overlay"
+  (click)="onModalOverlayClick($event)"
+>
+  <div class="elegant-modal-container modification-modal">
+    <div class="elegant-modal-content">
+      <!-- Header élégant -->
+      <div class="elegant-modal-header modification-header orange-header">
+        <div class="header-main">
+          <div class="modal-icon-wrapper modification orange-icon">
+            <div class="modal-icon-bg">
+              <i class="bi bi-pencil-square"></i>
+            </div>
+          </div>
+          <div class="header-info">
+            <h3 class="modal-title">Modification de Pompe</h3>
+            <p class="modal-subtitle">Pompe N° {{ selectedPompe?.numero_pompe }}</p>
+          </div>
+        </div>
+        <button
+          class="elegant-close-btn"
+          (click)="closeModificationModal()"
+        >
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+
+      <!-- Corps du modal -->
+      <div class="elegant-modal-body">
+        <form
+          (ngSubmit)="updatePompeModern()"
+          #modifyForm="ngForm"
+          class="elegant-form"
+        >
+          <!-- Information actuelle -->
+          <div class="current-info-section">
+            <div class="info-badge">
+              <i class="bi bi-info-circle"></i>
+              <span>Informations actuelles de la pompe</span>
+            </div>
+          </div>
+
+          <!-- Champs du formulaire -->
+          <div class="form-sections">
+            <div class="form-section">
+              <div class="form-group disabled">
+                <label class="elegant-label">
+                  <div class="label-wrapper">
+                    <i class="bi bi-hash"></i>
+                    <span>Numéro de pompe</span>
+                  </div>
+                  <span class="label-badge readonly">Lecture seule</span>
+                </label>
+                <div class="input-wrapper disabled">
+                  <input
+                    type="text"
+                    class="elegant-input"
+                    [(ngModel)]="selectedPompe.numero_pompe"
+                    name="numero_pompe"
+                    disabled
+                  />
+                  <i class="bi bi-lock input-icon"></i>
+                </div>
+                <small class="form-help"
+                  >Le numéro de pompe ne peut pas être modifié pour des raisons de sécurité</small
+                >
+              </div>
+              <div class="form-group">
+                <label class="elegant-label">
+                  <div class="label-wrapper">
+                    <i class="bi bi-droplet-fill"></i>
+                    <span>Type de carburant</span>
+                  </div>
+                  <span class="label-badge required">Requis</span>
+                </label>
+                <div class="input-wrapper">
+                  <select
+                    class="elegant-select"
+                    [(ngModel)]="selectedPompe.type_pompe"
+                    name="type_pompe"
+                    required
+                  >
+                    <option value="">Sélectionner un type...</option>
+                    <option value="sans plomb">Sans Plomb 95</option>
+                    <option value="gasoil">Gasoil</option>
+                    <option value="multi-produits">Multi-produits</option>
+                  </select>
+                  <i class="bi bi-chevron-down select-icon"></i>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="elegant-label">
+                  <div class="label-wrapper">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>Statut opérationnel</span>
+                  </div>
+                  <span class="label-badge required">Requis</span>
+                </label>
+                <div class="input-wrapper">
+                  <select
+                    class="elegant-select status-select"
+                    [(ngModel)]="selectedPompe.statut"
+                    name="statut"
+                    required
+                  >
+                    <option value="">Sélectionner un statut...</option>
+                    <option value="en_service">En Service</option>
+                    <option value="hors_service_temporaire">Hors Service Temporaire</option>
+                    <option value="reserve">En Réserve</option>
+                    <option value="maintenance">En Maintenance</option>
+                    <option value="hors_service_definitif">Hors Service Définitif</option>
+                  </select>
+                  <i class="bi bi-chevron-down select-icon"></i>
+                </div>
+                <small class="form-help"
+                  >Le statut détermine la disponibilité de la pompe pour les opérations</small
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button
+              type="button"
+              class="elegant-btn secondary"
+              (click)="closeModificationModal()"
+            >
+              <i class="bi bi-x-circle"></i>
+              <span>Annuler</span>
+            </button>
+            <button
+              type="submit"
+              class="elegant-btn primary orange-btn"
+              [disabled]="!modifyForm.valid"
+              [class.loading]="false"
+            >
+              <i class="bi bi-check-circle"></i>
+              <span>Enregistrer les modifications</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmation de suppression (gardée avec style Bootstrap) -->
+<div
+  class="modal fade"
+  [class.show]="showDeleteModal"
+  tabindex="-1"
+  style="display: block"
+  *ngIf="showDeleteModal"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Confirmer la suppression</h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          (click)="closeDeleteModal()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Êtes-vous sûr de vouloir supprimer la pompe
+          <strong>{{ pompeToDelete?.numero_pompe }}</strong> ?
+        </p>
+        <p class="text-danger">
+          Cette action supprimera également tous les pistolets associés et ne peut pas être annulée.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="closeDeleteModal()"
+        >
+          Annuler
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="confirmDeletePompeModern()"
+        >
+          Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal-backdrop fade show"
+  *ngIf="showDeleteModal"
+></div>
+
+<!-- Modales de succès et d'erreur style gestion-utilisateurs -->
+<div
+  *ngIf="showSuccessModal"
+  class="modal-overlay success-modal"
+  (click)="onModalOverlayClick($event)"
+>
+  <div class="modal-dialog-custom">
+    <div class="modal-content-custom">
+      <div class="modal-icon success-icon">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+      <h3 class="modal-title">Succès</h3>
+      <p class="modal-text">{{ successMessage }}</p>
+      <button
+        class="btn-close-modal success-btn"
+        (click)="closeSuccessModal()"
+      >
+        <i class="bi bi-check me-1"></i>Fermer
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  *ngIf="showErrorModal"
+  class="modal-overlay error-modal"
+  (click)="onModalOverlayClick($event)"
+>
+  <div class="modal-dialog-custom">
+    <div class="modal-content-custom">
+      <div class="modal-icon error-icon">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+      <h3 class="modal-title">Erreur</h3>
+      <p class="modal-text">{{ errorMessage }}</p>
+      <button
+        class="btn-close-modal error-btn"
+        (click)="closeErrorModal()"
+      >
+        <i class="bi bi-x me-1"></i>Fermer
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

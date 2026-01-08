@@ -1,0 +1,520 @@
+<header
+  id="header"
+  class="header fixed-top d-flex align-items-center"
+>
+  <div class="d-flex align-items-center justify-content-between">
+    <i
+      class="bi bi-list toggle-sidebar-btn"
+      (click)="toggleSidebar()"
+    ></i
+    >&nbsp;&nbsp;
+    <a class="logo d-flex align-items-center">
+      <img
+        src="logo.png"
+        alt="Logo"
+        class="logo-img"
+      />
+    </a>
+  </div>
+
+  <div class="search-bar">
+    <form
+      class="search-form d-flex align-items-center"
+      (submit)="onSearchSubmit($event)"
+    >
+      <input
+        #searchInput
+        type="text"
+        name="query"
+        [(ngModel)]="searchQuery"
+        (input)="onSearchInput()"
+        placeholder="Rechercher..."
+        title="Entrez un mot-clé"
+        autocomplete="off"
+      />
+      <button
+        type="submit"
+        title="Rechercher"
+      >
+        <i class="bi bi-search"></i>
+      </button>
+    </form>
+
+    <div
+      class="search-results-dropdown"
+      *ngIf="showSearchResults && searchResults.length > 0"
+    >
+      <div class="search-results-list">
+        <div
+          *ngFor="let result of searchResults"
+          class="search-result-item"
+          (click)="navigateToResult(result)"
+        >
+          <i
+            class="bi"
+            [ngClass]="result.icon || 'bi-link'"
+          ></i>
+          <div>
+            <h6>{{ result.title }}</h6>
+            <p class="text-muted small">{{ result.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="header-nav ms-auto">
+    <ul class="d-flex align-items-center">
+      <li class="nav-item d-block d-lg-none">
+        <a
+          class="nav-link nav-icon search-bar-toggle"
+          href="#"
+          (click)="$event.preventDefault(); focusSearch()"
+        >
+          <i class="bi bi-search"></i>
+        </a>
+      </li>
+
+      <!-- Bouton mode sombre/clair -->
+      <li class="nav-item mx-2">
+        <button
+          (click)="toggleTheme()"
+          class="theme-toggle"
+        >
+          <mat-icon>{{ isDarkMode ? 'dark_mode' : 'light_mode' }}</mat-icon>
+        </button>
+      </li>
+
+      <!-- Icône de messagerie - cachée pour les clients -->
+      <li
+        class="nav-item mx-2 position-relative"
+        *ngIf="user.role !== 'client'"
+      >
+        <a
+          class="nav-link nav-icon"
+          href="#"
+          (click)="$event.preventDefault(); openMessages()"
+        >
+          <i class="bi bi-chat-dots fs-5"></i>
+          <span
+            *ngIf="unreadMessagesCount > 0"
+            class="badge-notification"
+          >
+            {{ unreadMessagesCount }}
+          </span>
+        </a>
+      </li>
+
+      <li class="nav-item dropdown mx-2">
+        <a
+          class="nav-link nav-icon position-relative"
+          href="#"
+          data-bs-toggle="dropdown"
+        >
+          <i class="bi bi-bell"></i>
+          <span
+            *ngIf="unreadCount > 0"
+            class="badge-notification"
+          >
+            {{ unreadCount }}
+          </span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+          <li class="dropdown-header">
+            Vous avez {{ unreadCount }} notification(s) non lue(s)
+            <a (click)="openAllNotificationsModal()"
+              ><span class="badge rounded-pill bg-primary p-2 ms-2">Voir tout</span></a
+            >
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+
+          <ng-container *ngIf="notifications.length > 0; else noNotifications">
+            <li
+              *ngFor="let notif of notifications.slice(0, 5)"
+              class="notification-item"
+              [class.unread]="!notif.vue"
+              (click)="markAsRead(notif.id)"
+            >
+              <i
+                class="bi"
+                [ngClass]="getNotificationIcon(notif.type)"
+              ></i>
+              <div>
+                <h4>{{ getNotificationTitle(notif.type) }}</h4>
+                <p>{{ notif.message }}</p>
+                <p>{{ notif.created_at | date: 'short' }}</p>
+              </div>
+            </li>
+          </ng-container>
+
+          <ng-template #noNotifications>
+            <li class="notification-item">
+              <div>
+                <p>Aucune notification récente</p>
+              </div>
+            </li>
+          </ng-template>
+
+          <li><hr class="dropdown-divider" /></li>
+          <li class="dropdown-footer">
+            <a (click)="openAllNotificationsModal()">Voir toutes les notifications</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item dropdown mx-2">
+        <a
+          class="nav-link nav-profile d-flex align-items-center pe-0"
+          href="#"
+          data-bs-toggle="dropdown"
+        >
+          <img
+            *ngIf="profilePhoto; else defaultIcon"
+            [src]="profilePhoto"
+            alt="Profile"
+            class="profile-img"
+          />
+          <ng-template #defaultIcon>
+            <i class="bi bi-person-circle default-profile-icon"></i>
+          </ng-template>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+          <li class="dropdown-header">
+            <h6>{{ user.username || 'Utilisateur' }}</h6>
+            <span>{{ user.role || 'Rôle' }}</span>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center"
+              routerLink="/profile-utilisateur"
+            >
+              <i class="bi bi-person"></i>
+              <span>Mon Profil</span>
+            </a>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center"
+              routerLink="/profile-utilisateur"
+              [queryParams]="{ tab: 'profile-change-password' }"
+            >
+              <i class="bi bi-key"></i>
+              <span>Changer mot de passe</span>
+            </a>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center"
+              routerLink="/documentation"
+            >
+              <i class="bi bi-book"></i>
+              <span>Documentation</span>
+            </a>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+
+          <li>
+            <a
+              class="dropdown-item d-flex align-items-center"
+              (click)="logout()"
+            >
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Déconnexion</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</header>
+<!-- Modal de messagerie -->
+<div
+  class="modal fade"
+  id="messageModal"
+  tabindex="-1"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Messagerie</h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body p-0">
+        <div
+          class="d-flex"
+          style="height: 70vh"
+        >
+          <!-- Liste des contacts -->
+          <div class="contact-list">
+            <div class="contact-search">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Rechercher un contact..."
+                [(ngModel)]="contactSearch"
+                (input)="filterContacts()"
+              />
+            </div>
+
+            <div class="list-group list-group-flush">
+              <div
+                *ngFor="let user of filteredUsers"
+                class="list-group-item contact-item"
+                (click)="selectContact(user)"
+                [class.active]="selectedContact?.id === user.id"
+              >
+                <div class="d-flex align-items-center position-relative">
+                  <!-- Avatar du contact -->
+                  <div *ngIf="user.photo; else contactIcon">
+                    <img
+                      [src]="apiUrl + user.photo"
+                      class="contact-avatar"
+                      alt="Photo de profil"
+                    />
+                  </div>
+                  <ng-template #contactIcon>
+                    <div class="contact-icon">
+                      <i class="bi bi-person"></i>
+                    </div>
+                  </ng-template>
+
+                  <!-- Détails du contact -->
+                  <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h6 class="contact-name mb-0">{{ user.username }}</h6>
+                      <small class="text-muted">{{
+                        user.last_message_time | date: 'shortTime'
+                      }}</small>
+                    </div>
+                    <small class="contact-role">{{ user.role }}</small>
+                    <p class="last-message mb-0">{{ user.lastMessage || 'Aucun message' }}</p>
+                  </div>
+
+                  <!-- Badge de notification -->
+                  <span
+                    *ngIf="user.unreadCount && user.unreadCount > 0"
+                    class="unread-count"
+                  >
+                    {{ user.unreadCount }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conversation -->
+          <div
+            class="d-flex flex-column"
+            style="width: 65%"
+          >
+            <!-- En-tête de conversation -->
+            <div
+              *ngIf="selectedContact"
+              class="p-3 border-bottom d-flex align-items-center bg-white"
+            >
+              <!-- Avatar du contact sélectionné -->
+              <div *ngIf="selectedContact.photo; else conversationIcon">
+                <img
+                  [src]="apiUrl + selectedContact.photo"
+                  class="conversation-avatar"
+                  alt="Photo de profil"
+                />
+              </div>
+              <ng-template #conversationIcon>
+                <div class="conversation-icon">
+                  <i class="bi bi-person"></i>
+                </div>
+              </ng-template>
+              <h5 class="mb-0">{{ selectedContact.username }}</h5>
+            </div>
+
+            <!-- Aucun contact sélectionné -->
+            <div
+              *ngIf="!selectedContact"
+              class="flex-grow-1 d-flex align-items-center justify-content-center bg-chat"
+            >
+              <div class="text-center text-muted">
+                <i
+                  class="bi bi-chat-square-text"
+                  style="font-size: 3rem"
+                ></i>
+                <p class="mt-2">Sélectionnez un contact pour commencer à discuter</p>
+              </div>
+            </div>
+
+            <!-- Messages -->
+            <div
+              *ngIf="selectedContact"
+              #messagesContainer
+              class="flex-grow-1 p-3 overflow-auto bg-chat"
+            >
+              <div
+                *ngIf="isLoadingMessages"
+                class="text-center"
+              >
+                <div
+                  class="spinner-border text-primary"
+                  role="status"
+                >
+                  <span class="visually-hidden">Chargement...</span>
+                </div>
+              </div>
+
+              <div
+                *ngIf="!isLoadingMessages && messages.length === 0"
+                class="text-center text-muted mt-5"
+              >
+                Aucun message dans cette conversation
+              </div>
+
+              <!-- Liste des messages - Version améliorée -->
+              <div
+                *ngFor="let message of messages"
+                class="message"
+                [class.message-sent]="message.sender_id == currentUserId"
+                [class.message-received]="message.sender_id != currentUserId"
+              >
+                <div class="message-container">
+                  <!-- Avatar de l'expéditeur (uniquement pour les messages reçus) -->
+                  <div
+                    *ngIf="message.sender_id != currentUserId"
+                    class="message-avatar-container"
+                  >
+                    <div *ngIf="selectedContact.photo; else msgIcon">
+                      <img
+                        [src]="apiUrl + selectedContact.photo"
+                        class="message-avatar"
+                        alt="Photo de profil"
+                      />
+                    </div>
+                    <ng-template #msgIcon>
+                      <div class="message-avatar">
+                        <i class="bi bi-person"></i>
+                      </div>
+                    </ng-template>
+                  </div>
+
+                  <!-- Contenu du message -->
+                  <div class="message-content">
+                    <p class="mb-1">{{ message.content }}</p>
+                    <small class="message-time">
+                      {{ message.created_at | date: 'shortTime' }}
+                      <i
+                        *ngIf="message.sender_id == currentUserId"
+                        class="bi bi-check2-all ms-1"
+                      ></i>
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Zone de saisie -->
+            <div
+              *ngIf="selectedContact"
+              class="p-3 border-top bg-white"
+            >
+              <div class="d-flex align-items-center">
+                <input
+                  type="text"
+                  class="form-control message-input"
+                  placeholder="Écrivez un message..."
+                  [(ngModel)]="newMessage"
+                  (keyup.enter)="sendMessage()"
+                />
+                <button
+                  class="btn send-button"
+                  (click)="sendMessage()"
+                  [disabled]="!newMessage.trim()"
+                >
+                  <i class="bi bi-send"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour toutes les notifications -->
+<div
+  class="custom-modal-backdrop"
+  *ngIf="showAllNotificationsModal"
+  (click)="closeAllNotificationsModal()"
+></div>
+
+<div
+  class="custom-modal"
+  *ngIf="showAllNotificationsModal"
+>
+  <div class="custom-modal-header">
+    <h3>Toutes vos notifications</h3>
+    <button
+      class="custom-modal-close"
+      (click)="closeAllNotificationsModal()"
+    >
+      &times;
+    </button>
+  </div>
+  <div class="custom-modal-body">
+    <div class="notification-actions">
+      <span>Total: {{ notifications.length }} notification(s)</span>
+      <button
+        class="mark-all-read-btn"
+        (click)="markAllAsRead()"
+        [disabled]="unreadCount === 0"
+      >
+        Marquer tout comme lu
+      </button>
+    </div>
+
+    <div class="all-notifications-list">
+      <ng-container *ngIf="notifications.length > 0; else noNotificationsInModal">
+        <div
+          *ngFor="let notif of notifications"
+          class="notification-item-full"
+          [class.unread]="!notif.vue"
+          (click)="markAsRead(notif.id); $event.stopPropagation()"
+        >
+          <i
+            class="bi"
+            [ngClass]="getNotificationIcon(notif.type)"
+          ></i>
+          <div class="notification-content">
+            <h4>{{ getNotificationTitle(notif.type) }}</h4>
+            <p>{{ notif.message }}</p>
+            <small>{{ notif.created_at | date: 'medium' }}</small>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noNotificationsInModal>
+        <div class="no-notifications">
+          <i class="bi bi-bell-slash"></i>
+          <p>Aucune notification disponible</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+  <div class="custom-modal-footer">
+    <button
+      class="custom-modal-btn"
+      (click)="closeAllNotificationsModal()"
+    >
+      Fermer
+    </button>
+  </div>
+</div>

@@ -1,0 +1,234 @@
+<!-- Composant de connexion avec thème station-service -->
+<div class="login-page">
+  <!-- Éléments décoratifs animés -->
+  <div class="animated-bg">
+    <div class="floating-icon icon-1"><i class="bi bi-fuel-pump-fill"></i></div>
+    <div class="floating-icon icon-2"><i class="bi bi-speedometer2"></i></div>
+    <div class="floating-icon icon-3"><i class="bi bi-droplet-fill"></i></div>
+    <div class="floating-icon icon-4"><i class="bi bi-truck"></i></div>
+    <div class="floating-icon icon-5"><i class="bi bi-gear-fill"></i></div>
+    <div class="floating-icon icon-6"><i class="bi bi-fuel-pump"></i></div>
+  </div>
+
+  <!-- Section principale de connexion -->
+  <section class="login-section">
+    <div class="login-container">
+      <!-- Panneau gauche - Branding -->
+      <div class="branding-panel">
+        <div class="branding-content">
+          <div class="station-icon-wrapper">
+            <i class="bi bi-fuel-pump-fill main-icon"></i>
+          </div>
+          <h1 class="brand-title">CarboTrack</h1>
+          <p class="brand-subtitle">Gestion intelligente de votre station-service</p>
+          <div class="features-list">
+            <div class="feature-item">
+              <i class="bi bi-graph-up-arrow"></i>
+              <span>Suivi en temps réel</span>
+            </div>
+            <div class="feature-item">
+              <i class="bi bi-shield-check"></i>
+              <span>Sécurité renforcée</span>
+            </div>
+            <div class="feature-item">
+              <i class="bi bi-speedometer"></i>
+              <span>Performance optimisée</span>
+            </div>
+          </div>
+          
+          <!-- Développé par MSPro -->
+          <div class="developer-credit">
+            <span class="developed-by">Développé par</span>
+            <img src="msp.png" alt="MSPro" class="mspro-logo" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Panneau droit - Formulaire -->
+      <div class="form-panel">
+        <div class="login-card">
+          <div class="card-body">
+            <!-- Logo -->
+            <div class="text-center logo-container">
+              <a href="#" class="logo d-flex align-items-center justify-content-center">
+                <img src="logo.png" alt="Logo de l'application" class="img-fluid logo-image" />
+              </a>
+            </div>
+
+            <!-- Message d'information -->
+            <div class="alert alert-info text-center info-alert" role="alert">
+              <i class="bi bi-info-circle me-1"></i>
+              Les comptes utilisateurs sont créés uniquement par le gérant.
+            </div>
+
+            <!-- En-tête du formulaire -->
+            <div class="text-center form-header">
+              <h5 class="card-title login-title">
+                <i class="bi bi-person-badge me-2"></i>
+                Se connecter
+              </h5>
+              <p class="login-subtitle">
+                Entrez vos identifiants pour accéder à votre espace
+              </p>
+            </div>
+              <!-- Formulaire de connexion -->
+              <form
+                [formGroup]="loginForm"
+                (ngSubmit)="onLogin()"
+                class="row g-3 needs-validation login-form"
+                novalidate
+              >
+                <!-- Champ nom d'utilisateur / email -->
+                <div class="col-12">
+                  <label
+                    for="yourUsernameOrEmail"
+                    class="form-label"
+                  >
+                    <i class="bi bi-person me-1"></i>
+                    Nom d'utilisateur ou Email
+                  </label>
+                  <div class="input-group has-validation">
+                    <span
+                      class="input-group-text"
+                      id="addon-wrapping"
+                    >
+                      <i class="bi bi-at"></i>
+                    </span>
+                    <input
+                      type="text"
+                      formControlName="usernameOrEmail"
+                      class="form-control"
+                      [class.is-invalid]="isUsernameOrEmailInvalid"
+                      id="yourUsernameOrEmail"
+                      placeholder="Entrez votre nom d'utilisateur ou email"
+                      autocomplete="username"
+                      (input)="clearError()"
+                      required
+                    />
+                    <!-- Message d'erreur du champ -->
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="isUsernameOrEmailInvalid"
+                    >
+                      <i class="bi bi-exclamation-circle me-1"></i>
+                      <span *ngIf="usernameOrEmailControl?.errors?.['required']">
+                        Ce champ est obligatoire.
+                      </span>
+                      <span *ngIf="usernameOrEmailControl?.errors?.['minlength']">
+                        Minimum 3 caractères requis.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Champ mot de passe -->
+                <div class="col-12">
+                  <label
+                    for="yourPassword"
+                    class="form-label"
+                  >
+                    <i class="bi bi-lock me-1"></i>
+                    Mot de passe
+                  </label>
+                  <div class="input-group has-validation password-group">
+                    <span class="input-group-text">
+                      <i class="bi bi-key"></i>
+                    </span>
+                    <input
+                      [type]="isPasswordVisible ? 'text' : 'password'"
+                      formControlName="password"
+                      class="form-control password-input"
+                      [class.is-invalid]="isPasswordInvalid"
+                      id="yourPassword"
+                      placeholder="Entrez votre mot de passe"
+                      autocomplete="current-password"
+                      (input)="clearError()"
+                      required
+                    />
+                    <button
+                      class="btn btn-outline-secondary password-toggle-btn"
+                      type="button"
+                      (click)="togglePasswordVisibility()"
+                      [attr.aria-label]="
+                        isPasswordVisible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'
+                      "
+                    >
+                      <i
+                        class="bi"
+                        [class.bi-eye]="!isPasswordVisible"
+                        [class.bi-eye-slash]="isPasswordVisible"
+                      ></i>
+                    </button>
+                    <!-- Message d'erreur du champ -->
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="isPasswordInvalid"
+                    >
+                      <i class="bi bi-exclamation-circle me-1"></i>
+                      <span *ngIf="passwordControl?.errors?.['required']">
+                        Ce champ est obligatoire.
+                      </span>
+                      <span *ngIf="passwordControl?.errors?.['minlength']">
+                        Minimum 6 caractères requis.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bouton de connexion -->
+                <div class="col-12">
+                  <button
+                    class="btn btn-primary w-100 login-btn"
+                    type="submit"
+                    [disabled]="loginForm.invalid || isLoading"
+                  >
+                    <!-- Indicateur de chargement -->
+                    <span
+                      *ngIf="isLoading"
+                      class="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    <i
+                      *ngIf="!isLoading"
+                      class="bi bi-fuel-pump-fill me-2"
+                    ></i>
+                    {{ isLoading ? 'Connexion en cours...' : 'Accéder à la station' }}
+                  </button>
+                </div>
+
+                <!-- Lien mot de passe oublié -->
+                <div class="col-12 text-center">
+                  <p class="small mb-0 forgot-password-link">
+                    <a
+                      routerLink="/forgetEmail"
+                      class="text-decoration-none"
+                    >
+                      <i class="bi bi-question-circle me-1"></i>
+                      Mot de passe oublié ?
+                    </a>
+                  </p>
+                </div>
+              </form>
+
+              <!-- Zone d'affichage des erreurs -->
+              <div
+                *ngIf="errorMessage"
+                class="alert alert-danger mt-3 error-message"
+                role="alert"
+              >
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                {{ errorMessage }}
+                <button
+                  type="button"
+                  class="btn-close"
+                  (click)="clearError()"
+                  aria-label="Fermer"
+                ></button>
+              </div>
+            </div> <!-- .card-body -->
+          </div> <!-- .login-card -->
+        </div> <!-- .form-panel -->
+      </div> <!-- .login-container -->
+  </section> <!-- .login-section -->
+</div> <!-- .login-page -->

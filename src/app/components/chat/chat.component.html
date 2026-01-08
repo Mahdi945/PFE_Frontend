@@ -1,0 +1,42 @@
+<!-- Chat Toggle Bubble -->
+<div
+  class="chat-toggle"
+  (click)="toggleChat()"
+>
+  💬
+</div>
+
+<!-- Chat Box -->
+<div
+  class="chat-box"
+  *ngIf="showChat"
+>
+  <div class="chat-header">
+    Chat with us
+    <button
+      class="close-btn"
+      (click)="toggleChat()"
+    >
+      ×
+    </button>
+  </div>
+
+  <div class="chat-messages">
+    <div
+      *ngFor="let msg of messages"
+      class="message-bubble"
+      [ngClass]="{ user: msg.sender === 'You', bot: msg.sender !== 'You' }"
+    >
+      {{ msg.text }}
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <input
+      [(ngModel)]="userMessage"
+      placeholder="Type your message..."
+      (keyup.enter)="sendMessage()"
+    />
+    <button (click)="sendMessage()">Send</button>
+  </div>
+</div>

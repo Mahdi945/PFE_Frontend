@@ -1,0 +1,501 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <!-- Breadcrumb -->
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+      <li class="breadcrumb-item">Crédits</li>
+      <li class="breadcrumb-item active">Historique des Paiements</li>
+    </ol>
+  </nav>
+
+  <!-- Titre de page amélioré -->
+  <div class="pagetitle d-flex justify-content-between align-items-center mb-4">
+    <div class="title-with-icon d-flex align-items-center">
+      <div class="title-icon-wrapper me-3">
+        <i class="bi bi-credit-card-2-front title-icon"></i>
+      </div>
+      <div class="title-text-content">
+        <h1 class="title-main mb-0">Historique des Paiements</h1>
+        <p class="title-subtitle mb-0">Gestion et suivi des paiements de crédit</p>
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <button
+        class="btn btn-success btn-modern"
+        (click)="exportToExcel()"
+        title="Exporter tous les paiements"
+      >
+        <i class="bi bi-file-excel me-2"></i>Exporter Excel
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtres améliorés -->
+  <div class="filters-card mb-4">
+    <div class="card-header">
+      <h6 class="card-title mb-0"><i class="bi bi-funnel me-2"></i>Filtres de recherche</h6>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- Champ de recherche général -->
+        <div class="col-md-3">
+          <div class="input-group input-group-modern">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Rechercher par nom client..."
+              [(ngModel)]="searchTerm"
+              (input)="filterPayments()"
+            />
+          </div>
+        </div>
+
+        <!-- Recherche par ID Paiement -->
+        <div class="col-md-2">
+          <div class="input-group input-group-modern">
+            <span class="input-group-text"><i class="bi bi-hash"></i></span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Référence..."
+              [(ngModel)]="searchPaymentId"
+              (input)="filterPayments()"
+            />
+          </div>
+        </div>
+
+        <!-- Recherche par ID Crédit -->
+        <div class="col-md-2">
+          <div class="input-group input-group-modern">
+            <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="ID Crédit..."
+              [(ngModel)]="searchCreditId"
+              (input)="filterPayments()"
+            />
+          </div>
+        </div>
+
+        <!-- Filtre par mode -->
+        <div class="col-md-2">
+          <div class="input-group input-group-modern">
+            <span class="input-group-text"><i class="bi bi-wallet2"></i></span>
+            <select
+              class="form-select"
+              [(ngModel)]="selectedMode"
+              (change)="filterPayments()"
+            >
+              <option value="">Tous les modes</option>
+              <option value="especes">Espèces</option>
+              <option value="carte">Carte</option>
+              <option value="virement">Virement</option>
+              <option value="cheque">Chèque</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Filtre par date -->
+        <div class="col-md-3">
+          <div class="input-group input-group-modern">
+            <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+            <input
+              type="date"
+              class="form-control"
+              [(ngModel)]="selectedDate"
+              (change)="filterPayments()"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Résumé -->
+  <div class="stats-card mb-4">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="stat-item">
+          <div class="stat-icon bg-primary">
+            <i class="bi bi-receipt"></i>
+          </div>
+          <div class="stat-content">
+            <h4>{{ filteredPayments.length }}</h4>
+            <p>Paiement(s) trouvé(s)</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-item">
+          <div class="stat-icon bg-success">
+            <i class="bi bi-currency-dollar"></i>
+          </div>
+          <div class="stat-content">
+            <h4>{{ totalPayed | number: '1.2-2' }} DT</h4>
+            <p>Total payé</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-item">
+          <div class="stat-icon bg-info">
+            <i class="bi bi-graph-up"></i>
+          </div>
+          <div class="stat-content">
+            <h4>{{ totalPayed / filteredPayments.length || 0 | number: '1.2-2' }} DT</h4>
+            <p>Moyenne par paiement</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau moderne -->
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="table table-modern">
+        <thead>
+          <tr>
+            <th>Référence</th>
+            <th>Crédit</th>
+            <th>Client</th>
+            <th>Montant</th>
+            <th>Date</th>
+            <th>Mode</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="isLoading">
+            <td
+              colspan="7"
+              class="text-center py-4"
+            >
+              <div
+                class="spinner-border text-primary"
+                role="status"
+              >
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="!isLoading && filteredPayments.length === 0">
+            <td
+              colspan="7"
+              class="text-center py-4 text-muted"
+            >
+              <i class="bi bi-inbox display-4 d-block mb-2"></i>
+              Aucun paiement trouvé
+            </td>
+          </tr>
+          <tr
+            *ngFor="
+              let payment of filteredPayments
+                | slice: (currentPage - 1) * pageSize : currentPage * pageSize
+            "
+            class="table-row-hover table-row-clickable"
+            (click)="viewDetails(payment)"
+          >
+            <td>
+              <span class="reference-badge">{{ payment.reference_paiement }}</span>
+            </td>
+            <td>
+              <span class="credit-badge">Crédit #{{ payment.id_credit }}</span>
+            </td>
+            <td>
+              <div class="client-info">
+                <i class="bi bi-person-circle me-2"></i>
+                {{ payment.username || 'Inconnu' }}
+              </div>
+            </td>
+            <td>
+              <div class="amount-info">
+                <div class="amount-paid">{{ payment.montant_paye | number: '1.2-2' }} DT</div>
+                <small class="amount-remaining text-muted"
+                  >Reste: {{ payment.montant_restant | number: '1.2-2' }} DT</small
+                >
+              </div>
+            </td>
+            <td>
+              <div class="date-info">
+                <div>{{ payment.date_paiement | date: 'dd/MM/yyyy' }}</div>
+                <small class="text-muted">{{ payment.date_paiement | date: 'HH:mm' }}</small>
+              </div>
+            </td>
+            <td>
+              <span
+                class="mode-badge"
+                [ngClass]="{
+                  'mode-especes': payment.mode_paiement === 'especes',
+                  'mode-carte': payment.mode_paiement === 'carte',
+                  'mode-virement': payment.mode_paiement === 'virement',
+                  'mode-cheque': payment.mode_paiement === 'cheque',
+                }"
+              >
+                <i
+                  class="bi"
+                  [ngClass]="{
+                    'bi-cash': payment.mode_paiement === 'especes',
+                    'bi-credit-card': payment.mode_paiement === 'carte',
+                    'bi-bank': payment.mode_paiement === 'virement',
+                    'bi-check2-square': payment.mode_paiement === 'cheque',
+                  }"
+                ></i>
+                {{ getPaymentModeLabel(payment.mode_paiement) }}
+              </span>
+            </td>
+            <td>
+              <button
+                class="btn-action-eye"
+                (click)="$event.stopPropagation(); viewDetails(payment)"
+                title="Voir les détails"
+              >
+                <i class="bi bi-eye"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination moderne -->
+    <nav
+      *ngIf="totalPages > 1"
+      class="pagination-container"
+    >
+      <ul class="pagination pagination-modern justify-content-center">
+        <li
+          class="page-item"
+          [class.disabled]="currentPage === 1"
+        >
+          <a
+            class="page-link"
+            (click)="changePage(currentPage - 1)"
+          >
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        </li>
+        <li
+          class="page-item"
+          *ngFor="let page of getPages()"
+          [class.active]="page === currentPage"
+        >
+          <a
+            class="page-link"
+            (click)="changePage(page)"
+            >{{ page }}</a
+          >
+        </li>
+        <li
+          class="page-item"
+          [class.disabled]="currentPage === totalPages"
+        >
+          <a
+            class="page-link"
+            (click)="changePage(currentPage + 1)"
+          >
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+      <div class="pagination-info">
+        Page {{ currentPage }} sur {{ totalPages }} - {{ filteredPayments.length }} paiement(s)
+      </div>
+    </nav>
+  </div>
+</main>
+
+<!-- Modal de détails moderne -->
+<div
+  *ngIf="showDetailsModal"
+  class="modal-overlay"
+  (click)="closeDetailsModal()"
+>
+  <div
+    class="modal-dialog-modern"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-content-modern">
+      <div class="modal-header-modern">
+        <div class="modal-title-container">
+          <div class="modal-icon-wrapper">
+            <i class="bi bi-receipt-cutoff"></i>
+          </div>
+          <div>
+            <h3 class="modal-title">Détails du Paiement</h3>
+            <p class="modal-subtitle">{{ selectedPayment?.reference_paiement }}</p>
+          </div>
+        </div>
+        <button
+          class="btn-close-modern"
+          (click)="closeDetailsModal()"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-modern">
+        <div
+          class="row g-4"
+          *ngIf="selectedPayment"
+        >
+          <!-- Informations du paiement -->
+          <div class="col-md-6">
+            <div class="info-card">
+              <div class="info-card-header">
+                <i class="bi bi-credit-card-2-front me-2"></i>
+                <h5>Informations Paiement</h5>
+              </div>
+              <div class="info-card-body">
+                <div class="info-item">
+                  <label>Référence</label>
+                  <span class="value">{{ selectedPayment.reference_paiement }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Montant payé</label>
+                  <span class="value amount"
+                    >{{ selectedPayment.montant_paye | number: '1.2-2' }} DT</span
+                  >
+                </div>
+                <div class="info-item">
+                  <label>Montant restant</label>
+                  <span class="value amount"
+                    >{{ selectedPayment.montant_restant | number: '1.2-2' }} DT</span
+                  >
+                </div>
+                <div class="info-item">
+                  <label>Date du paiement</label>
+                  <span class="value">{{
+                    selectedPayment.date_paiement | date: 'dd/MM/yyyy à HH:mm'
+                  }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Mode de paiement</label>
+                  <span class="value">
+                    <span
+                      class="mode-badge"
+                      [ngClass]="{
+                        'mode-especes': selectedPayment.mode_paiement === 'especes',
+                        'mode-carte': selectedPayment.mode_paiement === 'carte',
+                        'mode-virement': selectedPayment.mode_paiement === 'virement',
+                        'mode-cheque': selectedPayment.mode_paiement === 'cheque',
+                      }"
+                    >
+                      {{ getPaymentModeLabel(selectedPayment.mode_paiement) }}
+                    </span>
+                  </span>
+                </div>
+                <div
+                  class="info-item"
+                  *ngIf="selectedPayment.description"
+                >
+                  <label>Description</label>
+                  <span class="value">{{ selectedPayment.description }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Traité par</label>
+                  <span class="value">{{ selectedPayment.caissier_username || 'N/A' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Informations du crédit -->
+          <div class="col-md-6">
+            <div class="info-card">
+              <div class="info-card-header">
+                <i class="bi bi-bank me-2"></i>
+                <h5>Crédit Associé</h5>
+              </div>
+              <div
+                class="info-card-body"
+                *ngIf="selectedPaymentCredit"
+              >
+                <div class="info-item">
+                  <label>ID Crédit</label>
+                  <span class="value">#{{ selectedPaymentCredit.id }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Client</label>
+                  <span class="value">{{
+                    selectedPayment.username || selectedPaymentCredit.utilisateur
+                  }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Type de crédit</label>
+                  <span class="value">{{ selectedPaymentCredit.type_credit }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Solde initial</label>
+                  <span class="value amount"
+                    >{{ selectedPaymentCredit.solde_credit | number: '1.2-2' }} DT</span
+                  >
+                </div>
+                <div class="info-item">
+                  <label>Date début</label>
+                  <span class="value">{{
+                    selectedPaymentCredit.date_debut | date: 'dd/MM/yyyy'
+                  }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Durée</label>
+                  <span class="value">{{ selectedPaymentCredit.duree_credit }} mois</span>
+                </div>
+                <div class="info-item">
+                  <label>État</label>
+                  <span class="value">
+                    <span
+                      class="status-badge"
+                      [ngClass]="'status-' + selectedPaymentCredit.etat"
+                    >
+                      {{ selectedPaymentCredit.etat }}
+                    </span>
+                  </span>
+                </div>
+              </div>
+              <div
+                class="info-card-body"
+                *ngIf="!selectedPaymentCredit"
+              >
+                <div class="text-muted text-center py-3">
+                  <i class="bi bi-exclamation-triangle"></i>
+                  Informations du crédit non disponibles
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer-modern">
+        <button
+          class="btn btn-secondary"
+          (click)="closeDetailsModal()"
+        >
+          <i class="bi bi-x-circle me-2"></i>Fermer
+        </button>
+        <button
+          class="btn btn-success"
+          (click)="exportPaymentDetails()"
+        >
+          <i class="bi bi-file-excel me-2"></i>Exporter en Excel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
+<a
+  href="#"
+  class="back-to-top d-flex align-items-center justify-content-center"
+>
+  <i class="bi bi-arrow-up-short"></i>
+</a>

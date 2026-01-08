@@ -1,0 +1,43 @@
+# EditorConfig aide à maintenir des styles de codage cohérents
+# https://editorconfig.org
+
+root = true
+
+# Règles pour tous les fichiers
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+end_of_line = lf
+
+# TypeScript et JavaScript
+[*.{ts,js}]
+quote_type = single
+max_line_length = 90
+indent_size = 2
+
+# Angular Templates
+[*.html]
+max_line_length = 100
+indent_size = 2
+
+# Styles CSS/SCSS
+[*.{css,scss}]
+max_line_length = 80
+indent_size = 2
+
+# JSON files
+[*.json]
+max_line_length = 80
+indent_size = 2
+
+# Markdown
+[*.md]
+max_line_length = 80
+trim_trailing_whitespace = false
+
+# Fichiers de configuration
+[{package.json,angular.json,tsconfig*.json}]
+indent_size = 2

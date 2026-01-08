@@ -1,0 +1,3281 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <div class="container-fluid">
+    <!-- Breadcrumb -->
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item">Stock</li>
+
+        <li class="breadcrumb-item active">Gérer le Stock</li>
+      </ol>
+    </nav>
+
+    <!-- Titre de page amélioré -->
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+      <div class="title-text-content">
+        <h1 class="title-main"><i class="bi bi-box-seam me-2"></i> Gestion du Stock</h1>
+      </div>
+    </div>
+
+    <!-- Section principale -->
+    <section class="section dashboard">
+      <div class="row">
+        <!-- Cartes statistiques -->
+        <div class="col-lg-12">
+          <div class="row">
+            <!-- Carte valeur du stock -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 class="card-title">Valeur du Stock</h5>
+                  <div class="d-flex align-items-center">
+                    <div
+                      class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                    >
+                      <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ stockValue | number: '1.2-2' }} DT</h6>
+                      <span class="text-muted small pt-2 ps-1">{{ totalProducts }} produits</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Carte produits en alerte -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card">
+                <div class="card-body">
+                  <h5 class="card-title">Produits en Alerte</h5>
+                  <div class="d-flex align-items-center">
+                    <div
+                      class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning"
+                    >
+                      <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ lowStockCount }}</h6>
+                      <span class="text-muted small pt-2 ps-1">Stock faible/rupture</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Onglets -->
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <ul
+                class="nav nav-tabs nav-tabs-bordered"
+                id="borderedTab"
+                role="tablist"
+              >
+                <li
+                  class="nav-item"
+                  role="presentation"
+                >
+                  <button
+                    class="nav-link"
+                    [class.active]="activeTab === 'products'"
+                    (click)="changeTab('products')"
+                    id="products-tab"
+                    type="button"
+                  >
+                    <i class="bi bi-box-seam me-1"></i> Produits
+                  </button>
+                </li>
+                <li
+                  class="nav-item"
+                  role="presentation"
+                >
+                  <button
+                    class="nav-link"
+                    [class.active]="activeTab === 'categories'"
+                    (click)="changeTab('categories')"
+                    id="categories-tab"
+                    type="button"
+                  >
+                    <i class="bi bi-tags me-1"></i> Catégories
+                  </button>
+                </li>
+                <li
+                  class="nav-item"
+                  role="presentation"
+                >
+                  <button
+                    class="nav-link"
+                    [class.active]="activeTab === 'movements'"
+                    (click)="changeTab('movements')"
+                    id="movements-tab"
+                    type="button"
+                  >
+                    <i class="bi bi-arrow-left-right me-1"></i> Mouvements
+                  </button>
+                </li>
+                <li
+                  class="nav-item"
+                  role="presentation"
+                >
+                  <button
+                    class="nav-link"
+                    [class.active]="activeTab === 'sales'"
+                    (click)="changeTab('sales')"
+                    id="sales-tab"
+                    type="button"
+                  >
+                    <i class="bi bi-cart me-1"></i> Ventes
+                  </button>
+                </li>
+                <li
+                  class="nav-item"
+                  role="presentation"
+                >
+                  <button
+                    class="nav-link"
+                    [class.active]="activeTab === 'suppliers'"
+                    (click)="changeTab('suppliers')"
+                    id="suppliers-tab"
+                    type="button"
+                  >
+                    <i class="bi bi-building me-1"></i> Fournisseurs
+                  </button>
+                </li>
+                <li
+                  class="nav-item"
+                  role="presentation"
+                >
+                  <button
+                    class="nav-link"
+                    [class.active]="activeTab === 'purchases'"
+                    (click)="changeTab('purchases')"
+                    id="purchases-tab"
+                    type="button"
+                  >
+                    <i class="bi bi-receipt me-1"></i> Achats
+                  </button>
+                </li>
+              </ul>
+
+              <!-- Contenu des onglets -->
+              <div class="tab-content pt-2">
+                <!-- Onglet Produits -->
+                <div
+                  class="tab-pane fade"
+                  [class.active]="activeTab === 'products'"
+                  [class.show]="activeTab === 'products'"
+                >
+                  <div class="pt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                      <h2 class="card-title">
+                        <i class="bi bi-list-ul me-2"></i>Liste des Produits
+                      </h2>
+                      <div>
+                        <button
+                          class="btn btn-primary btn-lg me-2"
+                          (click)="openAddProductModal()"
+                        >
+                          <i class="bi bi-plus-circle me-1"></i> Ajouter Produit
+                        </button>
+                        <button
+                          class="btn btn-warning btn-lg me-2"
+                          (click)="openInventoryModal()"
+                        >
+                          <i class="bi bi-clipboard-check me-1"></i> Inventaire
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Filtres améliorés -->
+                    <div class="row mb-4">
+                      <div class="col-md-3">
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text bg-primary text-white"
+                            ><i class="bi bi-search"></i
+                          ></span>
+                          <input
+                            type="text"
+                            class="form-control form-control-lg"
+                            placeholder="Produit..."
+                            [(ngModel)]="searchTerm"
+                            (input)="filterProducts()"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text bg-info text-white"
+                            ><i class="bi bi-tag"></i
+                          ></span>
+                          <input
+                            type="text"
+                            class="form-control form-control-lg"
+                            placeholder="Catégorie..."
+                            [(ngModel)]="categorySearchTerm"
+                            (input)="filterProductsByCategory()"
+                            #categoryInput
+                          />
+                          <div
+                            class="dropdown-menu"
+                            [class.show]="showCategoryDropdown && filteredCategories.length > 0"
+                          >
+                            <a
+                              class="dropdown-item"
+                              *ngFor="let cat of filteredCategories"
+                              (click)="selectCategoryFilter(cat)"
+                              >{{ cat.nom }}</a
+                            >
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text bg-success text-white"
+                            ><i class="bi bi-building"></i
+                          ></span>
+                          <input
+                            type="text"
+                            class="form-control form-control-lg"
+                            placeholder="Fournisseur..."
+                            [(ngModel)]="supplierSearchTerm"
+                            (input)="filterProductsBySupplier()"
+                            #supplierInput
+                          />
+                          <div
+                            class="dropdown-menu"
+                            [class.show]="showSupplierDropdown && filteredSuppliers.length > 0"
+                          >
+                            <a
+                              class="dropdown-item"
+                              *ngFor="let fournisseur of filteredSuppliers"
+                              (click)="selectSupplierFilter(fournisseur)"
+                              >{{ fournisseur.nom }}</a
+                            >
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text bg-warning text-white"
+                            ><i class="bi bi-exclamation-triangle"></i
+                          ></span>
+                          <select
+                            class="form-select form-select-lg"
+                            [(ngModel)]="stockFilter"
+                            (change)="filterProducts()"
+                          >
+                            <option value="all">Tout le stock</option>
+                            <option value="low">Stock faible</option>
+                            <option value="out">Rupture</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Bouton effacer les filtres -->
+                    <div
+                      class="row mb-3"
+                      *ngIf="
+                        searchTerm ||
+                        categorySearchTerm ||
+                        supplierSearchTerm ||
+                        stockFilter !== 'all'
+                      "
+                    >
+                      <div class="col-12 text-end">
+                        <button
+                          class="btn btn-outline-secondary"
+                          (click)="clearProductFilters()"
+                        >
+                          <i class="bi bi-x-circle me-1"></i> Effacer les filtres
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Cartes de produits améliorées -->
+                    <div class="row">
+                      <div
+                        *ngIf="loading"
+                        class="col-12 text-center my-4"
+                      >
+                        <div
+                          class="spinner-border text-primary"
+                          role="status"
+                        >
+                          <span class="visually-hidden">Chargement...</span>
+                        </div>
+                      </div>
+                      <div
+                        class="col-md-4 col-lg-3 mb-4"
+                        *ngFor="
+                          let product of filteredProducts
+                            | slice: (currentPage - 1) * itemsPerPage : currentPage * itemsPerPage
+                        "
+                      >
+                        <div class="card product-card h-100">
+                          <div
+                            class="card-img-container"
+                            (click)="editProduct(product)"
+                            style="cursor: pointer"
+                          >
+                            <img
+                              *ngIf="product.image_url"
+                              [src]="product.image_url"
+                              class="product-image"
+                              alt="Image du produit"
+                            />
+                            <div
+                              *ngIf="!product.image_url"
+                              class="no-image-placeholder-display"
+                            >
+                              <i class="bi bi-image"></i>
+                              <span>Aucune image</span>
+                            </div>
+                          </div>
+                          <div
+                            class="card-body"
+                            (click)="editProduct(product)"
+                            style="cursor: pointer"
+                          >
+                            <h5 class="card-title">{{ product.nom }}</h5>
+                            <p class="category">
+                              <i class="bi bi-tag-fill me-1"></i
+                              >{{ getCategoryName(product.categorie_id) }}
+                            </p>
+                            <p
+                              class="supplier mb-2"
+                              *ngIf="product.fournisseur_nom"
+                            >
+                              <i class="bi bi-building me-1"></i>{{ product.fournisseur_nom }}
+                            </p>
+                            <p
+                              class="supplier mb-2"
+                              *ngIf="!product.fournisseur_nom"
+                            >
+                              <i class="bi bi-building me-1"></i
+                              ><span class="text-muted">Aucun fournisseur</span>
+                            </p>
+                            <div class="product-details">
+                              <span class="price"
+                                >{{ product.prix_vente | number: '1.2-2' }} DT</span
+                              >
+                              <span
+                                class="badge"
+                                [ngClass]="{
+                                  'bg-danger': product.quantite_stock <= product.seuil_alerte,
+                                  'bg-warning':
+                                    product.quantite_stock > product.seuil_alerte &&
+                                    product.quantite_stock < product.seuil_alerte + 5,
+                                  'bg-success': product.quantite_stock >= product.seuil_alerte + 5,
+                                }"
+                              >
+                                <i class="bi bi-box-seam me-1"></i>{{ product.quantite_stock }}
+                              </span>
+                            </div>
+                          </div>
+                          <div class="card-footer bg-transparent d-flex justify-content-center">
+                            <button
+                              class="btn btn-action btn-edit me-2"
+                              (click)="editProduct(product); $event.stopPropagation()"
+                              title="Modifier"
+                            >
+                              <i class="bi bi-pencil-fill"></i>
+                            </button>
+                            <button
+                              class="btn btn-action btn-delete"
+                              (click)="confirmDelete(product.id); $event.stopPropagation()"
+                              title="Supprimer"
+                            >
+                              <i class="bi bi-trash-fill"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Message si aucun produit -->
+                    <div
+                      *ngIf="filteredProducts.length === 0 && !loading"
+                      class="alert alert-info"
+                    >
+                      <i class="bi bi-info-circle me-2"></i>Aucun produit trouvé
+                    </div>
+
+                    <!-- Pagination améliorée -->
+                    <div
+                      class="row mt-4"
+                      *ngIf="filteredProducts.length > itemsPerPage"
+                    >
+                      <div class="col-md-12 d-flex justify-content-center">
+                        <nav>
+                          <ul class="pagination pagination-lg">
+                            <li
+                              class="page-item"
+                              [class.disabled]="currentPage === 1"
+                            >
+                              <a
+                                class="page-link"
+                                (click)="changePage(currentPage - 1)"
+                              >
+                                <i class="bi bi-chevron-left"></i>
+                              </a>
+                            </li>
+                            <li
+                              *ngFor="let page of getPages()"
+                              class="page-item"
+                              [class.active]="currentPage === page"
+                            >
+                              <a
+                                class="page-link"
+                                (click)="changePage(page)"
+                                >{{ page }}</a
+                              >
+                            </li>
+                            <li
+                              class="page-item"
+                              [class.disabled]="currentPage === totalPages"
+                            >
+                              <a
+                                class="page-link"
+                                (click)="changePage(currentPage + 1)"
+                              >
+                                <i class="bi bi-chevron-right"></i>
+                              </a>
+                            </li>
+                          </ul>
+                        </nav>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Onglet Catégories -->
+                <div
+                  class="tab-pane fade"
+                  [class.active]="activeTab === 'categories'"
+                  [class.show]="activeTab === 'categories'"
+                >
+                  <div class="pt-3">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="card">
+                          <div class="card-body">
+                            <h5 class="card-title">
+                              <i class="bi bi-plus-circle me-2"></i>Gestion des Catégories
+                            </h5>
+                            <form
+                              [formGroup]="categoryForm"
+                              (ngSubmit)="saveCategory()"
+                            >
+                              <div class="mb-3">
+                                <label class="form-label"
+                                  >Nom <span class="text-danger">*</span></label
+                                >
+                                <input
+                                  type="text"
+                                  class="form-control form-control-lg"
+                                  formControlName="nom"
+                                  [class.is-invalid]="
+                                    categoryForm.get('nom')?.invalid &&
+                                    (categoryForm.get('nom')?.dirty ||
+                                      categoryForm.get('nom')?.touched)
+                                  "
+                                  required
+                                />
+                                <div
+                                  *ngIf="
+                                    categoryForm.get('nom')?.invalid &&
+                                    (categoryForm.get('nom')?.dirty ||
+                                      categoryForm.get('nom')?.touched)
+                                  "
+                                  class="invalid-feedback d-block"
+                                >
+                                  Le nom de la catégorie est obligatoire
+                                </div>
+                              </div>
+                              <div class="mb-3">
+                                <label class="form-label">Catégorie parente</label>
+                                <select
+                                  class="form-select form-select-lg"
+                                  formControlName="parent_id"
+                                >
+                                  <option value="">Aucune (principale)</option>
+                                  <option
+                                    *ngFor="let cat of categories"
+                                    [value]="cat.id"
+                                    [disabled]="cat.id === editingCategory?.id"
+                                  >
+                                    {{ cat.nom }}
+                                  </option>
+                                </select>
+                              </div>
+                              <div class="d-flex justify-content-end">
+                                <button
+                                  type="button"
+                                  class="btn btn-secondary btn-lg me-2"
+                                  (click)="cancelEdit()"
+                                  *ngIf="editingCategory"
+                                >
+                                  Annuler
+                                </button>
+                                <button
+                                  type="submit"
+                                  class="btn btn-primary btn-lg"
+                                  [disabled]="categoryForm.invalid || loading"
+                                >
+                                  <span
+                                    *ngIf="loading"
+                                    class="spinner-border spinner-border-sm me-1"
+                                  ></span>
+                                  {{ editingCategory ? 'Mettre à jour' : 'Ajouter' }}
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="card">
+                          <div class="card-body">
+                            <h5 class="card-title">
+                              <i class="bi bi-list-ul me-2"></i>Liste des Catégories
+                            </h5>
+                            <div
+                              *ngIf="loading"
+                              class="text-center my-4"
+                            >
+                              <div
+                                class="spinner-border text-primary"
+                                role="status"
+                              >
+                                <span class="visually-hidden">Chargement...</span>
+                              </div>
+                            </div>
+                            <div
+                              class="table-responsive"
+                              *ngIf="!loading"
+                            >
+                              <table class="table table-hover">
+                                <thead>
+                                  <tr>
+                                    <th>Nom</th>
+                                    <th>Parente</th>
+                                    <th>Actions</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngFor="let category of categories">
+                                    <td>{{ category.nom }}</td>
+                                    <td>{{ getCategoryName(category.parent_id) || '-' }}</td>
+                                    <td>
+                                      <div class="d-block mb-2">
+                                        <button
+                                          class="btn btn-action btn-edit"
+                                          (click)="startEditCategory(category)"
+                                          title="Modifier"
+                                        >
+                                          <i class="bi bi-pencil-fill"></i>
+                                        </button>
+                                      </div>
+                                      <div class="d-block">
+                                        <button
+                                          class="btn btn-action btn-delete"
+                                          (click)="deleteCategory(category.id)"
+                                          title="Supprimer"
+                                        >
+                                          <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr *ngIf="categories.length === 0 && !loading">
+                                    <td
+                                      colspan="3"
+                                      class="text-center"
+                                    >
+                                      Aucune catégorie trouvée
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Onglet Mouvements -->
+                <div
+                  class="tab-pane fade"
+                  [class.active]="activeTab === 'movements'"
+                  [class.show]="activeTab === 'movements'"
+                >
+                  <div class="pt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                      <h2 class="card-title">
+                        <i class="bi bi-arrow-left-right me-2"></i>Mouvements de Stock
+                      </h2>
+                      <div>
+                        <button
+                          class="btn btn-success btn-lg me-2"
+                          (click)="exportMovementsToExcel()"
+                          title="Exporter vers Excel"
+                        >
+                          <i class="bi bi-file-earmark-excel me-1"></i> Exporter Excel
+                        </button>
+                        <button
+                          class="btn btn-primary btn-lg"
+                          (click)="openAddMovementModal()"
+                        >
+                          <i class="bi bi-plus-circle me-1"></i> Ajouter Mouvement
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Filtres améliorés -->
+                    <div class="row mb-4">
+                      <div class="col-md-3">
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text bg-primary text-white"
+                            ><i class="bi bi-funnel"></i
+                          ></span>
+                          <select
+                            class="form-select form-select-lg"
+                            [(ngModel)]="movementTypeFilter"
+                            (change)="loadMovements()"
+                          >
+                            <option value="">Types</option>
+                            <option value="ENTREE">Entrée</option>
+                            <option value="SORTIE">Sortie</option>
+                            <option value="AJUSTEMENT">Ajustement</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text bg-info text-white"
+                            ><i class="bi bi-box-seam"></i
+                          ></span>
+                          <input
+                            type="text"
+                            class="form-control form-control-lg"
+                            placeholder="Rechercher produit..."
+                            [(ngModel)]="movementProductSearchTerm"
+                            (input)="filterMovementsByProduct()"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text bg-warning text-white"
+                            ><i class="bi bi-calendar"></i
+                          ></span>
+                          <input
+                            type="date"
+                            class="form-control form-control-lg"
+                            [(ngModel)]="startDate"
+                            (change)="loadMovements()"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text bg-warning text-white"
+                            ><i class="bi bi-calendar"></i
+                          ></span>
+                          <input
+                            type="date"
+                            class="form-control form-control-lg"
+                            [(ngModel)]="endDate"
+                            (change)="loadMovements()"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Tableau des mouvements -->
+                    <div class="table-responsive">
+                      <div
+                        *ngIf="loading"
+                        class="text-center my-4"
+                      >
+                        <div
+                          class="spinner-border text-primary"
+                          role="status"
+                        >
+                          <span class="visually-hidden">Chargement...</span>
+                        </div>
+                      </div>
+
+                      <table
+                        class="table table-hover datatable"
+                        *ngIf="!loading"
+                      >
+                        <thead>
+                          <tr>
+                            <th>Date</th>
+                            <th>Produit</th>
+                            <th>Type</th>
+                            <th>Quantité</th>
+                            <th>Assuré par</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let movement of movements">
+                            <td>{{ movement.date_mouvement | date: 'dd/MM/yyyy HH:mm' }}</td>
+                            <td>{{ getProductName(movement.produit_id) }}</td>
+                            <td>
+                              <span
+                                class="badge"
+                                [ngClass]="{
+                                  'bg-success': movement.type === 'ENTREE',
+                                  'bg-danger': movement.type === 'SORTIE',
+                                  'bg-warning': movement.type === 'AJUSTEMENT',
+                                }"
+                              >
+                                <i
+                                  class="bi bi-arrow-up"
+                                  *ngIf="movement.type === 'ENTREE'"
+                                ></i>
+                                <i
+                                  class="bi bi-arrow-down"
+                                  *ngIf="movement.type === 'SORTIE'"
+                                ></i>
+                                <i
+                                  class="bi bi-arrow-repeat"
+                                  *ngIf="movement.type === 'AJUSTEMENT'"
+                                ></i>
+                                {{ movement.type }}
+                              </span>
+                            </td>
+                            <td>{{ movement.quantite }}</td>
+                            <td>{{ movement.agent_username }}</td>
+                            <td>
+                              <button
+                                class="btn btn-action btn-view"
+                                (click)="viewMovementDetails(movement)"
+                                title="Détails"
+                              >
+                                <i class="bi bi-eye-fill"></i>
+                              </button>
+                            </td>
+                          </tr>
+                          <tr *ngIf="movements.length === 0 && !loading">
+                            <td
+                              colspan="7"
+                              class="text-center"
+                            >
+                              Aucun mouvement trouvé
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <!-- Onglet Fournisseurs -->
+                <div
+                  class="tab-pane fade"
+                  [class.active]="activeTab === 'suppliers'"
+                  [class.show]="activeTab === 'suppliers'"
+                >
+                  <div class="pt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                      <h2 class="card-title">
+                        <i class="bi bi-building me-2"></i>Liste des Fournisseurs
+                      </h2>
+                      <div>
+                        <button
+                          class="btn btn-primary"
+                          (click)="openAddFournisseurModal()"
+                        >
+                          <i class="bi bi-plus-circle me-1"></i> Ajouter Fournisseur
+                        </button>
+                        <button
+                          class="btn btn-outline-secondary ms-2"
+                          (click)="refreshFournisseurs()"
+                        >
+                          <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Barre de recherche et filtres -->
+                    <div class="row mb-3">
+                      <div class="col-md-8">
+                        <div class="input-group">
+                          <span class="input-group-text"><i class="bi bi-search"></i></span>
+                          <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Rechercher par nom, contact ou email..."
+                            [(ngModel)]="fournisseurSearchTerm"
+                            (input)="filterFournisseurs()"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Tableau des fournisseurs -->
+                    <div class="table-responsive">
+                      <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                          <tr>
+                           
+                            <th>Nom</th>
+                            <th>Contact</th>
+                            <th>Téléphone</th>
+                            <th>Email</th>
+                            <th>Adresse</th>
+                            <th class="text-center">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            *ngFor="
+                              let fournisseur of filteredFournisseurs
+                                | slice
+                                  : (currentFournisseurPage - 1) * fournisseursPerPage
+                                  : currentFournisseurPage * fournisseursPerPage
+                            "
+                          >
+                        
+                            <td>{{ fournisseur.nom }}</td>
+                            <td>{{ fournisseur.contact || '-' }}</td>
+                            <td>{{ fournisseur.telephone || '-' }}</td>
+                            <td>{{ fournisseur.email || '-' }}</td>
+                            <td>{{ fournisseur.adresse || '-' }}</td>
+                            <td class="text-center d-flex flex-column align-items-center">
+                              <button
+                                class="btn btn-action btn-edit mb-1"
+                                (click)="editFournisseur(fournisseur)"
+                                title="Modifier"
+                              >
+                                <i class="bi bi-pencil-fill"></i>
+                              </button>
+                              <button
+                                class="btn btn-action btn-delete"
+                                (click)="deleteFournisseur(fournisseur.id)"
+                                title="Supprimer"
+                              >
+                                <i class="bi bi-trash-fill"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <!-- Message si aucun fournisseur -->
+                    <div
+                      *ngIf="filteredFournisseurs.length === 0"
+                      class="text-center p-4"
+                    >
+                      <i
+                        class="bi bi-building text-muted"
+                        style="font-size: 3rem"
+                      ></i>
+                      <p class="text-muted mt-2">Aucun fournisseur trouvé</p>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div
+                      *ngIf="totalFournisseurPages > 1"
+                      class="d-flex justify-content-center mt-4"
+                    >
+                      <nav>
+                        <ul class="pagination pagination-lg">
+                          <li
+                            class="page-item"
+                            [class.disabled]="currentFournisseurPage === 1"
+                          >
+                            <a
+                              class="page-link"
+                              (click)="changeFournisseurPage(currentFournisseurPage - 1)"
+                            >
+                              <i class="bi bi-chevron-left"></i>
+                            </a>
+                          </li>
+                          <li
+                            *ngFor="let page of getFournisseurPages()"
+                            class="page-item"
+                            [class.active]="currentFournisseurPage === page"
+                          >
+                            <a
+                              class="page-link"
+                              (click)="changeFournisseurPage(page)"
+                              >{{ page }}</a
+                            >
+                          </li>
+                          <li
+                            class="page-item"
+                            [class.disabled]="currentFournisseurPage === totalFournisseurPages"
+                          >
+                            <a
+                              class="page-link"
+                              (click)="changeFournisseurPage(currentFournisseurPage + 1)"
+                            >
+                              <i class="bi bi-chevron-right"></i>
+                            </a>
+                          </li>
+                        </ul>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Onglet Achats -->
+                <div
+                  class="tab-pane fade"
+                  [class.active]="activeTab === 'purchases'"
+                  [class.show]="activeTab === 'purchases'"
+                >
+                  <div class="pt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                      <h2 class="card-title"><i class="bi bi-receipt me-2"></i>Liste des Achats</h2>
+                      <div>
+                        <button
+                          class="btn btn-success btn-lg me-2"
+                          (click)="exportCommandesToExcel()"
+                          title="Exporter vers Excel"
+                        >
+                          <i class="bi bi-file-earmark-excel me-1"></i> Exporter Excel
+                        </button>
+                        <button
+                          class="btn btn-primary btn-lg"
+                          (click)="openAddCommandeModal()"
+                        >
+                          <i class="bi bi-plus-circle me-1"></i> Nouvelle Commande
+                        </button>
+
+                        <button
+                          class="btn btn-outline-secondary ms-2"
+                          (click)="refreshCommandes()"
+                        >
+                          <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Filtres -->
+                    <div class="row mb-3">
+                      <div class="col-md-4">
+                        <div class="input-group">
+                          <span class="input-group-text"><i class="bi bi-search"></i></span>
+                          <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Rechercher par nom de fournisseur..."
+                            [(ngModel)]="commandeSearchTerm"
+                            (input)="filterCommandesAchat()"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <select
+                          class="form-select"
+                          [(ngModel)]="commandeStatusFilter"
+                          (change)="loadCommandesAchat()"
+                        >
+                          <option value="">Tous les statuts</option>
+                          <option value="brouillon">Brouillon</option>
+                          <option value="validée">Validée</option>
+                          <option value="reçue">Reçue</option>
+                          <option value="annulée">Annulée</option>
+                        </select>
+                      </div>
+                    </div>
+                    <!-- Filtres de date -->
+                    <div class="row mb-3">
+                      <div class="col-md-4">
+                        <label class="form-label text-muted small">Date de début</label>
+                        <input
+                          type="date"
+                          class="form-control"
+                          [(ngModel)]="commandeStartDate"
+                          (change)="loadCommandesAchat()"
+                          placeholder="Date de début"
+                        />
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label text-muted small">Date de fin</label>
+                        <input
+                          type="date"
+                          class="form-control"
+                          [(ngModel)]="commandeEndDate"
+                          (change)="loadCommandesAchat()"
+                          placeholder="Date de fin"
+                        />
+                      </div>
+                      <div class="col-md-4 d-flex align-items-end">
+                        <button
+                          class="btn btn-outline-secondary"
+                          (click)="clearCommandeDateFilters()"
+                          title="Effacer les filtres de date"
+                        >
+                          <i class="bi bi-x-circle me-1"></i> Effacer dates
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Tableau des commandes -->
+                    <div class="table-responsive">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Fournisseur</th>
+                            <th>Date Commande</th>
+                            <th>Montant Total</th>
+                            <th>Statut</th>
+                            <th>Responsable</th>
+                            <th class="text-center">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            *ngFor="
+                              let commande of filteredCommandesAchat
+                                | slice
+                                  : (currentCommandePage - 1) * commandesPerPage
+                                  : currentCommandePage * commandesPerPage
+                            "
+                          >
+                            <td>{{ commande.id }}</td>
+                            <td>{{ getFournisseurName(commande.fournisseur_id) }}</td>
+                            <td>{{ commande.date_commande | date: 'dd/MM/yyyy' }}</td>
+                            <td>{{ commande.montant_total | number: '1.2-2' }} DT</td>
+                            <td>
+                              <select
+                                class="form-select form-select-sm"
+                                [value]="commande.statut"
+                                (change)="updateStatutCommande(commande, $any($event.target).value)"
+                                [disabled]="commande.statut === 'annulée'"
+                              >
+                                <option value="brouillon">Brouillon</option>
+                                <option value="validée">Validée</option>
+                                <option value="reçue">Reçue</option>
+                                <option value="annulée">Annulée</option>
+                              </select>
+                            </td>
+                            <td>{{ commande.agent_nom }}</td>
+                            <td class="text-center">
+                              <button
+                                class="btn btn-outline-info btn-sm"
+                                (click)="showCommandeDetailsModal(commande)"
+                                title="Voir les détails"
+                              >
+                                <i class="bi bi-eye"></i>
+                              </button>
+                              <!-- Boutons supprimés - seul l'agent peut gérer ses commandes -->
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <!-- Message si aucune commande -->
+                    <div
+                      *ngIf="filteredCommandesAchat.length === 0"
+                      class="text-center p-4"
+                    >
+                      <i
+                        class="bi bi-receipt text-muted"
+                        style="font-size: 3rem"
+                      ></i>
+                      <p class="text-muted mt-2">Aucune commande d'achat trouvée</p>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div
+                      *ngIf="totalCommandePages > 1"
+                      class="d-flex justify-content-center mt-4"
+                    >
+                      <nav>
+                        <ul class="pagination pagination-lg">
+                          <li
+                            class="page-item"
+                            [class.disabled]="currentCommandePage === 1"
+                          >
+                            <a
+                              class="page-link"
+                              (click)="changeCommandePage(currentCommandePage - 1)"
+                            >
+                              <i class="bi bi-chevron-left"></i>
+                            </a>
+                          </li>
+                          <li
+                            *ngFor="let page of getCommandePages()"
+                            class="page-item"
+                            [class.active]="currentCommandePage === page"
+                          >
+                            <a
+                              class="page-link"
+                              (click)="changeCommandePage(page)"
+                              >{{ page }}</a
+                            >
+                          </li>
+                          <li
+                            class="page-item"
+                            [class.disabled]="currentCommandePage === totalCommandePages"
+                          >
+                            <a
+                              class="page-link"
+                              (click)="changeCommandePage(currentCommandePage + 1)"
+                            >
+                              <i class="bi bi-chevron-right"></i>
+                            </a>
+                          </li>
+                        </ul>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Onglet Ventes -->
+                <div
+                  class="tab-pane fade"
+                  [class.active]="activeTab === 'sales'"
+                  [class.show]="activeTab === 'sales'"
+                >
+                  <div class="pt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                      <h2 class="card-title">
+                        <i class="bi bi-cart me-2"></i>Historique des Ventes
+                      </h2>
+                      <div>
+                        <button
+                          class="btn btn-success btn-lg me-2"
+                          (click)="exportSalesToExcel()"
+                          title="Exporter vers Excel"
+                        >
+                          <i class="bi bi-file-earmark-excel me-1"></i> Exporter Excel
+                        </button>
+                        <button
+                          class="btn btn-secondary btn-lg"
+                          (click)="refreshSales()"
+                        >
+                          <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Filtres améliorés -->
+                    <div class="row mb-4">
+                      <div class="col-md-3">
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text bg-warning text-white"
+                            ><i class="bi bi-calendar"></i
+                          ></span>
+                          <input
+                            type="date"
+                            class="form-control form-control-lg"
+                            [(ngModel)]="salesStartDate"
+                            (change)="loadSales()"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text bg-warning text-white"
+                            ><i class="bi bi-calendar"></i
+                          ></span>
+                          <input
+                            type="date"
+                            class="form-control form-control-lg"
+                            [(ngModel)]="salesEndDate"
+                            (change)="loadSales()"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text bg-info text-white"
+                            ><i class="bi bi-person"></i
+                          ></span>
+                          <select
+                            class="form-select form-select-lg"
+                            [(ngModel)]="salesCaissierFilter"
+                            (change)="filterSales()"
+                          >
+                            <option value="">Caissiers</option>
+                            <option
+                              *ngFor="let user of cashiers"
+                              [value]="user.id"
+                            >
+                              {{ user.username }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group input-group-lg">
+                          <span class="input-group-text bg-primary text-white"
+                            ><i class="bi bi-credit-card"></i
+                          ></span>
+                          <select
+                            class="form-select form-select-lg"
+                            [(ngModel)]="salesPaymentFilter"
+                            (change)="filterSales()"
+                          >
+                            <option value="">Types</option>
+                            <option value="ESPECES">Espèces</option>
+                            <option value="CARTE">Carte</option>
+                            <option value="CHEQUE">Chèque</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Tableau des ventes -->
+                    <div class="table-responsive">
+                      <div
+                        *ngIf="loading"
+                        class="text-center my-4"
+                      >
+                        <div
+                          class="spinner-border text-primary"
+                          role="status"
+                        >
+                          <span class="visually-hidden">Chargement...</span>
+                        </div>
+                      </div>
+
+                      <table
+                        class="table table-hover datatable"
+                        *ngIf="!loading"
+                      >
+                        <thead>
+                          <tr>
+                            <th>N°</th>
+                            <th>Date</th>
+                            <th>Caissier</th>
+                            <th>Total</th>
+                            <th>Paiement</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            *ngFor="
+                              let sale of filteredSales
+                                | slice
+                                  : (currentSalesPage - 1) * salesPerPage
+                                  : currentSalesPage * salesPerPage
+                            "
+                          >
+                            <td>{{ sale.id }}</td>
+                            <td>{{ sale.date_vente | date: 'dd/MM/yyyy HH:mm' }}</td>
+                            <td>{{ getUserName(sale.id_caissier) }}</td>
+                            <td>{{ sale.montant_total | number: '1.2-2' }} DT</td>
+                            <td>
+                              <span
+                                class="badge"
+                                [ngClass]="{
+                                  'bg-success': sale.mode_paiement === 'ESPECES',
+                                  'bg-primary': sale.mode_paiement === 'CARTE',
+                                  'bg-warning': sale.mode_paiement === 'CHEQUE',
+                                }"
+                              >
+                                <i
+                                  class="bi bi-cash"
+                                  *ngIf="sale.mode_paiement === 'ESPECES'"
+                                ></i>
+                                <i
+                                  class="bi bi-credit-card"
+                                  *ngIf="sale.mode_paiement === 'CARTE'"
+                                ></i>
+                                <i
+                                  class="bi bi-wallet2"
+                                  *ngIf="sale.mode_paiement === 'CHEQUE'"
+                                ></i>
+                                {{ sale.mode_paiement }}
+                              </span>
+                            </td>
+                            <td>
+                              <button
+                                class="btn btn-action btn-view me-1"
+                                (click)="showSaleDetails(sale)"
+                                title="Détails"
+                              >
+                                <i class="bi bi-eye-fill"></i>
+                              </button>
+                              <button
+                                class="btn btn-action btn-cancel"
+                                (click)="cancelSale(sale.id)"
+                                *ngIf="sale.statut === 'COMPLET'"
+                                title="Annuler"
+                              >
+                                <i class="bi bi-x-circle-fill"></i>
+                              </button>
+                            </td>
+                          </tr>
+                          <tr *ngIf="filteredSales.length === 0 && !loading">
+                            <td
+                              colspan="6"
+                              class="text-center"
+                            >
+                              Aucune vente trouvée
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <!-- Totaux -->
+                    <div
+                      class="row mt-4"
+                      *ngIf="!loading"
+                    >
+                      <div class="col-md-12">
+                        <div class="alert alert-secondary">
+                          <strong><i class="bi bi-graph-up me-2"></i>Totaux:</strong>
+                          {{ totalSales | number: '1.2-2' }} DT ({{ filteredSales.length }} ventes)
+                          <span class="ms-3"
+                            ><i class="bi bi-cash-coin me-1"></i>Espèces:
+                            {{ totalCash | number: '1.2-2' }} DT</span
+                          >
+                          <span class="ms-3"
+                            ><i class="bi bi-credit-card me-1"></i>Cartes:
+                            {{ totalCard | number: '1.2-2' }} DT</span
+                          >
+                          <span class="ms-3"
+                            ><i class="bi bi-wallet2 me-1"></i>Chèques:
+                            {{ totalCheck | number: '1.2-2' }} DT</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Pagination améliorée -->
+                    <div
+                      class="row mt-4"
+                      *ngIf="filteredSales.length > salesPerPage && !loading"
+                    >
+                      <div class="col-md-12 d-flex justify-content-center">
+                        <nav>
+                          <ul class="pagination pagination-lg">
+                            <li
+                              class="page-item"
+                              [class.disabled]="currentSalesPage === 1"
+                            >
+                              <a
+                                class="page-link"
+                                (click)="changeSalesPage(currentSalesPage - 1)"
+                              >
+                                <i class="bi bi-chevron-left"></i>
+                              </a>
+                            </li>
+                            <li
+                              *ngFor="let page of getSalesPages()"
+                              class="page-item"
+                              [class.active]="currentSalesPage === page"
+                            >
+                              <a
+                                class="page-link"
+                                (click)="changeSalesPage(page)"
+                                >{{ page }}</a
+                              >
+                            </li>
+                            <li
+                              class="page-item"
+                              [class.disabled]="currentSalesPage === totalSalesPages"
+                            >
+                              <a
+                                class="page-link"
+                                (click)="changeSalesPage(currentSalesPage + 1)"
+                              >
+                                <i class="bi bi-chevron-right"></i>
+                              </a>
+                            </li>
+                          </ul>
+                        </nav>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal Produit Moderne -->
+  <div
+    class="modal fade"
+    id="productModal"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content modern-product-modal">
+        <div class="modal-header product-header">
+          <div class="header-content">
+            <div class="header-icon">
+              <i class="bi bi-box-seam"></i>
+            </div>
+            <div class="header-text">
+              <h5 class="modal-title">{{ editingProduct ? 'Modifier' : 'Ajouter' }} Produit</h5>
+              <p class="header-subtitle">Gestion complète des informations produit</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal('productModal')"
+            aria-label="Close"
+          ></button>
+        </div>
+
+        <div class="modal-body product-body">
+          <form
+            [formGroup]="productForm"
+            (ngSubmit)="saveProduct()"
+          >
+            <div class="row">
+              <!-- Section principale (informations de base) -->
+              <div class="col-lg-8">
+                <!-- Section 1: Informations générales -->
+                <div class="product-section">
+                  <div class="section-header">
+                    <i class="bi bi-info-circle"></i>
+                    <h6>Informations générales</h6>
+                  </div>
+                  <div class="section-content">
+                    <div class="row">
+                      <div class="col-md-8">
+                        <div class="form-group-modern">
+                          <label class="form-label-modern"
+                            >Nom du produit <span class="required">*</span></label
+                          >
+                          <input
+                            type="text"
+                            class="form-control-modern"
+                            formControlName="nom"
+                            placeholder="Entrez le nom du produit"
+                            [class.is-invalid]="
+                              productForm.get('nom')?.invalid &&
+                              (productForm.get('nom')?.dirty || productForm.get('nom')?.touched)
+                            "
+                            required
+                          />
+                          <div
+                            *ngIf="
+                              productForm.get('nom')?.invalid &&
+                              (productForm.get('nom')?.dirty || productForm.get('nom')?.touched)
+                            "
+                            class="invalid-feedback"
+                          >
+                            Le nom du produit est obligatoire
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group-modern">
+                          <label class="form-label-modern">Code barre</label>
+                          <div class="input-group-modern">
+                            <input
+                              type="text"
+                              class="form-control-modern"
+                              formControlName="code_barre"
+                              readonly
+                            />
+                            <button
+                              class="btn-regenerate"
+                              type="button"
+                              (click)="regenerateBarcode()"
+                            >
+                              <i class="bi bi-arrow-repeat"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group-modern">
+                          <label class="form-label-modern">Catégorie</label>
+                          <div class="position-relative autocomplete-container">
+                            <input
+                              type="text"
+                              class="form-control-modern"
+                              [(ngModel)]="categorySearchTerm"
+                              [ngModelOptions]="{ standalone: true }"
+                              (input)="filterCategories()"
+                              (focus)="showCategoryResults = true"
+                              placeholder="Rechercher une catégorie..."
+                            />
+                            <div
+                              class="autocomplete-results"
+                              *ngIf="showCategoryResults && filteredCategories.length > 0"
+                            >
+                              <div
+                                class="autocomplete-item"
+                                *ngFor="let cat of filteredCategories"
+                                (click)="selectCategory(cat)"
+                              >
+                                {{ cat.nom }}
+                              </div>
+                            </div>
+                          </div>
+                          <small class="form-hint">
+                            <i class="bi bi-info-circle"></i>
+                            Vous pouvez organiser vos produits par catégories
+                          </small>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group-modern">
+                          <label class="form-label-modern">Fournisseur</label>
+                          <div class="position-relative autocomplete-container">
+                            <input
+                              type="text"
+                              class="form-control-modern"
+                              [(ngModel)]="supplierSearchTerm"
+                              [ngModelOptions]="{ standalone: true }"
+                              (input)="filterSuppliers()"
+                              (focus)="showSupplierResults = true"
+                              placeholder="Rechercher un fournisseur..."
+                            />
+                            <div
+                              class="autocomplete-results"
+                              *ngIf="showSupplierResults && filteredSupplierOptions.length > 0"
+                            >
+                              <div
+                                class="autocomplete-item"
+                                *ngFor="let supplier of filteredSupplierOptions"
+                                (click)="selectSupplier(supplier)"
+                              >
+                                {{ supplier.nom }}
+                              </div>
+                            </div>
+                          </div>
+                          <small class="form-hint">
+                            <i class="bi bi-info-circle"></i>
+                            Le fournisseur principal pour ce produit
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Section 2: Tarification -->
+                <div class="product-section">
+                  <div class="section-header">
+                    <i class="bi bi-currency-dollar"></i>
+                    <h6>Tarification et TVA</h6>
+                  </div>
+                  <div class="section-content">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group-modern">
+                          <label class="form-label-modern"
+                            >Prix d'achat (DT) <span class="required">*</span></label
+                          >
+                          <input
+                            type="number"
+                            step="0.01"
+                            class="form-control-modern"
+                            formControlName="prix_achat"
+                            placeholder="0.00"
+                            (input)="onPrixAchatChange()"
+                            [class.is-invalid]="
+                              productForm.get('prix_achat')?.invalid &&
+                              (productForm.get('prix_achat')?.dirty ||
+                                productForm.get('prix_achat')?.touched)
+                            "
+                            required
+                          />
+                          <div
+                            *ngIf="
+                              productForm.get('prix_achat')?.invalid &&
+                              (productForm.get('prix_achat')?.dirty ||
+                                productForm.get('prix_achat')?.touched)
+                            "
+                            class="invalid-feedback"
+                          >
+                            Le prix d'achat est obligatoire et doit être positif
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group-modern">
+                          <label class="form-label-modern"
+                            >TVA (%) <span class="required">*</span></label
+                          >
+                          <input
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            max="100"
+                            class="form-control-modern"
+                            formControlName="tva"
+                            placeholder="7.0"
+                            (input)="onTvaChange()"
+                            [class.is-invalid]="
+                              productForm.get('tva')?.invalid &&
+                              (productForm.get('tva')?.dirty || productForm.get('tva')?.touched)
+                            "
+                            required
+                          />
+                          <div
+                            *ngIf="
+                              productForm.get('tva')?.invalid &&
+                              (productForm.get('tva')?.dirty || productForm.get('tva')?.touched)
+                            "
+                            class="invalid-feedback"
+                          >
+                            La TVA est obligatoire (0-100%)
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group-modern">
+                          <label class="form-label-modern"
+                            >Prix de vente (DT) <span class="required">*</span></label
+                          >
+                          <input
+                            type="number"
+                            step="0.01"
+                            class="form-control-modern"
+                            formControlName="prix_vente"
+                            placeholder="0.00"
+                            [class.is-invalid]="
+                              productForm.get('prix_vente')?.invalid &&
+                              (productForm.get('prix_vente')?.dirty ||
+                                productForm.get('prix_vente')?.touched)
+                            "
+                            required
+                          />
+                          <div
+                            *ngIf="
+                              productForm.get('prix_vente')?.invalid &&
+                              (productForm.get('prix_vente')?.dirty ||
+                                productForm.get('prix_vente')?.touched)
+                            "
+                            class="invalid-feedback"
+                          >
+                            Le prix de vente est obligatoire et doit être positif
+                          </div>
+                          <small class="form-hint text-info">
+                            <i class="bi bi-calculator"></i>
+                            Calculé automatiquement avec la TVA
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Section 3: Stock -->
+                <div class="product-section">
+                  <div class="section-header">
+                    <i class="bi bi-boxes"></i>
+                    <h6>Gestion des stocks</h6>
+                  </div>
+                  <div class="section-content">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group-modern">
+                          <label class="form-label-modern">Quantité en stock</label>
+                          <input
+                            type="number"
+                            class="form-control-modern"
+                            formControlName="quantite_stock"
+                            placeholder="0"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group-modern">
+                          <label class="form-label-modern">Seuil d'alerte</label>
+                          <input
+                            type="number"
+                            class="form-control-modern"
+                            formControlName="seuil_alerte"
+                            placeholder="5"
+                          />
+                          <small class="form-hint">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Quantité minimale avant alerte
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Section 4: Description -->
+                <div class="product-section">
+                  <div class="section-header">
+                    <i class="bi bi-card-text"></i>
+                    <h6>Description</h6>
+                  </div>
+                  <div class="section-content">
+                    <div class="form-group-modern">
+                      <textarea
+                        class="form-control-modern"
+                        formControlName="description"
+                        rows="3"
+                        placeholder="Description détaillée du produit (optionnel)"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Section image -->
+              <div class="col-lg-4">
+                <div class="product-section">
+                  <div class="section-header">
+                    <i class="bi bi-image"></i>
+                    <h6>Image du produit</h6>
+                  </div>
+                  <div class="section-content">
+                    <div class="image-upload-modern">
+                      <div
+                        class="image-preview-modern"
+                        *ngIf="productImagePreview"
+                        (click)="fileInput.click()"
+                      >
+                        <img
+                          [src]="productImagePreview"
+                          class="product-image"
+                          alt="Prévisualisation"
+                        />
+                        <div class="image-overlay">
+                          <i class="bi bi-pencil"></i>
+                        </div>
+                      </div>
+                      <div
+                        class="image-placeholder-modern"
+                        *ngIf="!productImagePreview"
+                        (click)="fileInput.click()"
+                      >
+                        <i class="bi bi-cloud-upload"></i>
+                        <p>Cliquez ou glissez une image ici</p>
+                        <small class="text-muted mt-2">Format: JPG, PNG (Max 5MB)</small>
+                      </div>
+                      <input
+                        #fileInput
+                        type="file"
+                        class="form-control mt-3 visually-hidden"
+                        (change)="onProductImageChange($event)"
+                        accept="image/*"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer product-footer">
+              <button
+                type="button"
+                class="btn-cancel-modern"
+                (click)="closeModal('productModal')"
+              >
+                <i class="bi bi-x-circle"></i>
+                Annuler
+              </button>
+              <button
+                type="submit"
+                class="btn-save-modern"
+                [disabled]="productForm.invalid || loading"
+              >
+                <span
+                  *ngIf="loading"
+                  class="spinner-border spinner-border-sm me-2"
+                ></span>
+                <i
+                  class="bi bi-check-circle"
+                  *ngIf="!loading"
+                ></i>
+                {{ editingProduct ? 'Mettre à jour' : 'Enregistrer' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Code Barre avec Succès -->
+  <div
+    class="modal fade"
+    id="barcodeModal"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content barcode-modal">
+        <div class="modal-header barcode-header">
+          <div class="success-badge">
+            <i class="bi bi-check-circle"></i>
+            <span>Produit ajouté avec succès !</span>
+          </div>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal('barcodeModal')"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body text-center barcode-body">
+          <div class="success-icon-large">
+            <i class="bi bi-check-circle-fill"></i>
+          </div>
+          <h4 class="product-added-title">{{ addedProduct?.nom }}</h4>
+          <p class="barcode-subtitle">Voici le code-barre généré pour votre produit</p>
+
+          <div class="barcode-container">
+            <div class="barcode-display">
+              <svg id="barcode"></svg>
+            </div>
+            <div class="barcode-info">
+              <span class="barcode-label">Code:</span>
+              <span class="barcode-code">{{ addedProduct?.code_barre }}</span>
+            </div>
+          </div>
+
+          <div class="barcode-actions">
+            <button
+              class="btn-print-barcode"
+              (click)="printBarcode()"
+            >
+              <i class="bi bi-printer"></i>
+              Imprimer le code-barre
+            </button>
+            <button
+              class="btn-close-barcode"
+              (click)="closeModal('barcodeModal')"
+            >
+              <i class="bi bi-check-lg"></i>
+              Terminer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Mouvement -->
+  <div
+    class="modal fade"
+    id="movementModal"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Ajouter Mouvement</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal('movementModal')"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form
+            [formGroup]="movementForm"
+            (ngSubmit)="saveMovement()"
+          >
+            <div class="mb-3">
+              <label class="form-label">Type <span class="text-danger">*</span></label>
+              <select
+                class="form-select form-select-lg"
+                formControlName="type"
+                [class.is-invalid]="
+                  movementForm.get('type')?.invalid &&
+                  (movementForm.get('type')?.dirty || movementForm.get('type')?.touched)
+                "
+                required
+              >
+                <option value="ENTREE">Entrée de stock</option>
+                <option value="SORTIE">Sortie de stock</option>
+                <option value="AJUSTEMENT">Ajustement</option>
+              </select>
+              <div
+                *ngIf="
+                  movementForm.get('type')?.invalid &&
+                  (movementForm.get('type')?.dirty || movementForm.get('type')?.touched)
+                "
+                class="invalid-feedback d-block"
+              >
+                Le type est obligatoire
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Produit <span class="text-danger">*</span></label>
+              <div class="autocomplete-container">
+                <input
+                  type="text"
+                  class="form-control form-control-lg"
+                  [(ngModel)]="movementProductSearchTerm"
+                  [ngModelOptions]="{ standalone: true }"
+                  (input)="filterProductsForMovement()"
+                  (focus)="showMovementProductDropdown = true"
+                  placeholder="Rechercher un produit..."
+                  [class.is-invalid]="
+                    movementForm.get('produit_id')?.invalid &&
+                    (movementForm.get('produit_id')?.dirty ||
+                      movementForm.get('produit_id')?.touched)
+                  "
+                />
+                <div
+                  class="autocomplete-results"
+                  *ngIf="showMovementProductDropdown && filteredProductsForMovement.length > 0"
+                >
+                  <div
+                    class="autocomplete-item"
+                    *ngFor="let product of filteredProductsForMovement"
+                    (click)="selectProductForMovement(product)"
+                  >
+                    <div class="fw-medium">{{ product.nom }}</div>
+                    <small class="text-muted"
+                      >Stock: {{ product.quantite_stock }} | Prix:
+                      {{ product.prix_vente | number: '1.2-2' }} DT</small
+                    >
+                  </div>
+                </div>
+                <div
+                  class="autocomplete-results"
+                  *ngIf="
+                    showMovementProductDropdown &&
+                    filteredProductsForMovement.length === 0 &&
+                    movementProductSearchTerm
+                  "
+                >
+                  <div class="autocomplete-item text-muted">Aucun produit trouvé</div>
+                </div>
+              </div>
+              <div
+                *ngIf="
+                  movementForm.get('produit_id')?.invalid &&
+                  (movementForm.get('produit_id')?.dirty || movementForm.get('produit_id')?.touched)
+                "
+                class="invalid-feedback d-block"
+              >
+                Le produit est obligatoire
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Quantité <span class="text-danger">*</span></label>
+              <input
+                type="number"
+                class="form-control form-control-lg"
+                formControlName="quantite"
+                [class.is-invalid]="
+                  movementForm.get('quantite')?.invalid &&
+                  (movementForm.get('quantite')?.dirty || movementForm.get('quantite')?.touched)
+                "
+                required
+              />
+              <div
+                *ngIf="
+                  movementForm.get('quantite')?.invalid &&
+                  (movementForm.get('quantite')?.dirty || movementForm.get('quantite')?.touched)
+                "
+                class="invalid-feedback d-block"
+              >
+                La quantité est obligatoire et doit être supérieure à 0
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Raison</label>
+              <textarea
+                class="form-control form-control-lg"
+                formControlName="raison"
+              ></textarea>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary btn-lg"
+                (click)="closeModal('movementModal')"
+              >
+                Annuler
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg"
+                [disabled]="movementForm.invalid || loading"
+              >
+                <span
+                  *ngIf="loading"
+                  class="spinner-border spinner-border-sm me-1"
+                ></span>
+                Enregistrer
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Détails Mouvement -->
+  <div
+    class="modal fade"
+    id="movementDetailsModal"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Détails du Mouvement</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal('movementDetailsModal')"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="selectedMovement">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <p>
+                  <strong><i class="bi bi-calendar me-2"></i>Date:</strong>
+                  {{ selectedMovement.date_mouvement | date: 'dd/MM/yyyy HH:mm' }}
+                </p>
+                <p>
+                  <strong><i class="bi bi-box-seam me-2"></i>Produit:</strong>
+                  {{ getProductName(selectedMovement.produit_id) }}
+                </p>
+                <p>
+                  <strong><i class="bi bi-arrow-left-right me-2"></i>Type:</strong>
+                  <span
+                    class="badge"
+                    [ngClass]="{
+                      'bg-success': selectedMovement.type === 'ENTREE',
+                      'bg-danger': selectedMovement.type === 'SORTIE',
+                      'bg-warning': selectedMovement.type === 'AJUSTEMENT',
+                    }"
+                  >
+                    {{ selectedMovement.type }}
+                  </span>
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p>
+                  <strong><i class="bi bi-box me-2"></i>Quantité:</strong>
+                  {{ selectedMovement.quantite }}
+                </p>
+                <p>
+                  <strong><i class="bi bi-person me-2"></i>Responsable:</strong>
+                  {{ selectedMovement.agent_username }}
+                </p>
+                <p>
+                  <strong><i class="bi bi-chat-square-text me-2"></i>Raison:</strong>
+                  {{ selectedMovement.raison || '-' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary btn-lg"
+            (click)="closeModal('movementDetailsModal')"
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Détails Vente -->
+  <div
+    class="modal fade"
+    id="saleDetailsModal"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Détails de la Vente #{{ selectedSale?.id }}</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal('saleDetailsModal')"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div
+            *ngIf="loading"
+            class="text-center my-4"
+          >
+            <div
+              class="spinner-border text-primary"
+              role="status"
+            >
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+
+          <div *ngIf="!loading && selectedSale">
+            <!-- En-tête de la vente -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">
+                      <i class="bi bi-info-circle me-2"></i>Informations
+                    </h6>
+                    <p>
+                      <strong>Date:</strong>
+                      {{ selectedSale.date_vente | date: 'dd/MM/yyyy HH:mm' }}
+                    </p>
+                    <p><strong>Caissier:</strong> {{ getUserName(selectedSale.id_caissier) }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">
+                      <i class="bi bi-credit-card me-2"></i>Paiement
+                    </h6>
+                    <p>
+                      <strong>Total:</strong> {{ selectedSale.montant_total | number: '1.2-2' }} DT
+                    </p>
+                    <p>
+                      <strong>Mode:</strong>
+                      <span
+                        class="badge"
+                        [ngClass]="{
+                          'bg-success': selectedSale.mode_paiement === 'ESPECES',
+                          'bg-primary': selectedSale.mode_paiement === 'CARTE',
+                          'bg-warning': selectedSale.mode_paiement === 'CHEQUE',
+                        }"
+                      >
+                        {{ selectedSale.mode_paiement }}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Produits vendus -->
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="bi bi-cart-check me-2"></i>Produits vendus</h5>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Produit</th>
+                        <th class="text-end">Quantité</th>
+                        <th class="text-end">Prix unitaire</th>
+                        <th class="text-end">Sous-total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of saleDetails">
+                        <td>
+                          {{ item.produit_nom }}
+                          <small class="text-muted d-block">{{ item.code_barre }}</small>
+                        </td>
+                        <td class="text-end">{{ item.quantite }}</td>
+                        <td class="text-end">
+                          {{ parseNumber(item.prix_unitaire) | number: '1.2-2' }} DT
+                        </td>
+                        <td class="text-end">
+                          {{ parseNumber(item.prix_unitaire * item.quantite) | number: '1.2-2' }} DT
+                        </td>
+                      </tr>
+                      <tr *ngIf="saleDetails.length === 0">
+                        <td
+                          colspan="4"
+                          class="text-center py-4"
+                        >
+                          Aucun détail de vente disponible
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Totaux -->
+            <div class="row">
+              <div class="col-md-6 offset-md-6">
+                <div class="card border-primary">
+                  <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-receipt me-2"></i>Résumé de paiement</h6>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span>Total:</span>
+                      <strong>{{ selectedSale.montant_total | number: '1.2-2' }} DT</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span>Montant payé:</span>
+                      <strong>{{ selectedSale.montant_paye | number: '1.2-2' }} DT</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                      <span>Monnaie rendue:</span>
+                      <strong>{{ selectedSale.monnaie_rendue | number: '1.2-2' }} DT</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reçu imprimable (caché à l'écran mais utilisé pour l'impression) -->
+            <div
+              id="receipt"
+              class="d-none"
+            >
+              <div class="text-center mb-3">
+                <h4>VOTRE BOUTIQUE</h4>
+                <small>Reçu de vente #{{ selectedSale.id }}</small>
+              </div>
+              <div class="mb-2">
+                <div class="d-flex justify-content-between">
+                  <span>Date:</span>
+                  <span>{{ selectedSale.date_vente | date: 'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>Caissier:</span>
+                  <span>{{ getUserName(selectedSale.id_caissier) }}</span>
+                </div>
+              </div>
+              <hr />
+              <div
+                *ngFor="let item of saleDetails"
+                class="mb-1"
+              >
+                <div class="d-flex justify-content-between">
+                  <span>{{ item.produit_nom }} x{{ item.quantite }}</span>
+                  <span
+                    >{{
+                      parseNumber(item.prix_unitaire * item.quantite) | number: '1.2-2'
+                    }}
+                    DT</span
+                  >
+                </div>
+                <small class="text-muted">{{ item.code_barre }}</small>
+              </div>
+              <hr />
+              <div class="mb-1">
+                <div class="d-flex justify-content-between">
+                  <strong>Total:</strong>
+                  <strong>{{ selectedSale.montant_total | number: '1.2-2' }} DT</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>Payé:</span>
+                  <span>{{ selectedSale.montant_paye | number: '1.2-2' }} DT</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>Monnaie:</span>
+                  <span>{{ selectedSale.monnaie_rendue | number: '1.2-2' }} DT</span>
+                </div>
+              </div>
+              <hr />
+              <div class="text-center mt-3">
+                <small>Merci pour votre achat !</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary btn-lg"
+            (click)="closeModal('saleDetailsModal')"
+          >
+            <i class="bi bi-x-circle me-1"></i> Fermer
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-lg"
+            (click)="printSale()"
+          >
+            <i class="bi bi-printer me-1"></i> Imprimer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal d'Inventaire -->
+  <div
+    class="modal fade"
+    id="inventoryModal"
+    tabindex="-1"
+    aria-labelledby="inventoryModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-warning text-dark">
+          <h5
+            class="modal-title"
+            id="inventoryModalLabel"
+          >
+            <i class="bi bi-clipboard-check me-2"></i>Ajustement d'Inventaire
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            (click)="closeModal('inventoryModal')"
+          ></button>
+        </div>
+        <form [formGroup]="inventaireForm">
+          <div class="modal-body">
+            <div class="alert alert-info">
+              <i class="bi bi-info-circle me-2"></i>
+              Sélectionnez un produit et saisissez le stock réel pour effectuer un ajustement
+              automatique.
+            </div>
+            <!-- Sélection du produit avec recherche -->
+            <div class="mb-3">
+              <label
+                for="inventoryProduct"
+                class="form-label fw-bold"
+              >
+                <i class="bi bi-box-seam me-1"></i>Produit
+              </label>
+              <div class="autocomplete-container">
+                <input
+                  type="text"
+                  class="form-control form-control-lg"
+                  [(ngModel)]="inventoryProductSearchTerm"
+                  [ngModelOptions]="{ standalone: true }"
+                  (input)="filterInventoryProducts()"
+                  (focus)="showInventoryProductResults = true"
+                  placeholder="Rechercher un produit..."
+                  [class.is-invalid]="
+                    inventaireForm.get('produit_id')?.invalid &&
+                    inventaireForm.get('produit_id')?.touched
+                  "
+                />
+
+                <div
+                  class="autocomplete-results"
+                  *ngIf="showInventoryProductResults && filteredInventoryProducts.length > 0"
+                >
+                  <div
+                    class="autocomplete-item"
+                    *ngFor="let product of filteredInventoryProducts"
+                    (click)="selectInventoryProduct(product)"
+                  >
+                    {{ product.nom }} (Stock actuel: {{ product.quantite_stock }})
+                  </div>
+                </div>
+              </div>
+
+              <div
+                *ngIf="
+                  inventaireForm.get('produit_id')?.invalid &&
+                  inventaireForm.get('produit_id')?.touched
+                "
+                class="text-danger mt-1"
+              >
+                <small>Veuillez sélectionner un produit</small>
+              </div>
+            </div>
+
+            <!-- Affichage des informations du produit sélectionné -->
+            <div
+              *ngIf="selectedProductForInventory"
+              class="alert alert-light border"
+            >
+              <h6 class="mb-2"><i class="bi bi-info-circle me-1"></i>Informations du produit</h6>
+              <div class="row">
+                <div class="col-md-6">
+                  <strong>Nom:</strong> {{ selectedProductForInventory.nom }}<br />
+                  <strong>Code-barre:</strong> {{ selectedProductForInventory.code_barre }}
+                </div>
+                <div class="col-md-6">
+                  <strong>Stock système:</strong>
+                  <span class="badge bg-primary ms-1">{{
+                    selectedProductForInventory.quantite_stock
+                  }}</span
+                  ><br />
+                  <strong>Catégorie:</strong>
+                  {{ getCategoryName(selectedProductForInventory.categorie_id) }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Stock réel -->
+            <div
+              class="mb-3"
+              *ngIf="selectedProductForInventory"
+            >
+              <label
+                for="stockReel"
+                class="form-label fw-bold"
+              >
+                <i class="bi bi-calculator me-1"></i>Stock Réel
+              </label>
+              <input
+                type="number"
+                class="form-control form-control-lg"
+                id="stockReel"
+                formControlName="stock_reel"
+                (input)="onStockReelChange()"
+                placeholder="Entrez le stock réel compté"
+                min="0"
+              />
+              <div
+                *ngIf="
+                  inventaireForm.get('stock_reel')?.invalid &&
+                  inventaireForm.get('stock_reel')?.touched
+                "
+                class="text-danger mt-1"
+              >
+                <small>Veuillez saisir un stock réel valide</small>
+              </div>
+            </div>
+
+            <!-- Affichage de l'écart -->
+            <div
+              *ngIf="calculatedEcart"
+              class="alert"
+              [ngClass]="{
+                'alert-success': ecart > 0,
+                'alert-danger': ecart < 0,
+                'alert-info': ecart === 0,
+              }"
+            >
+              <h6 class="mb-2"><i class="bi bi-calculator me-1"></i>Calcul de l'écart</h6>
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Stock système:</strong> {{ selectedProductForInventory.quantite_stock }}
+                </div>
+                <div class="col-md-4"><strong>Stock réel:</strong> {{ stockReel }}</div>
+                <div class="col-md-4">
+                  <strong>Écart:</strong>
+                  <span
+                    class="badge"
+                    [ngClass]="{
+                      'bg-success': ecart > 0,
+                      'bg-danger': ecart < 0,
+                      'bg-secondary': ecart === 0,
+                    }"
+                  >
+                    {{ ecart > 0 ? '+' : '' }}{{ ecart }}
+                  </span>
+                </div>
+              </div>
+              <hr class="my-2" />
+              <div *ngIf="ecart !== 0">
+                <strong>Action:</strong>
+                <span
+                  *ngIf="ecart > 0"
+                  class="text-success"
+                >
+                  <i class="bi bi-arrow-up-circle me-1"></i>Ajout de {{ ecart }} unité(s) au stock
+                </span>
+                <span
+                  *ngIf="ecart < 0"
+                  class="text-danger"
+                >
+                  <i class="bi bi-arrow-down-circle me-1"></i>Retrait de
+                  {{ getAbsoluteValue(ecart) }} unité(s) du stock
+                </span>
+              </div>
+              <div
+                *ngIf="ecart === 0"
+                class="text-info"
+              >
+                <i class="bi bi-check-circle me-1"></i>Aucun ajustement nécessaire - Les stocks
+                concordent
+              </div>
+            </div>
+
+            <!-- Raison de l'ajustement -->
+            <div
+              class="mb-3"
+              *ngIf="calculatedEcart"
+            >
+              <label
+                for="raison"
+                class="form-label fw-bold"
+              >
+                <i class="bi bi-chat-text me-1"></i>Raison de l'ajustement
+              </label>
+              <textarea
+                class="form-control"
+                id="raison"
+                formControlName="raison"
+                rows="3"
+                readonly
+                placeholder="La raison sera générée automatiquement"
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary btn-lg"
+              (click)="closeModal('inventoryModal')"
+            >
+              <i class="bi bi-x-circle me-1"></i> Annuler
+            </button>
+            <button
+              type="button"
+              class="btn btn-warning btn-lg"
+              [disabled]="inventaireForm.invalid || !calculatedEcart || ecart === 0 || loading"
+              (click)="saveInventoryAdjustment()"
+            >
+              <span
+                *ngIf="loading"
+                class="spinner-border spinner-border-sm me-2"
+              ></span>
+              <i
+                class="bi bi-check-circle me-1"
+                *ngIf="!loading"
+              ></i>
+              Valider l'Ajustement
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Modals de notification modernes -->
+  <!-- Modal de succès moderne -->
+  <div
+    *ngIf="showSuccessModal"
+    class="modal-overlay success-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom success-modal-custom">
+      <div class="modal-content-custom">
+        <div class="modal-icon success-icon">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <h3 class="modal-title">Succès</h3>
+        <p class="modal-text">{{ successMessage }}</p>
+        <button
+          class="btn-close-modal success-btn"
+          (click)="showSuccessModal = false"
+        >
+          <i class="bi bi-check"></i>
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmation de suppression -->
+  <div
+    *ngIf="showConfirmDeleteModal"
+    class="modal-overlay confirm-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom confirm-modal-custom">
+      <div class="modal-content-custom">
+        <div class="modal-icon confirm-icon">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <h3 class="modal-title">Confirmer la suppression</h3>
+        <p class="modal-text">{{ confirmDeleteMessage }}</p>
+        <div class="modal-buttons">
+          <button
+            class="btn-cancel-confirm"
+            (click)="cancelDelete()"
+          >
+            <i class="bi bi-x"></i>
+            Annuler
+          </button>
+          <button
+            class="btn-confirm-delete"
+            (click)="confirmDeleteAction()"
+          >
+            <i class="bi bi-trash"></i>
+            Supprimer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal d'erreur moderne -->
+  <div
+    *ngIf="showErrorModal"
+    class="modal-overlay error-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom error-modal-custom">
+      <div class="modal-content-custom">
+        <div class="modal-icon error-icon">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <h3 class="modal-title">Erreur</h3>
+        <p class="modal-text">{{ errorMessage }}</p>
+        <button
+          class="btn-close-modal error-btn"
+          (click)="showErrorModal = false"
+        >
+          <i class="bi bi-x"></i>
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Fournisseur -->
+  <div
+    class="modal fade"
+    id="fournisseurModal"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">{{ editingFournisseur ? 'Modifier' : 'Ajouter' }} Fournisseur</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal('fournisseurModal')"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form
+            [formGroup]="fournisseurForm"
+            (ngSubmit)="saveFournisseur()"
+          >
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label"
+                    >Nom du fournisseur <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="nom"
+                    [class.is-invalid]="
+                      fournisseurForm.get('nom')?.invalid &&
+                      (fournisseurForm.get('nom')?.dirty || fournisseurForm.get('nom')?.touched)
+                    "
+                    required
+                  />
+                  <div
+                    *ngIf="
+                      fournisseurForm.get('nom')?.invalid &&
+                      (fournisseurForm.get('nom')?.dirty || fournisseurForm.get('nom')?.touched)
+                    "
+                    class="invalid-feedback"
+                  >
+                    Le nom du fournisseur est obligatoire
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Personne de contact</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="contact"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Téléphone</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    formControlName="telephone"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    formControlName="email"
+                    [class.is-invalid]="
+                      fournisseurForm.get('email')?.invalid &&
+                      (fournisseurForm.get('email')?.dirty || fournisseurForm.get('email')?.touched)
+                    "
+                  />
+                  <div
+                    *ngIf="
+                      fournisseurForm.get('email')?.invalid &&
+                      (fournisseurForm.get('email')?.dirty || fournisseurForm.get('email')?.touched)
+                    "
+                    class="invalid-feedback"
+                  >
+                    Veuillez entrer un email valide
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Adresse</label>
+              <textarea
+                class="form-control"
+                formControlName="adresse"
+                rows="3"
+              ></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModal('fournisseurModal')"
+          >
+            Annuler
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="saveFournisseur()"
+            [disabled]="fournisseurForm.invalid || loading"
+          >
+            <span
+              *ngIf="loading"
+              class="spinner-border spinner-border-sm me-1"
+            ></span>
+            {{ editingFournisseur ? 'Modifier' : 'Ajouter' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Commande d'Achat -->
+  <div
+    class="modal fade"
+    id="commandeModal"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content modern-modal">
+        <div
+          class="modal-header bg-primary text-white d-flex justify-content-between align-items-center"
+        >
+          <div class="header-content">
+            <div class="header-icon">
+              <i class="bi bi-cart-plus"></i>
+            </div>
+            <div class="header-text">
+              <h5 class="modal-title">{{ editingCommande ? 'Modifier' : 'Nouvelle' }} Commande</h5>
+              <p class="header-subtitle mb-0">Gestion des commandes fournisseur</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal('commandeModal')"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form
+            [formGroup]="commandeAchatForm"
+            (ngSubmit)="saveCommande()"
+          >
+            <!-- Informations de base -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="form-group-modern">
+                  <label class="form-label-modern"
+                    >Fournisseur <span class="required">*</span></label
+                  >
+                  <div class="position-relative autocomplete-container">
+                    <input
+                      type="text"
+                      class="form-control-modern"
+                      [(ngModel)]="supplierSearchTerm"
+                      [ngModelOptions]="{ standalone: true }"
+                      (input)="filterSuppliersForCommande()"
+                      (focus)="showSupplierResults = true"
+                      placeholder="Rechercher un fournisseur..."
+                      [class.is-invalid]="
+                        commandeAchatForm.get('fournisseur_id')?.invalid &&
+                        (commandeAchatForm.get('fournisseur_id')?.dirty ||
+                          commandeAchatForm.get('fournisseur_id')?.touched)
+                      "
+                    />
+                    <div
+                      class="autocomplete-results"
+                      *ngIf="showSupplierResults && filteredSupplierOptions.length > 0"
+                    >
+                      <div
+                        class="autocomplete-item"
+                        *ngFor="let supplier of filteredSupplierOptions"
+                        (click)="selectCommandeSupplier(supplier)"
+                      >
+                        {{ supplier.nom }}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    *ngIf="
+                      commandeAchatForm.get('fournisseur_id')?.invalid &&
+                      (commandeAchatForm.get('fournisseur_id')?.dirty ||
+                        commandeAchatForm.get('fournisseur_id')?.touched)
+                    "
+                    class="invalid-feedback"
+                  >
+                    Veuillez sélectionner un fournisseur
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label"
+                    >Date de commande <span class="text-danger">*</span></label
+                  >
+                  <input
+                    type="date"
+                    class="form-control"
+                    formControlName="date_commande"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Statut</label>
+                  <select
+                    class="form-select"
+                    formControlName="statut"
+                  >
+                    <option value="brouillon">Brouillon</option>
+                    <option value="validée">Validée</option>
+                    <option value="reçue">Reçue</option>
+                    <option value="annulée">Annulée</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Section ajout de produits -->
+            <div
+              class="card mb-4"
+              *ngIf="!editingCommande"
+            >
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Ajouter des produits</h6>
+                <button
+                  type="button"
+                  class="btn btn-success btn-sm"
+                  (click)="openAddProductModal()"
+                >
+                  <i class="bi bi-plus"></i> Nouveau produit
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label">Produit</label>
+                      <div class="autocomplete-container">
+                        <input
+                          type="text"
+                          class="form-control"
+                          [(ngModel)]="productSearchTerm"
+                          [ngModelOptions]="{ standalone: true }"
+                          (input)="filterCommandeProducts()"
+                          (focus)="showProductResults = true"
+                          placeholder="Rechercher un produit..."
+                        />
+                        <div
+                          class="autocomplete-results"
+                          *ngIf="showProductResults && filteredCommandeProducts.length > 0"
+                        >
+                          <div
+                            class="autocomplete-item"
+                            *ngFor="let product of filteredCommandeProducts"
+                            (click)="selectCommandeProduct(product)"
+                          >
+                            {{ product.nom }} - {{ product.prix_achat || 0 | number: '1.2-2' }} DT
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="form-label">Quantité</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        [(ngModel)]="productQuantity"
+                        [ngModelOptions]="{ standalone: true }"
+                        min="1"
+                        step="1"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label class="form-label">&nbsp;</label>
+                      <button
+                        type="button"
+                        class="btn btn-success w-100"
+                        (click)="addProductToCommande()"
+                        [disabled]="!selectedProduct || productQuantity <= 0"
+                      >
+                        <i class="bi bi-plus"></i> Ajouter
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Liste des produits ajoutés -->
+            <div
+              class="card mb-4"
+              *ngIf="tempLignesCommande.length > 0"
+            >
+              <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-list-ul me-2"></i>Produits de la commande</h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Produit</th>
+                        <th>Prix unitaire</th>
+                        <th>Quantité</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let ligne of tempLignesCommande; let i = index">
+                        <td>{{ ligne.produit_nom }}</td>
+                        <td>{{ ligne.prix_unitaire | number: '1.2-2' }} DT</td>
+                        <td>
+                          <input
+                            type="number"
+                            class="form-control form-control-sm"
+                            [(ngModel)]="ligne.quantite"
+                            [ngModelOptions]="{ standalone: true }"
+                            (change)="updateLigneQuantity(ligne)"
+                            min="1"
+                            style="width: 80px"
+                          />
+                        </td>
+                        <td>{{ ligne.quantite * ligne.prix_unitaire | number: '1.2-2' }} DT</td>
+                        <td>
+                          <button
+                            type="button"
+                            class="btn btn-outline-danger btn-sm"
+                            (click)="removeProductFromCommande(i)"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Montant total -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Montant total <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <input
+                      type="number"
+                      class="form-control"
+                      formControlName="montant_total"
+                      step="0.01"
+                      min="0"
+                      [class.is-invalid]="
+                        commandeAchatForm.get('montant_total')?.invalid &&
+                        (commandeAchatForm.get('montant_total')?.dirty ||
+                          commandeAchatForm.get('montant_total')?.touched)
+                      "
+                      [readonly]="!editingCommande"
+                      required
+                    />
+                    <span class="input-group-text">DT</span>
+                  </div>
+                  <div
+                    *ngIf="
+                      commandeAchatForm.get('montant_total')?.invalid &&
+                      (commandeAchatForm.get('montant_total')?.dirty ||
+                        commandeAchatForm.get('montant_total')?.touched)
+                    "
+                    class="invalid-feedback"
+                  >
+                    Le montant total est obligatoire et doit être positif
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModal('commandeModal')"
+          >
+            Annuler
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="saveCommande()"
+            [disabled]="commandeAchatForm.invalid || loading"
+          >
+            <span
+              *ngIf="loading"
+              class="spinner-border spinner-border-sm me-1"
+            ></span>
+            {{ editingCommande ? 'Modifier' : 'Valider la commande' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Détails de Commande -->
+  <div
+    class="modal fade"
+    id="commandeDetailsModal"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title">
+            <i class="bi bi-eye me-2"></i>Détails de la Commande #{{ selectedCommande?.id }}
+          </h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal('commandeDetailsModal')"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div
+          class="modal-body"
+          *ngIf="selectedCommande"
+        >
+          <!-- Informations générales -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <div class="card h-100">
+                <div class="card-header">
+                  <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Informations générales</h6>
+                </div>
+                <div class="card-body">
+                  <p>
+                    <strong>Fournisseur:</strong>
+                    {{ getFournisseurName(selectedCommande.fournisseur_id) }}
+                  </p>
+                  <p>
+                    <strong>Date de commande:</strong>
+                    {{ selectedCommande.date_commande | date: 'dd/MM/yyyy' }}
+                  </p>
+                  <p>
+                    <strong>Statut:</strong>
+                    <span
+                      class="badge"
+                      [ngClass]="{
+                        'bg-warning': selectedCommande.statut === 'brouillon',
+                        'bg-info': selectedCommande.statut === 'validée',
+                        'bg-success': selectedCommande.statut === 'reçue',
+                        'bg-danger': selectedCommande.statut === 'annulée',
+                      }"
+                    >
+                      {{ getStatutLabel(selectedCommande.statut) }}
+                    </span>
+                  </p>
+                  <p><strong>Agent:</strong> {{ getAgentName(selectedCommande.agent_id) }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card h-100">
+                <div class="card-header">
+                  <h6 class="mb-0"><i class="bi bi-currency-dollar me-2"></i>Montant</h6>
+                </div>
+                <div class="card-body">
+                  <div class="text-center">
+                    <h3 class="text-primary">
+                      {{ selectedCommande.montant_total | number: '1.2-2' }} DT
+                    </h3>
+                    <p class="text-muted">Montant total de la commande</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lignes de commande -->
+          <div class="card">
+            <div class="card-header">
+              <h6 class="mb-0"><i class="bi bi-list-ul me-2"></i>Produits commandés</h6>
+            </div>
+            <div class="card-body">
+              <div
+                *ngIf="selectedCommande.lignes && selectedCommande.lignes.length > 0"
+                class="table-responsive"
+              >
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Produit</th>
+                      <th>Prix unitaire</th>
+                      <th>Quantité</th>
+                      <th>Total ligne</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let ligne of selectedCommande.lignes">
+                      <td>{{ ligne.produit_nom || getProductName(ligne.produit_id) }}</td>
+                      <td>{{ ligne.prix_unitaire | number: '1.2-2' }} DT</td>
+                      <td>{{ ligne.quantite }}</td>
+                      <td>
+                        <strong
+                          >{{ ligne.quantite * ligne.prix_unitaire | number: '1.2-2' }} DT</strong
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr class="table-secondary">
+                      <th colspan="3">Total général</th>
+                      <th>{{ selectedCommande.montant_total | number: '1.2-2' }} DT</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <div
+                *ngIf="!selectedCommande.lignes || selectedCommande.lignes.length === 0"
+                class="text-center py-4"
+              >
+                <i
+                  class="bi bi-box text-muted"
+                  style="font-size: 3rem"
+                ></i>
+                <p class="text-muted mt-2">Aucun produit dans cette commande</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zone d'impression (cachée) -->
+        <div
+          id="commande-receipt"
+          class="d-none"
+        >
+          <div *ngIf="selectedCommande">
+            <div class="text-center mb-3">
+              <h4>BON DE COMMANDE</h4>
+              <p class="mb-1">Commande #{{ selectedCommande.id }}</p>
+              <small class="text-muted">{{
+                selectedCommande.date_commande | date: 'dd/MM/yyyy HH:mm'
+              }}</small>
+            </div>
+
+            <hr />
+
+            <div class="mb-3">
+              <div class="d-flex justify-content-between mb-1">
+                <span>Fournisseur:</span>
+                <span>{{ getFournisseurName(selectedCommande.fournisseur_id) }}</span>
+              </div>
+              <div class="d-flex justify-content-between mb-1">
+                <span>Statut:</span>
+                <span>{{ getStatutLabel(selectedCommande.statut) }}</span>
+              </div>
+              <div class="d-flex justify-content-between mb-1">
+                <span>Responsable:</span>
+                <span>{{ selectedCommande.agent_nom }}</span>
+              </div>
+            </div>
+
+            <hr />
+
+            <div class="mb-3">
+              <div *ngFor="let ligne of selectedCommande.lignes">
+                <div class="d-flex justify-content-between mb-1">
+                  <span>{{ ligne.produit_nom || getProductName(ligne.produit_id) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-1 small text-muted">
+                  <span>{{ ligne.quantite }} x {{ ligne.prix_unitaire | number: '1.2-2' }} DT</span>
+                  <span>{{ ligne.quantite * ligne.prix_unitaire | number: '1.2-2' }} DT</span>
+                </div>
+              </div>
+            </div>
+
+            <hr />
+
+            <div class="d-flex justify-content-between mb-2">
+              <strong>Total:</strong>
+              <strong>{{ selectedCommande.montant_total | number: '1.2-2' }} DT</strong>
+            </div>
+
+            <div class="text-center mt-3">
+              <small class="text-muted">Date d'impression: {{ getCurrentDate() }}</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-primary me-2"
+            (click)="printCommande()"
+            title="Imprimer la commande"
+          >
+            <i class="bi bi-printer me-1"></i> Imprimer
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModal('commandeDetailsModal')"
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

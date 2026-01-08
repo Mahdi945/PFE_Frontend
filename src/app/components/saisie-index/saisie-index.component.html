@@ -1,0 +1,450 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <div class="container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+        <li class="breadcrumb-item active">Saisie Index fermeture</li>
+      </ol>
+    </nav>
+
+    <!-- Titre de page amélioré -->
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+      <div class="title-text-content">
+        <h1 class="title-main">Saisie d'index de fermeture</h1>
+      </div>
+    </div>
+
+    <!-- User Info Card -->
+    <div
+      *ngIf="currentUser"
+      class="alert alert-info user-info-card"
+    >
+      <div class="d-flex align-items-center">
+        <i class="bi bi-person-circle me-2"></i>
+        <span>
+          <strong>{{ currentUser.username }}</strong> ({{ currentUser.role }})
+          <span *ngIf="currentAffectation">
+            - Poste: <strong>{{ currentAffectation.poste }}</strong> - Pompe:
+            <strong>{{ currentAffectation.numero_pompe }}</strong>
+          </span>
+          <span
+            *ngIf="!currentAffectation && !loadingAffectation"
+            class="text-danger ms-2"
+          >
+            <i class="bi bi-exclamation-triangle"></i> Aucune affectation trouvée
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Date Selection -->
+    <div class="card date-selection-card mb-4">
+      <div class="card-body">
+        <form
+          [formGroup]="indexForm"
+          (ngSubmit)="onSubmit()"
+        >
+          <div class="row align-items-end">
+            <div class="col-md-4">
+              <label
+                for="date"
+                class="form-label"
+              >
+                <i class="bi bi-calendar3 me-2"></i>Date de saisie
+              </label>
+              <input
+                type="date"
+                id="date"
+                class="form-control"
+                formControlName="date"
+                [max]="today"
+              />
+            </div>
+            <div class="col-md-8">
+              <div
+                *ngIf="loadingPistolets"
+                class="loading-indicator"
+              >
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Chargement des pistolets...
+              </div>
+              <div
+                *ngIf="!loadingPistolets && pistoletIndexes.length === 0"
+                class="no-pistolets"
+              >
+                <i class="bi bi-info-circle me-2"></i>
+                Aucun pistolet trouvé pour cette pompe
+              </div>
+            </div>
+          </div>
+
+          <!-- Pistolets Grid -->
+          <div
+            *ngIf="pistoletIndexes.length > 0"
+            class="pistolets-grid mt-4"
+          >
+            <h5 class="section-title mb-3">
+              <i class="bi bi-fuel-pump me-2"></i>
+              Pistolets de la pompe {{ currentAffectation?.numero_pompe }}
+            </h5>
+
+            <div class="row g-3">
+              <div
+                class="col-lg-6 col-xl-4"
+                *ngFor="let pistoletIndex of pistoletIndexes; trackBy: trackByPistoletId"
+              >
+                <div
+                  class="pistolet-card"
+                  [class.valid]="pistoletIndex.isValid"
+                  [class.invalid]="!pistoletIndex.isValid && pistoletIndex.indexFermeture !== null"
+                >
+                  <div class="pistolet-header">
+                    <div class="pistolet-info">
+                      <h6 class="pistolet-number">
+                        <i class="bi bi-droplet-fill me-2"></i>
+                        Pistolet {{ pistoletIndex.pistolet.numero_pistolet }}
+                      </h6>
+                      <p class="product-name">{{ pistoletIndex.pistolet.nom_produit }}</p>
+                      <span class="price-badge"
+                        >{{ pistoletIndex.pistolet.prix_unitaire }} DT/L</span
+                      >
+                    </div>
+                    <div
+                      class="status-indicator"
+                      [class.valid]="pistoletIndex.isValid"
+                    >
+                      <i
+                        class="bi"
+                        [class.bi-check-circle-fill]="pistoletIndex.isValid"
+                        [class.bi-circle]="!pistoletIndex.isValid"
+                      ></i>
+                    </div>
+                  </div>
+
+                  <div class="pistolet-body">
+                    <div class="row mb-3">
+                      <div class="col-6">
+                        <label class="form-label small">Index d'ouverture</label>
+                        <input
+                          type="number"
+                          class="form-control form-control-sm"
+                          [value]="pistoletIndex.indexOuverture | number: '1.2-2'"
+                          readonly
+                        />
+                        <small
+                          class="text-muted"
+                          *ngIf="pistoletIndex.lastClosingIndex !== null"
+                        >
+                          Dernier: {{ pistoletIndex.lastClosingIndex | number: '1.2-2' }}
+                        </small>
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label small">Index de fermeture</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          class="form-control form-control-sm"
+                          [(ngModel)]="pistoletIndex.indexFermeture"
+                          [ngModelOptions]="{ standalone: true }"
+                          (ngModelChange)="onIndexFermetureChange(pistoletIndex)"
+                          placeholder="0.00"
+                          [min]="pistoletIndex.indexOuverture"
+                        />
+                      </div>
+                    </div>
+
+                    <div
+                      *ngIf="pistoletIndex.errorMessage"
+                      class="alert alert-danger alert-sm"
+                    >
+                      <i class="bi bi-exclamation-triangle me-1"></i>
+                      {{ pistoletIndex.errorMessage }}
+                    </div>
+
+                    <div
+                      *ngIf="pistoletIndex.isValid && pistoletIndex.indexFermeture !== null"
+                      class="summary-row"
+                    >
+                      <div class="row text-center">
+                        <div class="col-4">
+                          <div class="summary-item">
+                            <small class="text-muted">Quantité</small>
+                            <div class="fw-bold text-primary">
+                              {{ pistoletIndex.quantiteVendue | number: '1.2-2' }}L
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-8">
+                          <div class="summary-item">
+                            <small class="text-muted">Montant</small>
+                            <div class="fw-bold text-success">
+                              {{ pistoletIndex.montantTotal | number: '1.2-2' }} DT
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Section -->
+          <div
+            *ngIf="hasValidIndexes"
+            class="total-summary mt-4"
+          >
+            <div class="card bg-light">
+              <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-calculator me-2"></i>Résumé total</h6>
+                <div class="row text-center">
+                  <div class="col-md-4">
+                    <div class="summary-total">
+                      <div class="summary-value text-primary">
+                        {{ totalQuantiteVendue | number: '1.2-2' }} L
+                      </div>
+                      <div class="summary-label">Quantité totale</div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="summary-total">
+                      <div class="summary-value text-success">
+                        {{ totalMontant | number: '1.2-2' }} DT
+                      </div>
+                      <div class="summary-label">Montant total</div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="summary-total">
+                      <div class="summary-value text-info">{{ validPistoletCount }}</div>
+                      <div class="summary-label">Pistolets validés</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons mt-4">
+            <div class="d-flex justify-content-between">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="resetForm()"
+              >
+                <i class="bi bi-arrow-clockwise me-2"></i>Réinitialiser
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg"
+                [disabled]="!hasValidIndexes || !currentAffectation || loadingAffectation"
+              >
+                <i class="bi bi-save me-2"></i>
+                Enregistrer tous les relevés
+                <span
+                  *ngIf="hasValidIndexes"
+                  class="badge bg-white text-primary ms-2"
+                >
+                  {{ validPistoletCount }}
+                </span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Modal de confirmation -->
+  <div
+    *ngIf="showConfirmationModal"
+    class="modal fade show"
+    tabindex="-1"
+    style="display: block; background-color: rgba(0, 0, 0, 0.5)"
+    id="confirmationModal"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-check-circle me-2"></i>Confirmer l'enregistrement
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            (click)="closeModal()"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-3">Êtes-vous sûr de vouloir enregistrer ces relevés ?</p>
+
+          <div class="confirmation-summary">
+            <div class="row mb-3">
+              <div class="col-md-6"><strong>Date :</strong> {{ indexForm.get('date')?.value }}</div>
+              <div class="col-md-6">
+                <strong>Pompe :</strong> {{ currentAffectation?.numero_pompe }}
+              </div>
+            </div>
+
+            <h6 class="mb-3">Relevés à enregistrer :</h6>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th>Pistolet</th>
+                    <th>Produit</th>
+                    <th>Index ouv.</th>
+                    <th>Index ferm.</th>
+                    <th>Quantité</th>
+                    <th>Montant</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let pistoletIndex of validPistolets"
+                    class="table-success"
+                  >
+                    <td>{{ pistoletIndex.pistolet.numero_pistolet }}</td>
+                    <td>{{ pistoletIndex.pistolet.nom_produit }}</td>
+                    <td>{{ pistoletIndex.indexOuverture | number: '1.2-2' }}</td>
+                    <td>{{ pistoletIndex.indexFermeture | number: '1.2-2' }}</td>
+                    <td>{{ pistoletIndex.quantiteVendue | number: '1.2-2' }} L</td>
+                    <td>{{ pistoletIndex.montantTotal | number: '1.2-2' }} DT</td>
+                  </tr>
+                </tbody>
+                <tfoot class="table-info">
+                  <tr>
+                    <th colspan="4">Total</th>
+                    <th>{{ totalQuantiteVendue | number: '1.2-2' }} L</th>
+                    <th>{{ totalMontant | number: '1.2-2' }} DT</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModal()"
+          >
+            <i class="bi bi-x-lg me-2"></i>Annuler
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="confirmSubmit()"
+          >
+            <i class="bi bi-check-lg me-2"></i>Confirmer l'enregistrement
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal de succès -->
+  <div
+    *ngIf="showSuccessModal"
+    class="modal fade show"
+    tabindex="-1"
+    style="display: block; background-color: rgba(0, 0, 0, 0.5)"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title">
+            <i class="bi bi-check-circle-fill me-2"></i>Relevés enregistrés avec succès
+          </h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal()"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="text-center mb-4">
+            <i
+              class="bi bi-check-circle-fill text-success"
+              style="font-size: 4rem"
+            ></i>
+            <h4 class="mt-3 mb-3">{{ modalMessage }}</h4>
+          </div>
+          <!-- Détails des relevés enregistrés -->
+          <div class="success-summary">
+            <div class="row mb-3">
+              <div class="col-md-6"><strong>Date :</strong> {{ indexForm.get('date')?.value }}</div>
+              <div class="col-md-6">
+                <strong>Pompe :</strong> {{ currentAffectation?.numero_pompe }}
+              </div>
+            </div>
+
+            <div class="alert alert-success">
+              <i class="bi bi-info-circle me-2"></i>
+              Les relevés ont été enregistrés avec succès dans la base de données.
+            </div>
+          </div>
+
+          <p class="text-muted text-center mt-3">Redirection dans {{ countdown }} secondes...</p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-success"
+            (click)="closeModal()"
+          >
+            <i class="bi bi-check-lg me-2"></i>OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal d'erreur -->
+  <div
+    *ngIf="showErrorModal"
+    class="modal fade show"
+    tabindex="-1"
+    style="display: block; background-color: rgba(0, 0, 0, 0.5)"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2"></i>Erreur</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal()"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body text-center">
+          <i
+            class="bi bi-exclamation-triangle-fill text-danger"
+            style="font-size: 4rem"
+          ></i>
+          <h4 class="mt-3">{{ modalMessage }}</h4>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="closeModal()"
+          >
+            <i class="bi bi-x-lg me-2"></i>Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

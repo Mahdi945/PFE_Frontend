@@ -1,0 +1,407 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <!-- Breadcrumb -->
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+      <li class="breadcrumb-item active">Traiter des réclamations</li>
+    </ol>
+  </nav>
+  <!-- Page Title -->
+  <div class="pagetitle d-flex justify-content-between align-items-center">
+    <div class="title-with-icon d-flex align-items-center">
+      <div class="title-text-content">
+        <h1 class="title-main mb-0">Traiter les Réclamations</h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div
+    *ngIf="errorMessage"
+    class="alert alert-danger mb-3"
+  >
+    <i class="bi bi-exclamation-triangle-fill"></i> {{ errorMessage }}
+  </div>
+
+  <!-- Filtres améliorés -->
+  <div class="row mb-4 g-3 align-items-end filters-section">
+    <!-- Champ de recherche -->
+    <div class="col-md-4">
+      <div class="input-group">
+        <span class="input-group-text bg-light border-end-0">
+          <i class="bi bi-search text-muted"></i>
+        </span>
+        <input
+          type="text"
+          class="form-control border-start-0"
+          placeholder="Référence, client ou objet..."
+          [(ngModel)]="searchTerm"
+          (input)="filterReclamations()"
+        />
+      </div>
+    </div>
+
+    <!-- Filtre par statut -->
+    <div class="col-md-4">
+      <div class="input-group">
+        <span class="input-group-text bg-light border-end-0">
+          <i class="bi bi-filter-circle text-muted"></i>
+        </span>
+        <select
+          class="form-select border-start-0"
+          [(ngModel)]="filterStatut"
+          (change)="filterReclamations()"
+        >
+          <option value="">Tous les statuts</option>
+          <option
+            *ngFor="let statut of statutOptions"
+            [value]="statut"
+          >
+            {{ statut | titlecase }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Filtre par date -->
+    <div class="col-md-4">
+      <div class="input-group">
+        <span class="input-group-text bg-light border-end-0">
+          <i class="bi bi-calendar text-muted"></i>
+        </span>
+        <input
+          type="date"
+          class="form-control border-start-0"
+          [(ngModel)]="dateDebut"
+          (change)="filterReclamations()"
+          placeholder="Date début"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau des réclamations -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Référence</th>
+          <th>Client</th>
+          <th>Objet</th>
+          <th>Date</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="isLoading">
+          <td
+            colspan="6"
+            class="text-center"
+          >
+            <div
+              class="spinner-border text-primary"
+              role="status"
+            >
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="!isLoading && filteredReclamations.length === 0">
+          <td
+            colspan="6"
+            class="text-center"
+          >
+            Aucune réclamation trouvée
+          </td>
+        </tr>
+        <tr
+          *ngFor="let rec of filteredReclamations"
+          class="clickable-row"
+          (click)="showReclamationDetails(rec)"
+        >
+          <td>{{ rec.reference || 'N/A' }}</td>
+          <td>{{ rec.username || 'N/A' }}</td>
+          <td>{{ rec.objet || 'N/A' }}</td>
+          <td>{{ rec.date_creation ? (rec.date_creation | date: 'dd/MM/yyyy') : 'N/A' }}</td>
+          <td>
+            <select
+              class="form-select form-select-sm"
+              [(ngModel)]="rec.newStatut"
+              (change)="onStatutChange(rec)"
+              (click)="$event.stopPropagation()"
+              [ngClass]="{
+                'border-primary': rec.statut === 'nouveau',
+                'border-warning': rec.statut === 'en_cours',
+                'border-success': rec.statut === 'resolu',
+                'border-secondary': rec.statut === 'fermer',
+              }"
+            >
+              <option
+                *ngFor="let statut of statutOptions"
+                [value]="statut"
+                [disabled]="isStatutDisabled(statut, rec.statut)"
+              >
+                {{ statut | titlecase }}
+              </option>
+            </select>
+          </td>
+          <td>
+            <button
+              class="btn-action-view"
+              (click)="showReclamationDetails(rec); $event.stopPropagation()"
+              title="Voir les détails"
+            >
+              <i class="bi bi-eye"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- Modal Détails de réclamation -->
+  <div
+    *ngIf="showDetailsModal"
+    class="modal-overlay"
+    (click)="closeDetailsModal()"
+  >
+    <div
+      class="modal-dialog-reclamation"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-content-reclamation">
+        <div class="modal-header-reclamation">
+          <div class="reclamation-info-header">
+            <div class="reclamation-icon">
+              <i class="bi bi-file-text-fill"></i>
+            </div>
+            <div class="reclamation-title-info">
+              <h2 class="modal-title-reclamation">
+                {{ selectedReclamation?.reference || 'Réclamation' }}
+              </h2>
+              <p class="reclamation-subtitle">Détails complets de la réclamation</p>
+            </div>
+          </div>
+          <button
+            class="btn-close-reclamation"
+            (click)="closeDetailsModal()"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <div class="modal-body-reclamation">
+          <div class="reclamation-details-grid">
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <i class="bi bi-info-circle"></i>
+                <span>Informations générales</span>
+              </div>
+              <div class="detail-card-content">
+                <div class="detail-row">
+                  <span class="detail-label-simple">Référence</span>
+                  <span class="detail-value-simple">{{
+                    selectedReclamation?.reference || 'N/A'
+                  }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label-simple">Client</span>
+                  <span class="detail-value-simple">{{
+                    selectedReclamation?.username || 'N/A'
+                  }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label-simple">Email</span>
+                  <span class="detail-value-simple">{{ selectedReclamation?.email || 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label-simple">Date</span>
+                  <span class="detail-value-simple">{{
+                    selectedReclamation?.date_creation
+                      ? (selectedReclamation.date_creation | date: 'dd/MM/yyyy HH:mm')
+                      : 'N/A'
+                  }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <i class="bi bi-clipboard-data"></i>
+                <span>Détails de la réclamation</span>
+              </div>
+              <div class="detail-card-content">
+                <div class="detail-row">
+                  <span class="detail-label-simple">Objet</span>
+                  <span class="detail-value-simple">{{ selectedReclamation?.objet || 'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label-simple">Raison</span>
+                  <span class="detail-value-simple">{{
+                    selectedReclamation?.raison || 'N/A'
+                  }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label-simple">Statut</span>
+                  <span class="detail-value-simple">
+                    <span
+                      [class]="getBadgeClass(selectedReclamation?.statut)"
+                      class="badge"
+                    >
+                      {{
+                        selectedReclamation?.statut
+                          ? (selectedReclamation.statut | titlecase)
+                          : 'N/A'
+                      }}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="description-section">
+            <div class="description-header">
+              <i class="bi bi-card-text"></i>
+              <span>Description complète</span>
+            </div>
+            <div class="description-content">
+              {{ selectedReclamation?.description || 'Aucune description fournie' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer-reclamation">
+          <button
+            class="btn-close-reclamation-footer"
+            (click)="closeDetailsModal()"
+          >
+            <i class="bi bi-x-lg"></i> Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmation orange pour changement de statut -->
+  <div
+    *ngIf="showConfirmationModal"
+    class="modal-overlay"
+    (click)="closeConfirmationModal()"
+  >
+    <div
+      class="modal-dialog-custom"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-content-custom">
+        <div
+          class="modal-icon"
+          style="background: linear-gradient(135deg, #fed7aa, #fb923c); color: #ea580c"
+        >
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+
+        <h3 class="modal-title">Confirmer le changement de statut</h3>
+        <p class="modal-text">
+          Êtes-vous sûr de vouloir changer le statut de la réclamation
+          <strong>{{ pendingStatusChange?.reference }}</strong>
+          vers <strong>{{ pendingStatusChange?.newStatut | titlecase }}</strong> ?
+        </p>
+
+        <div class="modal-actions">
+          <button
+            class="btn-cancel"
+            (click)="closeConfirmationModal()"
+          >
+            <i class="bi bi-x-lg"></i> Annuler
+          </button>
+          <button
+            class="btn-confirm-orange"
+            (click)="confirmStatusChange()"
+          >
+            <i class="bi bi-check-lg"></i> Confirmer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de succès -->
+  <div
+    *ngIf="showSuccessModal"
+    class="modal-overlay"
+    (click)="closeSuccessModal()"
+  >
+    <div
+      class="modal-dialog-custom"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-content-custom">
+        <div
+          class="modal-icon"
+          style="background: linear-gradient(135deg, #bbf7d0, #22c55e); color: #059669"
+        >
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+
+        <h3 class="modal-title">Succès</h3>
+        <p class="modal-text">{{ successMessage }}</p>
+
+        <div class="modal-actions">
+          <button
+            class="btn-confirm"
+            (click)="closeSuccessModal()"
+          >
+            <i class="bi bi-check-lg"></i> OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal d'erreur -->
+  <div
+    *ngIf="showErrorModal"
+    class="modal-overlay"
+    (click)="closeErrorModal()"
+  >
+    <div
+      class="modal-dialog-custom"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-content-custom">
+        <div
+          class="modal-icon"
+          style="background: linear-gradient(135deg, #fecaca, #ef4444); color: #dc2626"
+        >
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+
+        <h3 class="modal-title">Erreur</h3>
+        <p class="modal-text">{{ errorModalMessage }}</p>
+
+        <div class="modal-actions">
+          <button
+            class="btn-cancel"
+            (click)="closeErrorModal()"
+          >
+            <i class="bi bi-x-lg"></i> Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>
+<a
+  href="#"
+  class="back-to-top d-flex align-items-center justify-content-center"
+  ><i class="bi bi-arrow-up-short"></i
+></a>

@@ -1,0 +1,219 @@
+<div class="container">
+  <section
+    class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4"
+  >
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 col-xl-6">
+          <!-- Carte du formulaire -->
+          <div class="card mb-4 shadow-lg">
+            <div class="card-body p-4 p-md-5">
+              <div class="text-center pb-4">
+                <!-- Logo -->
+                <div class="logo-container mb-4">
+                  <a
+                    href="/"
+                    class="d-inline-block"
+                  >
+                    <img
+                      src="logo.png"
+                      alt="Logo"
+                      class="img-fluid"
+                      style="height: 70px; width: auto"
+                    />
+                  </a>
+                </div>
+
+                <!-- Titres -->
+                <h2 class="card-title fw-bold mb-2">Réinitialisation de mot de passe</h2>
+                <p class="text-muted">Créez un nouveau mot de passe sécurisé</p>
+              </div>
+              <form
+                [formGroup]="resetPasswordForm"
+                (ngSubmit)="onResetPassword()"
+                class="needs-validation"
+                novalidate
+              >
+                <div class="mb-4">
+                  <label
+                    for="password"
+                    class="form-label fw-semibold"
+                    >Nouveau mot de passe</label
+                  >
+                  <div class="input-group border rounded-3">
+                    <span class="input-group-text bg-transparent border-0">🔒</span>
+                    <input
+                      [type]="passwordVisible ? 'text' : 'password'"
+                      formControlName="password"
+                      class="form-control border-0 py-2 px-3"
+                      id="password"
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-link text-secondary password-toggle"
+                      (click)="togglePasswordVisibility()"
+                    >
+                      <mat-icon>{{ passwordVisible ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
+                  </div>
+
+                  <!-- Indicateur de force -->
+                  <div class="password-strength-bar mt-2">
+                    <div class="strength {{ passwordStrength }} rounded-pill"></div>
+                  </div>
+
+                  <!-- Critères -->
+                  <div class="password-criteria mt-2">
+                    <small
+                      class="d-block text-muted"
+                      [class.text-success]="passwordHasMinLength"
+                    >
+                      <mat-icon
+                        class="align-middle"
+                        style="font-size: 16px"
+                      >
+                        {{ passwordHasMinLength ? 'check_circle' : 'circle' }}
+                      </mat-icon>
+                      Minimum 8 caractères
+                    </small>
+                    <small
+                      class="d-block text-muted"
+                      [class.text-success]="passwordHasUpperCase"
+                    >
+                      <mat-icon
+                        class="align-middle"
+                        style="font-size: 16px"
+                      >
+                        {{ passwordHasUpperCase ? 'check_circle' : 'circle' }}
+                      </mat-icon>
+                      Une majuscule
+                    </small>
+                    <small
+                      class="d-block text-muted"
+                      [class.text-success]="passwordHasNumber"
+                    >
+                      <mat-icon
+                        class="align-middle"
+                        style="font-size: 16px"
+                      >
+                        {{ passwordHasNumber ? 'check_circle' : 'circle' }}
+                      </mat-icon>
+                      Un chiffre
+                    </small>
+                    <small
+                      class="d-block text-muted"
+                      [class.text-success]="passwordHasSpecialChar"
+                    >
+                      <mat-icon
+                        class="align-middle"
+                        style="font-size: 16px"
+                      >
+                        {{ passwordHasSpecialChar ? 'check_circle' : 'circle' }}
+                      </mat-icon>
+                      Un caractère spécial
+                    </small>
+                  </div>
+                </div>
+                <!-- Champ Confirmation -->
+                <div class="mb-4">
+                  <label
+                    for="confirmPassword"
+                    class="form-label fw-semibold"
+                    >Confirmer le mot de passe</label
+                  >
+                  <div class="input-group border rounded-3">
+                    <span class="input-group-text bg-transparent border-0">🔒</span>
+                    <input
+                      [type]="confirmPasswordVisible ? 'text' : 'password'"
+                      formControlName="confirmPassword"
+                      class="form-control border-0 py-2 px-3"
+                      id="confirmPassword"
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-link text-secondary password-toggle"
+                      (click)="toggleConfirmPasswordVisibility()"
+                    >
+                      <mat-icon>{{
+                        confirmPasswordVisible ? 'visibility_off' : 'visibility'
+                      }}</mat-icon>
+                    </button>
+                  </div>
+                </div>
+                <!-- Message d'état -->
+                <div
+                  *ngIf="message"
+                  class="alert alert-dismissible fade show mb-4 rounded-3"
+                  [ngClass]="{ 'alert-success': !isError, 'alert-danger': isError }"
+                >
+                  {{ message }}
+                  <button
+                    type="button"
+                    class="btn-close"
+                    (click)="message = ''"
+                  ></button>
+                </div>
+
+                <!-- Erreurs de validation -->
+                <div
+                  *ngIf="
+                    resetPasswordForm.get('confirmPassword')?.touched &&
+                    resetPasswordForm.hasError('mismatch')
+                  "
+                  class="alert alert-warning rounded-3 mb-4"
+                >
+                  <div class="d-flex align-items-center">
+                    <mat-icon class="me-2">warning</mat-icon>
+                    Les mots de passe ne correspondent pas
+                  </div>
+                </div>
+                <!-- Bouton de soumission -->
+                <button
+                  class="btn btn-primary w-100 py-2 rounded-pill fw-semibold"
+                  type="submit"
+                  [disabled]="resetPasswordForm.invalid || isLoading"
+                  [class.btn-disabled]="resetPasswordForm.invalid"
+                >
+                  <span
+                    *ngIf="!isLoading"
+                    class="d-flex align-items-center justify-content-center"
+                  >
+                    <i class="bi bi-shield-lock me-2"></i>
+                    Réinitialiser le mot de passe
+                  </span>
+                  <span
+                    *ngIf="isLoading"
+                    class="d-flex align-items-center justify-content-center"
+                  >
+                    <span
+                      class="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    Réinitialisation en cours...
+                  </span>
+                </button>
+
+                <!-- Lien de redirection vers la page de login -->
+                <div class="login-link-container text-center">
+                  <p class="login-link-text">Vous vous souvenez de votre mot de passe ?</p>
+                  <a
+                    routerLink="/login"
+                    class="login-link"
+                  >
+                    <i class="bi bi-arrow-left"></i>
+                    Retour à la connexion
+                  </a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

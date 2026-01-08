@@ -1,0 +1,316 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <!-- Breadcrumb positionné tout en haut -->
+  <div class="breadcrumb-container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#"><i class="bi bi-house-door"></i></a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="#">Utilisateurs</a>
+        </li>
+        <li class="breadcrumb-item active">Créer compte</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Titre séparé en dessous du breadcrumb -->
+  <div class="pagetitle">
+    <div class="title-icon-container">
+      <div class="title-text-content">
+        <h1 class="title-main">Créer Compte Utilisateur</h1>
+      </div>
+    </div>
+  </div>
+  <!-- ==================== SECTION PRINCIPALE ==================== -->
+  <section class="section user-management">
+    <div class="container-fluid">
+      <!-- ==================== FORMULAIRE MODERNE ==================== -->
+      <!-- Formulaire d'ajout d'utilisateur avec design moderne -->
+      <div class="card form-card">
+        <div class="card-header">
+          <div class="header-content">
+            <i class="bi bi-person-plus"></i>
+            <h3 class="header-title">Informations utilisateur</h3>
+          </div>
+        </div>
+        <div class="card-body">
+          <form
+            class="modern-form"
+            (ngSubmit)="onSubmit()"
+            #userForm="ngForm"
+          >
+            <div class="form-grid">
+              <div class="form-group">
+                <label
+                  for="username"
+                  class="modern-label"
+                >
+                  <i class="bi bi-person"></i>
+                  Nom d'utilisateur <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="modern-input"
+                  id="username"
+                  name="username"
+                  [(ngModel)]="user.username"
+                  required
+                  minlength="3"
+                  maxlength="50"
+                  placeholder="Entrez le nom d'utilisateur"
+                />
+                <div
+                  *ngIf="
+                    userForm.controls['username']?.invalid && userForm.controls['username']?.touched
+                  "
+                  class="error-message"
+                >
+                  Le nom d'utilisateur est requis (3-50 caractères).
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label
+                  for="email"
+                  class="modern-label"
+                >
+                  <i class="bi bi-envelope"></i>
+                  Email <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="email"
+                  class="modern-input"
+                  id="email"
+                  name="email"
+                  [(ngModel)]="user.email"
+                  required
+                  email
+                  placeholder="exemple@email.com"
+                />
+                <div
+                  *ngIf="userForm.controls['email']?.invalid && userForm.controls['email']?.touched"
+                  class="error-message"
+                >
+                  Veuillez entrer une adresse email valide.
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label
+                  for="numero_telephone"
+                  class="modern-label"
+                >
+                  <i class="bi bi-phone"></i>
+                  Numéro de téléphone <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="modern-input"
+                  id="numero_telephone"
+                  name="numero_telephone"
+                  [(ngModel)]="user.numero_telephone"
+                  required
+                  pattern="^[0-9]{8,}$"
+                  placeholder="Ex: 12345678"
+                />
+                <div
+                  *ngIf="
+                    userForm.controls['numero_telephone']?.invalid &&
+                    userForm.controls['numero_telephone']?.touched
+                  "
+                  class="error-message"
+                >
+                  Veuillez entrer un numéro valide (au moins 8 chiffres).
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label
+                  for="password"
+                  class="modern-label"
+                >
+                  <i class="bi bi-lock"></i>
+                  Mot de passe <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="password"
+                  class="modern-input"
+                  id="password"
+                  name="password"
+                  [(ngModel)]="user.password"
+                  required
+                  minlength="8"
+                  maxlength="20"
+                  placeholder="8-20 caractères avec majuscule, minuscule, chiffre et caractère spécial"
+                />
+
+                <!-- Message d'erreur simple -->
+                <div
+                  *ngIf="
+                    userForm.controls['password']?.invalid && userForm.controls['password']?.touched
+                  "
+                  class="error-message"
+                >
+                  Le mot de passe doit contenir 8-20 caractères avec au moins 1 majuscule, 1
+                  minuscule, 1 chiffre et 1 caractère spécial.
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label
+                  for="role"
+                  class="modern-label"
+                >
+                  <i class="bi bi-shield-check"></i>
+                  Rôle <span class="text-danger">*</span>
+                </label>
+                <select
+                  class="modern-select"
+                  id="role"
+                  name="role"
+                  [(ngModel)]="user.role"
+                  required
+                >
+                  <option
+                    value=""
+                    disabled
+                    selected
+                  >
+                    Choisissez un rôle
+                  </option>
+                  <option value="cogerant">Cogerant</option>
+                  <option value="client">Client</option>
+                  <option value="caissier">Caissier</option>
+                  <option value="pompiste">Pompiste</option>
+                </select>
+                <div
+                  *ngIf="userForm.controls['role']?.invalid && userForm.controls['role']?.touched"
+                  class="error-message"
+                >
+                  Veuillez sélectionner un rôle.
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="reset"
+                class="btn-modern btn-secondary"
+              >
+                <i class="bi bi-arrow-clockwise"></i>
+                Vider
+              </button>
+              <button
+                type="submit"
+                class="btn-modern btn-primary"
+                [disabled]="userForm.invalid"
+              >
+                <i class="bi bi-check-circle"></i>
+                Valider
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ==================== MODALES MODERNES ==================== -->
+  <!-- Modales avec design moderne et animations inspirées du profil -->
+
+  <!-- Modal de succès avec design moderne et animations -->
+  <div
+    *ngIf="showMessageModal && isSuccessMessage"
+    class="modal-overlay success-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom">
+      <div class="modal-content-custom">
+        <div class="modal-icon">
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <h3 class="modal-title">{{ modalTitle }}</h3>
+        <p class="modal-text">{{ modalMessage }}</p>
+        <button
+          class="btn-close-modal"
+          (click)="closeModals()"
+        >
+          <i class="bi bi-x"></i>
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal d'erreur avec design moderne et animations -->
+  <div
+    *ngIf="showMessageModal && !isSuccessMessage"
+    class="modal-overlay error-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom">
+      <div class="modal-content-custom">
+        <div class="modal-icon">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <h3 class="modal-title">{{ modalTitle }}</h3>
+        <p class="modal-text">{{ modalMessage }}</p>
+        <button
+          class="btn-close-modal"
+          (click)="closeModals()"
+        >
+          <i class="bi bi-x"></i>
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmation moderne -->
+  <div
+    *ngIf="showConfirmationModal"
+    class="modal-overlay confirmation-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom">
+      <div class="modal-content-custom">
+        <div class="modal-icon">
+          <i class="bi bi-question-circle"></i>
+        </div>
+        <h3 class="modal-title">{{ modalTitle }}</h3>
+        <p class="modal-text">{{ modalMessage }}</p>
+        <div class="modal-actions">
+          <button
+            class="btn-cancel"
+            (click)="closeModals()"
+          >
+            <i class="bi bi-x-circle"></i>
+            Annuler
+          </button>
+          <button
+            class="btn-confirm-orange"
+            (click)="confirmAction()"
+          >
+            <i class="bi bi-check-circle"></i>
+            Confirmer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>
+
+<a
+  href="#"
+  class="back-to-top d-flex align-items-center justify-content-center"
+>
+  <i class="bi bi-arrow-up-short"></i>
+</a>

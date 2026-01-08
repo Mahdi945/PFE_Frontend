@@ -1,0 +1,1794 @@
+/* ========== STYLES MODERNES GESTION VÉHICULES (COPIÉS DE GESTION-CREDITS) ========== */
+
+/* Page Title and Header */
+.title-main {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0;
+}
+
+.pagetitle {
+  margin-bottom: 2rem;
+}
+
+/* ========== BOUTON AJOUTER VÉHICULE EXACTEMENT COMME GESTION-CREDITS ========== */
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border: none;
+  border-radius: 8px; /* Même style que gestion-credits */
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  text-decoration: none;
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+  background: linear-gradient(135deg, #218838, #1dc47f);
+  color: white;
+}
+
+.btn-success:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success i {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.btn-success:hover i {
+  transform: scale(1.1);
+}
+
+/* ========== STYLES DE SUCCÈS ET ÉCHEC COPIÉS DE GESTION-CREDITS ========== */
+
+/* Success Modal */
+.success-modal-custom,
+.error-modal-custom {
+  background: white;
+  border-radius: 20px;
+  padding: 3rem 2rem 2rem;
+  text-align: center;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  transform: scale(1);
+  transition: all 0.3s ease;
+  animation: successModalSlideIn 0.4s ease;
+  max-width: 450px;
+  width: 90%;
+}
+
+@keyframes successModalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.success-modal-custom .modal-icon,
+.error-modal-custom .modal-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 2.5rem;
+  animation: iconBounce 0.6s ease 0.2s both;
+}
+
+@keyframes iconBounce {
+  0%,
+  20%,
+  53%,
+  80%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%,
+  43% {
+    transform: translate3d(0, -10px, 0);
+  }
+  70% {
+    transform: translate3d(0, -5px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+.success-modal-custom .modal-title,
+.error-modal-custom .modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.success-modal-custom .modal-text,
+.error-modal-custom .modal-text {
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.btn-close-modal {
+  padding: 0.875rem 2rem;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+  min-width: 140px;
+  justify-content: center;
+  border: none;
+}
+
+.btn-close-modal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn-close-modal:active {
+  transform: translateY(0);
+}
+
+/* Base Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1055;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Header orangé pour renouvellement */
+.modal-header-orange {
+  background: linear-gradient(135deg, #fd7e14, #e55a4e) !important;
+  color: white !important;
+  padding: 2rem 2rem 1.5rem 2rem;
+  border-bottom: 1px solid #e9ecef;
+  border-radius: 0;
+}
+
+.modal-header-orange .modal-title {
+  color: white !important;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.btn-confirm-orange {
+  background: linear-gradient(135deg, #fd7e14, #e55a4e);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-confirm-orange:hover {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+}
+
+/* Messages d'erreur */
+.alert {
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 500;
+  animation: slideInDown 0.3s ease;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+  color: #c53030;
+  border-left: 4px solid #e53e3e;
+}
+
+.alert i {
+  font-size: 1.2rem;
+}
+
+/* ========== TABLEAU MODERNE (HEADER NOIR SANS DIVISEURS COMME GESTION-CREDITS) ========== */
+.table {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: none !important; /* Suppression de toutes les bordures */
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background: #2c3e50 !important; /* Header noir comme gestion-credits */
+  color: white !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.85rem;
+  padding: 1rem 0.75rem;
+  border: none !important; /* Sans diviseurs */
+  position: relative;
+}
+
+.table td {
+  padding: 1rem 0.75rem;
+  vertical-align: middle;
+  border: none !important; /* Suppression de tous les diviseurs horizontaux */
+  transition: all 0.2s ease;
+}
+
+.table tbody tr {
+  border: none !important; /* Suppression des bordures des lignes */
+}
+
+/* ========== STYLES COMPLÉMENTAIRES POUR LE TABLEAU ========== */
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+/* ========== INDICATEUR DE CHARGEMENT ========== */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border: 0.3em solid rgba(0, 0, 0, 0.1);
+  border-right-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========== BOUTONS D'ACTION AVEC COULEURS APPARENTES ET BACKGROUND COLORÉ ========== */
+.btn-action-view,
+.btn-action-renew {
+  border: none;
+  padding: 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-action-view {
+  background: linear-gradient(
+    135deg,
+    #7c3aed,
+    #6d28d9
+  ) !important; /* Violet plus foncé */
+}
+
+.btn-action-view:hover {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+  background: linear-gradient(
+    135deg,
+    #6d28d9,
+    #5b21b6
+  ) !important; /* Encore plus foncé au hover */
+}
+
+.btn-action-renew {
+  background: linear-gradient(
+    135deg,
+    #fd7e14,
+    #e55a4e
+  ) !important; /* Orange apparente */
+}
+
+.btn-action-renew:hover {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 4px 15px rgba(253, 126, 20, 0.4);
+  background: linear-gradient(135deg, #e55a4e, #dc3545) !important;
+}
+
+/* ========== MODAL STYLES MODERNES SANS ANIMATION AVEC SCROLLBAR ========== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+  padding: 1rem;
+}
+
+.modal-dialog-custom {
+  background: white;
+  border-radius: 0; /* Coins rectangulaires comme gestion-credits */
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.modal-content-custom {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: white;
+}
+
+.modal-header-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 2rem 1.5rem 2rem;
+  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 0;
+}
+
+.modal-header-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-close-modern {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.btn-close-modern:hover {
+  background: rgba(108, 117, 125, 0.1);
+  color: #495057;
+  transform: scale(1.1);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  cursor: pointer;
+}
+
+.btn-close:hover {
+  opacity: 1;
+}
+
+/* ========== HEADERS MODALS VERTS POUR AJOUT ET RENOUVELLEMENT ========== */
+.modal-success .modal-header {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border-bottom: none;
+}
+
+.modal-renew .modal-header {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border-bottom: none;
+}
+
+/* Modal Variations */
+.modal-danger .modal-header {
+  background-color: #dc3545;
+  color: white;
+}
+
+.modal-primary .modal-header {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.modal-lg .modal-content {
+  max-width: 800px;
+}
+
+/* ========== BREADCRUMB STYLES ========== */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 0 0 15px 0;
+  list-style: none;
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.breadcrumb-item a {
+  color: #718096;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  padding: 4px 0;
+}
+
+.breadcrumb-item a i {
+  font-size: 1.2rem;
+  color: #4a5568;
+  transition: all 0.2s ease;
+}
+
+.breadcrumb-item.active {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  padding: 0 10px;
+  color: #a0aec0;
+  font-size: 1.3rem;
+  font-weight: 300;
+}
+
+/* Hover Effects */
+.breadcrumb-item a:hover {
+  color: #3182ce;
+}
+
+.breadcrumb-item a:hover i {
+  color: #3182ce;
+  transform: scale(1.1);
+}
+
+/* ========== PAGE TITLE STYLES ========== */
+.pagetitle {
+  margin: 20px 0 30px;
+}
+
+.pagetitle h1,
+.pagetitle h2 {
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  line-height: 1.3;
+}
+
+/* Icon Container */
+.title-icon-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.pagetitle .title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 178, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+.pagetitle .title-icon i {
+  color: white;
+  font-size: 1.8rem;
+}
+
+/* Title Text Styling */
+.title-text-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.title-main {
+  font-weight: 600;
+  color: #4a5568;
+  letter-spacing: -0.5px;
+  font-size: 2.4rem;
+}
+
+.title-emphasis {
+  color: #3182ce;
+  font-weight: 800;
+  position: relative;
+  margin-top: 5px;
+}
+
+/* Underline Effect */
+.title-emphasis::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #3182ce, rgba(49, 130, 206, 0.2));
+  border-radius: 2px;
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Hover Animations */
+.pagetitle:hover .title-icon {
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 0 6px 20px rgba(0, 178, 255, 0.35);
+}
+
+.pagetitle:hover .title-emphasis::after {
+  transform: scaleX(1.1);
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.breadcrumb-item:first-child a:hover i {
+  animation: bounce 0.6s ease;
+}
+
+.pagetitle:hover .title-icon i {
+  animation: float 1.5s ease infinite;
+}
+
+/* ========== MODALS SANS ANIMATION AVEC SCROLLBAR ========== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  /* Suppression de l'animation selon demande */
+}
+
+/* Conteneur de modal personnalisé SANS ANIMATION */
+.modal-dialog-custom {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  max-width: 500px;
+  width: 95%;
+  max-height: 90vh;
+  overflow: hidden;
+  /* Suppression de l'animation selon demande */
+}
+
+.modal-content-custom {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Corps de modal avec scrollbar */
+.modal-body-modern {
+  padding: 2rem;
+  flex: 1;
+  overflow-y: auto; /* Scrollbar ajoutée selon demande */
+  max-height: 60vh;
+}
+
+/* ========== MODAL RENOUVELLEMENT AVEC HEADER VERT ========== */
+.modal-header-renew {
+  background: linear-gradient(
+    135deg,
+    #28a745,
+    #20c997
+  ) !important; /* Header vert selon demande */
+  color: white;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-header-renew::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* En-tête de modal moderne */
+.modal-header-modern {
+  background: linear-gradient(
+    135deg,
+    #28a745,
+    #20c997
+  ) !important; /* Header vert pour modal d'ajout */
+  color: white;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-header-modern::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.modal-header-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1;
+}
+
+.modal-icon-header {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 1rem;
+  font-size: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.modal-icon-header.renew-icon {
+  background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.modal-header-modern h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modal-header-modern p {
+  margin: 0.25rem 0 0 0;
+  opacity: 0.9;
+  font-size: 0.9rem;
+}
+
+/* Bouton de fermeture moderne */
+.btn-close-modern {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.btn-close-modern:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+/* Corps de modal moderne */
+.modal-body-modern {
+  padding: 2rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Styles des formulaires modernes */
+.form-group-modern {
+  margin-bottom: 1.5rem;
+}
+
+.form-label-modern {
+  display: block;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.form-control-modern {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-control-modern:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Dropdown de crédits */
+.credit-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f3f4;
+}
+
+/* ========== ACTIONS DE MODAL ========== */
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+}
+
+/* ========== BOUTONS MODALS SANS COULEUR DE BACKGROUND ========== */
+.btn-cancel-modern,
+.btn-submit-modern {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent !important; /* Sans couleur de background selon demande */
+}
+
+.btn-cancel-modern {
+  color: #4a5568;
+  border-color: #e2e8f0;
+}
+
+.btn-cancel-modern:hover {
+  background: #f7fafc !important;
+  transform: translateY(-2px);
+}
+
+.btn-submit-modern {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.btn-submit-modern:hover {
+  background: #667eea !important;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-submit-modern.renew-btn {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.btn-submit-modern.renew-btn:hover {
+  background: #28a745 !important;
+  color: white;
+}
+
+/* ========== MODAL DE DÉTAILS VÉHICULE AVEC SCROLLBAR ========== */
+
+.modal-dialog-vehicule {
+  background: white;
+  border-radius: 25px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+  max-width: 800px;
+  width: 95%;
+  max-height: 90vh;
+  overflow: hidden;
+  /* Suppression de l'animation selon demande */
+}
+
+.modal-content-vehicule {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Corps modal véhicule avec scrollbar */
+.modal-body-vehicule {
+  padding: 2rem;
+  flex: 1;
+  overflow-y: auto; /* Scrollbar ajoutée selon demande */
+  max-height: 70vh;
+}
+
+/* ========== QR CODE AVEC BOUTON IMPRIMER DESSOUS ========== */
+.qr-code-container {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.qr-code-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  cursor: pointer; /* QR code cliquable selon demande */
+  transition: all 0.3s ease;
+}
+
+.qr-code-preview:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Bouton imprimer sous le QR code - Plus apparent */
+.btn-print-qr {
+  background: linear-gradient(135deg, #0d6efd, #0056b3) !important;
+  color: white !important;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem auto 0;
+  width: fit-content;
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.2);
+}
+
+.btn-print-qr:hover {
+  background: linear-gradient(135deg, #0056b3, #003d82) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
+}
+
+/* En-tête véhicule - VIOLET PLUS FONCÉ comme bouton d'action œil */
+.modal-header-vehicule {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: white;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-header-vehicule::before {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: rotate 4s linear infinite;
+}
+
+.vehicule-info-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  z-index: 1;
+}
+
+.vehicule-icon {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.vehicule-type-icon {
+  font-size: 2rem;
+}
+
+.vehicule-title-info h3 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.vehicule-title-info p {
+  margin: 0.5rem 0 0 0;
+  opacity: 0.9;
+  font-size: 1rem;
+}
+
+.btn-close-vehicule {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.btn-close-vehicule:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: rotate(90deg);
+}
+
+/* Corps modal véhicule avec scrollbar */
+.modal-body-vehicule {
+  padding: 2rem;
+  flex: 1;
+  overflow-y: auto; /* Scrollbar ajoutée selon demande */
+  max-height: 70vh;
+}
+
+/* Représentation visuelle du véhicule */
+.vehicule-visual-card {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.vehicule-representation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  perspective: 1000px;
+}
+
+.vehicule-front,
+.vehicule-back {
+  width: 45%;
+  height: 150px;
+  background: linear-gradient(145deg, #ffffff, #f0f0f0);
+  border-radius: 15px;
+  box-shadow:
+    inset 5px 5px 10px #d1d1d1,
+    inset -5px -5px 10px #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+.vehicule-front:hover,
+.vehicule-back:hover {
+  transform: rotateY(5deg) rotateX(5deg);
+}
+
+.vehicule-plate,
+.vehicule-plate-back {
+  background: linear-gradient(145deg, #2c3e50, #34495e);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.vehicule-brand {
+  color: #6c757d;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.qr-code-back img {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+}
+
+/* Grille de détails */
+.vehicule-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.detail-card {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+}
+
+.detail-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.detail-icon {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.detail-content h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.detail-content p {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  color: #4a5568;
+}
+
+.detail-content small {
+  color: #718096;
+  font-size: 0.85rem;
+}
+
+/* Pied de page véhicule */
+.modal-footer-vehicule {
+  padding: 1.5rem 2rem;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.btn-close-vehicule-footer,
+.btn-renew-vehicule-footer {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-close-vehicule-footer {
+  background: linear-gradient(135deg, #6c757d, #495057);
+  color: white;
+}
+
+.btn-close-vehicule-footer:hover {
+  background: linear-gradient(135deg, #495057, #343a40);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.btn-renew-vehicule-footer {
+  background: linear-gradient(135deg, #fd7e14, #e55a4e);
+  color: white;
+}
+
+.btn-renew-vehicule-footer:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(253, 126, 20, 0.4);
+  background: linear-gradient(135deg, #e55a4e, #dc3545);
+}
+
+/* ========== MODAL DE SUCCÈS/ERREUR ========== */
+
+.success-modal-custom,
+.error-modal-custom {
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+}
+
+.modal-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.modal-text {
+  margin: 0 0 2rem 0;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.btn-close-modal {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-close-modal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* ========== AFFICHAGE VÉHICULE POUR RENOUVELLEMENT ========== */
+
+.vehicule-info-display {
+  background: linear-gradient(135deg, #f7fafc, #edf2f7);
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 2px solid #e2e8f0;
+}
+
+.vehicule-card-preview {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.vehicule-icon-large {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+
+/* Icône véhicule dans modal de renouvellement - Orange */
+.vehicule-icon-large.renewal-orange {
+  background: linear-gradient(135deg, #fd7e14, #e55a4e);
+}
+
+/* Icône véhicule dans modal de détails - Violet foncé */
+.vehicule-icon-large.details-purple {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+}
+
+.vehicule-details-preview h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.vehicule-details-preview p {
+  margin: 0;
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+/* ========== STYLES POUR LES BOUTONS D'ACTION ========== */
+
+.btn-action-view,
+.btn-action-renew {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-action-view {
+  background: linear-gradient(135deg, #4299e1, #3182ce);
+  color: white;
+}
+
+.btn-action-view:hover {
+  background: linear-gradient(135deg, #3182ce, #2b77cb);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(66, 153, 225, 0.3);
+}
+
+.btn-action-renew {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+}
+
+.btn-action-renew:hover {
+  background: linear-gradient(135deg, #20c997, #17a2b8);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+/* ========== LIGNE CLIQUABLE ========== */
+
+.clickable-row {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clickable-row:hover {
+  background-color: rgba(102, 126, 234, 0.05);
+  transform: scale(1.01);
+}
+
+/* ========== BADGES COLORÉS POUR LE TABLEAU ========== */
+
+.badge {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* ========== QR CODE STYLES DANS TABLEAU ET MODAL ========== */
+.qr-code-table {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+}
+
+.qr-code-table:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: #28a745;
+}
+
+.qr-code-modal {
+  width: 200px;
+  height: 200px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 1rem auto;
+  display: block;
+}
+
+.qr-code-modal:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ========== BADGE STYLES MODERNES ========== */
+.badge-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+}
+
+.badge-warning {
+  background: linear-gradient(135deg, #ffc107, #fd7e14);
+  color: white;
+}
+
+.badge-danger {
+  background: linear-gradient(135deg, #dc3545, #e83e8c);
+  color: white;
+}
+
+.badge-primary {
+  background: linear-gradient(135deg, #007bff, #6f42c1);
+  color: white;
+}
+
+.badge-secondary {
+  background: linear-gradient(135deg, #6c757d, #495057);
+  color: white;
+}
+
+/* ========== STYLES POUR LES ICÔNES DANS LES BADGES ========== */
+.badge i {
+  font-size: 0.875rem;
+}
+
+/* ===================== STYLES DE PAGINATION MODERNES (EXACTEMENT COMME GESTION-CREDITS) ===================== */
+
+.pagination {
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  border-radius: 12px;
+  margin: 2rem 0 1rem;
+  justify-content: center;
+}
+
+.pagination .page-item {
+  margin: 0 0.25rem;
+}
+
+.pagination .page-link {
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  color: #4a5568;
+  background: #f8fafc;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.pagination .page-link:hover {
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+  border-color: transparent;
+}
+
+.pagination .page-item.active .page-link {
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+}
+
+.pagination .page-item.disabled .page-link {
+  background: #e2e8f0;
+  color: #a0aec0;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pagination .page-item.disabled .page-link:hover {
+  background: #e2e8f0;
+  color: #a0aec0;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Amélioration pour les boutons Précédent/Suivant */
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link {
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+}
+
+.pagination .page-item:first-child .page-link:hover,
+.pagination .page-item:last-child .page-link:hover {
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+}
+
+/* Animation pour les numéros de page */
+.pagination .page-link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.pagination .page-link:hover::before {
+  left: 100%;
+}
+
+/* ===================== MODAL HEADER STYLES SPÉCIFIQUES ===================== */
+
+/* Modal Ajout Véhicule - Header Vert */
+.modal-header.add-vehicle-header {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border-bottom: none;
+}
+
+.modal-header.add-vehicle-header .modal-title {
+  color: white;
+  font-weight: 600;
+}
+
+.modal-header.add-vehicle-header .btn-close {
+  filter: brightness(0) invert(1);
+}
+
+/* Modal Renouvellement - Header et Tout Orange */
+
+.modal-header.renewal-header .modal-title {
+  color: white;
+  font-weight: 600;
+}
+
+.modal-header.renewal-header .btn-close {
+  filter: brightness(0) invert(1);
+}
+
+/* Boutons pour Modal Ajout */
+.btn-save-green {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-save-green:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  background: linear-gradient(135deg, #218838, #1dc47f);
+}
+
+/* Boutons pour Modal Renouvellement - Tout Orange */
+.btn-confirm-purple,
+.btn-cancel-purple {
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-confirm-purple {
+  background: linear-gradient(135deg, #ff8c00, #ff6f00);
+  color: white;
+}
+
+.btn-confirm-purple:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+  background: linear-gradient(135deg, #e67e00, #e66300);
+}
+
+.btn-cancel-purple {
+  background: linear-gradient(135deg, #ffb366, #ff9933);
+  color: white;
+}
+
+.btn-cancel-purple:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 179, 102, 0.3);
+  background: linear-gradient(135deg, #ff9933, #ff8000);
+}
+
+/* ===================== STYLES POUR LES ÉLÉMENTS MANQUANTS ===================== */
+
+/* Bouton annuler standard */
+.btn-cancel {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-cancel:hover {
+  background: #e9ecef;
+  transform: translateY(-1px);
+}
+
+/* Correction des icônes dans le header des modals */
+.modal-icon-header {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Amélioration des inputs modernes */
+.form-control-modern {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: white;
+  width: 100%;
+}
+
+.form-control-modern:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Amélioration du modal body */
+.modal-body-modern {
+  padding: 2rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Amélioration des actions du modal */
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Styles pour les groupes de formulaire */
+.form-group-modern {
+  margin-bottom: 1.5rem;
+}
+
+.form-label-modern {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Amélioration de la dropdown des crédits */
+.credit-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f3f4;
+}
+
+/* Header spécial pour le modal de renouvellement (orange) */
+.modal-header-renewal {
+  background: linear-gradient(135deg, #ff8c00, #ff6f00) !important;
+}

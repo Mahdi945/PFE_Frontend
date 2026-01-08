@@ -1,0 +1,79 @@
+{
+  "printWidth": 90,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "quoteProps": "as-needed",
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "avoid",
+  "endOfLine": "lf",
+  "embeddedLanguageFormatting": "auto",
+  "insertPragma": false,
+  "proseWrap": "preserve",
+  "requirePragma": false,
+  "overrides": [
+    {
+      "files": ["*.ts", "*.component.ts", "*.service.ts", "*.guard.ts"],
+      "options": {
+        "parser": "typescript",
+        "printWidth": 85,
+        "semi": true,
+        "singleQuote": true,
+        "trailingComma": "es5",
+        "bracketSpacing": true,
+        "arrowParens": "avoid"
+      }
+    },
+    {
+      "files": ["*.component.html", "*.html"],
+      "options": {
+        "parser": "angular",
+        "printWidth": 100,
+        "tabWidth": 2,
+        "singleAttributePerLine": true,
+        "bracketSameLine": false,
+        "htmlWhitespaceSensitivity": "css"
+      }
+    },
+    {
+      "files": ["*.css", "*.scss"],
+      "options": {
+        "parser": "css",
+        "printWidth": 80,
+        "tabWidth": 2,
+        "singleQuote": false,
+        "trailingComma": "none"
+      }
+    },
+    {
+      "files": ["*.json"],
+      "options": {
+        "parser": "json",
+        "printWidth": 80,
+        "tabWidth": 2,
+        "trailingComma": "none"
+      }
+    },
+    {
+      "files": ["*.md"],
+      "options": {
+        "parser": "markdown",
+        "printWidth": 80,
+        "proseWrap": "always",
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ["package.json", "angular.json", "tsconfig*.json"],
+      "options": {
+        "parser": "json",
+        "printWidth": 100,
+        "tabWidth": 2,
+        "trailingComma": "none"
+      }
+    }
+  ]
+}

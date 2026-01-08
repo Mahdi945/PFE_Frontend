@@ -1,0 +1,49 @@
+# Dépendances et builds
+node_modules/
+dist/
+build/
+coverage/
+
+# Fichiers de configuration Angular
+angular.json
+package-lock.json
+yarn.lock
+
+# Fichiers minifiés
+*.min.js
+*.min.css
+
+# Assets statiques tiers
+public/assets/vendor/
+public/assets/css/style.css
+public/assets/js/main.js
+public/assets/scss/
+
+# Fichiers temporaires
+*.tmp
+*.temp
+.cache/
+
+# Documentation générée
+docs/
+
+# IDE et OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env*
+
+# Ne pas formater les fichiers HTML externes (garder seulement les composants Angular)
+public/*.html
+
+# Ne pas formater certains fichiers markdown système
+README.md
+CHANGELOG.md
+DEPENDENCIES.md

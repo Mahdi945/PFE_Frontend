@@ -1,0 +1,686 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a><i class="bi bi-house-door"></i></a>
+      </li>
+      <li class="breadcrumb-item active">Dashboard Caissier</li>
+    </ol>
+  </nav>
+
+  <div class="pagetitle">
+    <h1>
+      <span class="title-icon">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 14V6H5V14H19ZM19 14C20.1046 14 21 14.8954 21 16V18C21 19.1046 20.1046 20 19 20H5C3.89543 20 3 19.1046 3 18V16C3 14.8954 3.89543 14 5 14M8 10H16M12 10V16"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+      </span>
+      <span class="title-text">
+        <span class="title-main">Dashboard</span>
+        <span class="title-emphasis">Caissier</span>
+      </span>
+    </h1>
+  </div>
+
+  <section class="section dashboard">
+    <div class="row g-4">
+      <!-- Filtres -->
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Filtrer les ventes</h5>
+            <form [formGroup]="filterForm">
+              <div class="row">
+                <div class="col-md-3">
+                  <select
+                    class="form-select"
+                    formControlName="period"
+                  >
+                    <option
+                      *ngFor="let opt of filterOptions"
+                      [value]="opt.value"
+                    >
+                      {{ opt.label }}
+                    </option>
+                  </select>
+                </div>
+                <div
+                  class="col-md-3"
+                  *ngIf="filterForm.get('period')?.value === 'custom'"
+                >
+                  <input
+                    type="date"
+                    class="form-control"
+                    formControlName="startDate"
+                  />
+                </div>
+                <div
+                  class="col-md-3"
+                  *ngIf="filterForm.get('period')?.value === 'custom'"
+                >
+                  <input
+                    type="date"
+                    class="form-control"
+                    formControlName="endDate"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="applyFilter()"
+                  >
+                    <i class="bi bi-funnel"></i> Appliquer
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistiques principales -->
+      <div class="col-12">
+        <div class="row">
+          <!-- Total Ventes -->
+          <div class="col-md-4">
+            <div class="card info-card sales-card">
+              <div class="card-body">
+                <h5 class="card-title">Total Ventes</h5>
+                <div class="d-flex align-items-center">
+                  <div
+                    class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                  >
+                    <i class="bi bi-cart-check"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ salesStats.total | number: '1.2-2' : 'fr' }} DT</h6>
+                    <span class="text-success small pt-1 fw-bold"
+                      >{{ salesStats.count }} ventes</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total Paiements -->
+          <div class="col-md-4">
+            <div class="card info-card revenue-card">
+              <div class="card-body">
+                <h5 class="card-title">Total Paiements</h5>
+                <div class="d-flex align-items-center">
+                  <div
+                    class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                  >
+                    <i class="bi bi-cash-coin"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ stats.total | number: '1.2-2' : 'fr' }} DT</h6>
+                    <span class="text-success small pt-1 fw-bold"
+                      >{{ stats.count }} transactions</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Paiements par mode -->
+          <div class="col-md-4">
+            <div class="card info-card">
+              <!-- Ajout de "info-card" ici -->
+              <div class="card-body">
+                <h5 class="card-title">Répartition Paiements</h5>
+                <div class="d-flex align-items-center">
+                  <div
+                    class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                  >
+                    <i class="bi bi-pie-chart-fill"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>Par mode</h6>
+                    <span class="text-muted small">Statistiques de paiement</span>
+                  </div>
+                </div>
+                <div
+                  class="chart-container"
+                  style="height: 200px"
+                >
+                  <canvas #modeChart></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dernières ventes -->
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Ventes</h5>
+
+            <div
+              *ngIf="isLoading"
+              class="text-center py-5"
+            >
+              <div
+                class="spinner-border text-primary"
+                role="status"
+              >
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+            </div>
+            <div *ngIf="!isLoading">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col">Date</th>
+                      <th scope="col">Référence</th>
+                      <th scope="col">Montant Total</th>
+                      <th scope="col">Montant Payé</th>
+                      <th scope="col">Monnaie</th>
+                      <th scope="col">Mode</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let sale of recentSales">
+                      <td>{{ sale.date_vente | date: 'dd/MM/yyyy HH:mm' }}</td>
+                      <td>{{ sale.reference_vente }}</td>
+                      <td>{{ sale.montant_total | number: '1.2-2' : 'fr' }} DT</td>
+                      <td>{{ sale.montant_paye | number: '1.2-2' : 'fr' }} DT</td>
+                      <td>{{ sale.monnaie_rendue | number: '1.2-2' : 'fr' }} DT</td>
+                      <td>
+                        <span
+                          class="badge"
+                          [ngClass]="{
+                            'bg-primary': sale.mode_paiement === 'ESPECES',
+                            'bg-success': sale.mode_paiement === 'CARTE',
+                            'bg-info': sale.mode_paiement === 'VIREMENT',
+                            'bg-warning': sale.mode_paiement === 'CHEQUE',
+                          }"
+                        >
+                          {{ sale.mode_paiement }}
+                        </span>
+                      </td>
+                      <td>
+                        <button
+                          class="btn btn-sm btn-outline-primary"
+                          (click)="showSaleDetails(sale)"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr *ngIf="recentSales.length === 0">
+                      <td
+                        colspan="7"
+                        class="text-center"
+                      >
+                        Aucune vente enregistrée
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="text-end mt-3">
+                <button
+                  class="btn btn-primary"
+                  (click)="showAllSalesModal = true"
+                >
+                  Voir toutes les ventes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Derniers paiements -->
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Derniers Paiements</h5>
+
+            <div
+              *ngIf="isLoading"
+              class="text-center py-5"
+            >
+              <div
+                class="spinner-border text-primary"
+                role="status"
+              >
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+            </div>
+            <div *ngIf="!isLoading">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col">Date</th>
+                      <th scope="col">Référence</th>
+                      <th scope="col">Client</th>
+                      <th scope="col">Montant</th>
+                      <th scope="col">Mode</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let payment of recentPayments.slice(0, 5)">
+                      <td>{{ payment.date_paiement | date: 'dd/MM/yyyy HH:mm' }}</td>
+                      <td>{{ payment.reference_paiement }}</td>
+                      <td>{{ payment.username }}</td>
+                      <td>{{ payment.montant_paye | number: '1.2-2' : 'fr' }} DT</td>
+                      <td>
+                        <span
+                          class="badge"
+                          [ngClass]="{
+                            'bg-primary': payment.mode_paiement === 'especes',
+                            'bg-success': payment.mode_paiement === 'carte',
+                            'bg-info': payment.mode_paiement === 'virement',
+                            'bg-warning': payment.mode_paiement === 'cheque',
+                          }"
+                        >
+                          {{ getPaymentModeLabel(payment.mode_paiement) }}
+                        </span>
+                      </td>
+                      <td>
+                        <button
+                          class="btn btn-sm btn-outline-primary"
+                          (click)="showPaymentDetails(payment)"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="text-end mt-3">
+                <button
+                  class="btn btn-primary"
+                  (click)="showAllPaymentsModal = true"
+                >
+                  Voir tous
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistiques temporelles -->
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Activité Récente</h5>
+            <div
+              class="chart-container"
+              style="height: 300px"
+            >
+              <canvas #activityChart></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Détails Paiement -->
+  <div
+    *ngIf="showPaymentModal"
+    class="modal fade show d-block"
+    tabindex="-1"
+    role="dialog"
+  >
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Détails du Paiement</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal()"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div
+            *ngIf="selectedPayment"
+            class="row"
+          >
+            <div class="col-md-6">
+              <div class="mb-3">
+                <h6>Référence</h6>
+                <p>{{ selectedPayment.reference_paiement }}</p>
+              </div>
+              <div class="mb-3">
+                <h6>Client</h6>
+                <p>{{ selectedPayment.username }}</p>
+              </div>
+              <div class="mb-3">
+                <h6>Date</h6>
+                <p>{{ selectedPayment.date_paiement | date: 'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <h6>Montant</h6>
+                <p class="fw-bold">
+                  {{ selectedPayment.montant_paye | currency: 'TND' : 'symbol' : '1.2-2' }}
+                </p>
+              </div>
+              <div class="mb-3">
+                <h6>Mode de Paiement</h6>
+                <p>
+                  <span
+                    class="badge"
+                    [ngClass]="{
+                      'bg-primary': selectedPayment.mode_paiement === 'especes',
+                      'bg-success': selectedPayment.mode_paiement === 'carte',
+                      'bg-info': selectedPayment.mode_paiement === 'virement',
+                      'bg-warning': selectedPayment.mode_paiement === 'cheque',
+                    }"
+                  >
+                    {{ getPaymentModeLabel(selectedPayment.mode_paiement) }}
+                  </span>
+                </p>
+              </div>
+              <div
+                class="mb-3"
+                *ngIf="selectedPayment.description"
+              >
+                <h6>Description</h6>
+                <p>{{ selectedPayment.description }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModal()"
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Détails Vente -->
+  <div
+    *ngIf="showSaleModal"
+    class="modal fade show d-block"
+    tabindex="-1"
+    role="dialog"
+  >
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Détails de la Vente</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="closeModal()"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div
+            *ngIf="selectedSale"
+            class="row"
+          >
+            <div class="col-md-6">
+              <div class="mb-3">
+                <h6>Référence</h6>
+                <p>{{ selectedSale.reference_vente }}</p>
+              </div>
+              <div class="mb-3">
+                <h6>Date</h6>
+                <p>{{ selectedSale.date_vente | date: 'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+              <div class="mb-3">
+                <h6>Montant Total</h6>
+                <p class="fw-bold">
+                  {{ selectedSale.montant_total | currency: 'TND' : 'symbol' : '1.2-2' }}
+                </p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <h6>Mode de Paiement</h6>
+                <p>
+                  <span
+                    class="badge"
+                    [ngClass]="{
+                      'bg-primary': selectedSale.mode_paiement === 'ESPECES',
+                      'bg-success': selectedSale.mode_paiement === 'CARTE',
+                      'bg-info': selectedSale.mode_paiement === 'VIREMENT',
+                      'bg-warning': selectedSale.mode_paiement === 'CHEQUE',
+                    }"
+                  >
+                    {{ selectedSale.mode_paiement }}
+                  </span>
+                </p>
+              </div>
+              <div class="mb-3">
+                <h6>Montant Payé</h6>
+                <p>{{ selectedSale.montant_paye | currency: 'TND' : 'symbol' : '1.2-2' }}</p>
+              </div>
+              <div class="mb-3">
+                <h6>Monnaie Rendu</h6>
+                <p>{{ selectedSale.monnaie_rendue | currency: 'TND' : 'symbol' : '1.2-2' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <h6>Produits Vendus</h6>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix Unitaire</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let produit of selectedSale.produits_vendus">
+                    <td>{{ produit.produit_nom }}</td>
+                    <td>{{ produit.quantite }}</td>
+                    <td>{{ produit.prix_unitaire | currency: 'TND' : 'symbol' : '1.2-2' }}</td>
+                    <td>
+                      {{
+                        produit.prix_unitaire * produit.quantite
+                          | currency: 'TND' : 'symbol' : '1.2-2'
+                      }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModal()"
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tous les Paiements -->
+  <div
+    *ngIf="showAllPaymentsModal"
+    class="modal fade show d-block"
+    tabindex="-1"
+    role="dialog"
+  >
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Tous les Paiements</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="showAllPaymentsModal = false"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Référence</th>
+                  <th>Client</th>
+                  <th>Montant</th>
+                  <th>Mode</th>
+                  <th>Crédit</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let payment of recentPayments">
+                  <td>{{ payment.date_paiement | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ payment.reference_paiement }}</td>
+                  <td>{{ payment.username }}</td>
+                  <td>{{ payment.montant_paye | currency: 'TND' : 'symbol' : '1.2-2' }}</td>
+                  <td>
+                    <span
+                      class="badge"
+                      [ngClass]="{
+                        'bg-primary': payment.mode_paiement === 'especes',
+                        'bg-success': payment.mode_paiement === 'carte',
+                        'bg-info': payment.mode_paiement === 'virement',
+                        'bg-warning': payment.mode_paiement === 'cheque',
+                      }"
+                    >
+                      {{ getPaymentModeLabel(payment.mode_paiement) }}
+                    </span>
+                  </td>
+                  <td>{{ payment.type_credit }}</td>
+                  <td>{{ payment.description || '-' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="showAllPaymentsModal = false"
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Toutes les Ventes -->
+  <div
+    *ngIf="showAllSalesModal"
+    class="modal fade show d-block"
+    tabindex="-1"
+    role="dialog"
+  >
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Toutes les Ventes</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            (click)="showAllSalesModal = false"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Référence</th>
+                  <th>Montant Total</th>
+                  <th>Montant Payé</th>
+                  <th>Monnaie</th>
+                  <th>Mode</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let sale of recentSales">
+                  <td>{{ sale.date_vente | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ sale.reference_vente }}</td>
+                  <td>{{ sale.montant_total | currency: 'TND' : 'symbol' : '1.2-2' }}</td>
+                  <td>{{ sale.montant_paye | currency: 'TND' : 'symbol' : '1.2-2' }}</td>
+                  <td>{{ sale.monnaie_rendue | currency: 'TND' : 'symbol' : '1.2-2' }}</td>
+                  <td>
+                    <span
+                      class="badge"
+                      [ngClass]="{
+                        'bg-primary': sale.mode_paiement === 'ESPECES',
+                        'bg-success': sale.mode_paiement === 'CARTE',
+                        'bg-info': sale.mode_paiement === 'VIREMENT',
+                        'bg-warning': sale.mode_paiement === 'CHEQUE',
+                      }"
+                    >
+                      {{ sale.mode_paiement }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="showAllSalesModal = false"
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="showPaymentModal || showSaleModal || showAllPaymentsModal || showAllSalesModal"
+    class="modal-backdrop fade show"
+  ></div>
+</main>
+
+<app-footer></app-footer>

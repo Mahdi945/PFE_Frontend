@@ -1,0 +1,404 @@
+/* Variables CSS personnalisées pour une meilleure maintenabilité */
+:host {
+  --login-primary-color: #012970;
+  --login-secondary-color: #4154f1;
+  --login-success-color: #198754;
+  --login-danger-color: #dc3545;
+  --login-warning-color: #fd7e14;
+  --login-info-color: #0dcaf0;
+  --login-light-color: #f8f9fa;
+  --login-dark-color: #212529;
+  --login-border-radius: 10px;
+  --login-box-shadow: 0 0 30px rgba(1, 41, 112, 0.1);
+  --login-transition: all 0.3s ease;
+}
+
+/* ======================================== */
+/* STYLES DE LA CARTE DE CONNEXION */
+/* ======================================== */
+
+/* Conteneur principal de la carte */
+.login-card {
+  width: 150%;
+  max-width: 450px;
+  padding: 15px;
+  border-radius: var(--login-border-radius);
+  border: none;
+  box-shadow: var(--login-box-shadow);
+  transition: var(--login-transition);
+}
+
+/* Effet de survol sur la carte */
+.login-card:hover {
+  box-shadow: 0 0 40px rgba(1, 41, 112, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Corps de la carte */
+.card-body {
+  padding: 30px;
+}
+
+/* ======================================== */
+/* STYLES DU LOGO ET BRANDING */
+/* ======================================== */
+
+/* Conteneur du logo */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* Image du logo */
+.logo-image {
+  max-height: 180px;
+  width: auto;
+  transition: var(--login-transition);
+}
+
+/* Effet de survol sur le logo */
+.logo-image:hover {
+  transform: scale(1.05);
+}
+
+/* ======================================== */
+/* STYLES DE L'EN-TÊTE DU FORMULAIRE */
+/* ======================================== */
+
+/* Conteneur de l'en-tête */
+.form-header {
+  margin-bottom: 25px;
+}
+
+/* Titre principal */
+.login-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--login-dark-color);
+  margin-bottom: 10px;
+}
+
+/* Sous-titre */
+.login-subtitle {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 0;
+  line-height: 1.4;
+}
+
+/* ======================================== */
+/* STYLES DU MESSAGE D'INFORMATION */
+/* ======================================== */
+
+/* Alert d'information */
+.info-alert {
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #b6d7ff;
+  background-color: #f0f8ff;
+  color: var(--login-info-color);
+}
+
+/* ======================================== */
+/* STYLES DU FORMULAIRE */
+/* ======================================== */
+
+/* Formulaire principal */
+.login-form {
+  margin-bottom: 0;
+}
+
+/* Labels des champs */
+.form-label {
+  font-weight: 500;
+  color: var(--login-dark-color);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+/* Icônes dans les labels */
+.form-label i {
+  font-size: 0.9rem;
+  color: var(--login-secondary-color);
+}
+
+/* ======================================== */
+/* STYLES DES CHAMPS DE SAISIE */
+/* ======================================== */
+
+/* Groupes d'input */
+.input-group {
+  margin-bottom: 10px;
+}
+
+/* Text des groupes d'input */
+.input-group-text {
+  background-color: var(--login-light-color);
+  border: 1px solid #ced4da;
+  color: var(--login-secondary-color);
+  font-weight: 500;
+  border-radius: 0;
+  width: 50px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+/* Champs de saisie */
+.form-control {
+  border: 1px solid #ced4da;
+  border-radius: 0;
+  border-left: none;
+  padding: 12px 15px;
+  font-size: 0.95rem;
+  transition: var(--login-transition);
+}
+
+/* Focus sur les champs */
+.form-control:focus {
+  border-color: var(--login-secondary-color);
+  box-shadow: 0 0 0 0.2rem rgba(65, 84, 241, 0.25);
+}
+
+/* Placeholder des champs */
+.form-control::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+/* ======================================== */
+/* STYLES SPÉCIFIQUES AU CHAMP MOT DE PASSE */
+/* ======================================== */
+
+/* Groupe du mot de passe */
+.password-group {
+  position: relative;
+}
+
+/* Input du mot de passe */
+.password-input {
+  padding-right: 50px;
+}
+
+/* Bouton de basculement de visibilité */
+.password-toggle-btn {
+  border-left: none;
+  background-color: var(--login-light-color);
+  border: 1px solid #ced4da;
+  color: var(--login-secondary-color);
+  cursor: pointer;
+  transition: var(--login-transition);
+  border-radius: 0;
+}
+
+/* Survol du bouton de basculement */
+.password-toggle-btn:hover {
+  background-color: #e9ecef;
+  color: var(--login-primary-color);
+}
+
+/* Focus du bouton de basculement */
+.password-toggle-btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(65, 84, 241, 0.25);
+}
+
+/* ======================================== */
+/* STYLES DU BOUTON DE CONNEXION */
+/* ======================================== */
+
+/* Bouton principal */
+.login-btn {
+  background-color: var(--login-secondary-color);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: var(--login-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Survol du bouton */
+.login-btn:hover:not(:disabled) {
+  background-color: var(--login-primary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(65, 84, 241, 0.3);
+}
+
+/* État actif du bouton */
+.login-btn:active {
+  transform: translateY(0);
+}
+
+/* Bouton désactivé */
+.login-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Spinner de chargement */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* ======================================== */
+/* STYLES DU LIEN MOT DE PASSE OUBLIÉ */
+/* ======================================== */
+
+/* Conteneur du lien */
+.forgot-password-link {
+  margin-top: 15px;
+}
+
+/* Lien mot de passe oublié */
+.forgot-password-link a {
+  color: var(--login-secondary-color);
+  font-weight: 500;
+  transition: var(--login-transition);
+}
+
+/* Survol du lien */
+.forgot-password-link a:hover {
+  color: var(--login-primary-color);
+  text-decoration: underline !important;
+}
+
+/* ======================================== */
+/* STYLES DES MESSAGES D'ERREUR */
+/* ======================================== */
+
+/* Message d'erreur global */
+.error-message {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: var(--login-danger-color);
+  border-radius: 6px;
+  padding: 12px 15px;
+  font-size: 0.9rem;
+  position: relative;
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Bouton de fermeture de l'erreur */
+.error-message .btn-close {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--login-danger-color);
+  opacity: 0.7;
+}
+
+/* Survol du bouton de fermeture */
+.error-message .btn-close:hover {
+  opacity: 1;
+}
+
+/* Messages d'erreur des champs */
+.invalid-feedback {
+  font-size: 0.8rem;
+  color: var(--login-danger-color);
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
+
+/* Champs en erreur */
+.form-control.is-invalid {
+  border-color: var(--login-danger-color);
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* ======================================== */
+/* ANIMATIONS */
+/* ======================================== */
+
+/* Animation d'apparition des messages d'erreur */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======================================== */
+/* RESPONSIVE DESIGN */
+/* ======================================== */
+
+/* Tablettes */
+@media (max-width: 768px) {
+  .login-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 15px;
+  }
+
+  .card-body {
+    padding: 20px;
+  }
+
+  .logo-image {
+    max-height: 120px;
+  }
+
+  .login-title {
+    font-size: 1.3rem;
+  }
+}
+
+/* Mobiles */
+@media (max-width: 480px) {
+  .card-body {
+    padding: 15px;
+  }
+
+  .logo-image {
+    max-height: 100px;
+  }
+
+  .login-title {
+    font-size: 1.2rem;
+  }
+
+  .form-control,
+  .login-btn {
+    padding: 10px 12px;
+  }
+}
+
+/* ======================================== */
+/* AMÉLIORATIONS D'ACCESSIBILITÉ */
+/* ======================================== */
+
+/* Focus visible pour les éléments interactifs */
+.login-btn:focus,
+.password-toggle-btn:focus,
+.forgot-password-link a:focus {
+  outline: 2px solid var(--login-secondary-color);
+  outline-offset: 2px;
+}
+
+/* Réduction des animations pour les utilisateurs sensibles */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

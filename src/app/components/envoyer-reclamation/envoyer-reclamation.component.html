@@ -1,0 +1,241 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <!-- Breadcrumb -->
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a><i class="bi bi-house-door"></i></a>
+      </li>
+      <li class="breadcrumb-item active">Réclamer</li>
+    </ol>
+  </nav>
+
+  <!-- Page Title -->
+  <div class="pagetitle">
+    <div class="title-with-icon">
+      <div class="title-text-content">
+        <h1 class="title-main">Envoyer une Réclamation</h1>
+        <p class="subtitle">Formulaire de contact pour vos réclamations</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Section -->
+  <section class="section contact">
+    <div class="row gy-4">
+      <!-- Formulaire à gauche -->
+      <div class="col-xl-6">
+        <div class="card p-4 h-100">
+          <form
+            [formGroup]="reclamationForm"
+            (ngSubmit)="envoyerReclamation()"
+          >
+            <div class="row gy-4">
+              <div class="col-md-12">
+                <label
+                  for="objet"
+                  class="form-label"
+                  >Objet <span class="text-danger">*</span></label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="objet"
+                  formControlName="objet"
+                  placeholder="Objet de votre réclamation"
+                  required
+                />
+                <div
+                  *ngIf="
+                    reclamationForm.get('objet')?.invalid && reclamationForm.get('objet')?.touched
+                  "
+                  class="text-danger"
+                >
+                  Veuillez entrer un objet pour votre réclamation.
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                <label
+                  for="raison"
+                  class="form-label"
+                  >Raison <span class="text-danger">*</span></label
+                >
+                <select
+                  class="form-control"
+                  id="raison"
+                  formControlName="raison"
+                  required
+                >
+                  <option
+                    value=""
+                    disabled
+                    selected
+                  >
+                    Choisissez une raison
+                  </option>
+                  <option value="service">Service client</option>
+                  <option value="produit">Produit défectueux</option>
+                  <option value="facturation">Problème de facturation</option>
+                  <option value="autre">Autre</option>
+                </select>
+                <div
+                  *ngIf="
+                    reclamationForm.get('raison')?.invalid && reclamationForm.get('raison')?.touched
+                  "
+                  class="text-danger"
+                >
+                  Veuillez sélectionner une raison.
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                <label
+                  for="description"
+                  class="form-label"
+                  >Description <span class="text-danger">*</span></label
+                >
+                <textarea
+                  class="form-control"
+                  id="description"
+                  formControlName="description"
+                  rows="6"
+                  placeholder="Décrivez votre réclamation en détail..."
+                  required
+                ></textarea>
+                <div
+                  *ngIf="
+                    reclamationForm.get('description')?.invalid &&
+                    reclamationForm.get('description')?.touched
+                  "
+                  class="text-danger"
+                >
+                  Veuillez entrer une description détaillée.
+                </div>
+              </div>
+
+              <div class="col-md-12 text-center">
+                <div
+                  *ngIf="isLoading"
+                  class="loading"
+                >
+                  Envoi en cours...
+                </div>
+                <div
+                  *ngIf="errorMessage"
+                  class="error-message alert alert-danger"
+                >
+                  {{ errorMessage }}
+                </div>
+                <div
+                  *ngIf="successMessage"
+                  class="sent-message alert alert-success"
+                >
+                  {{ successMessage }}
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="isLoading"
+                >
+                  <span *ngIf="!isLoading">Envoyer la Réclamation</span>
+                  <span
+                    *ngIf="isLoading"
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Cartes à droite -->
+      <div class="col-xl-6">
+        <div class="row h-100 g-3">
+          <div class="col-md-6">
+            <a
+              href="https://www.google.com/maps/search/Station+Service+TotalEnergies+Tunisie"
+              target="_blank"
+              class="card h-100 info-box text-decoration-none"
+            >
+              <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <i
+                  class="bi bi-geo-alt mb-3"
+                  style="font-size: 2rem"
+                ></i>
+                <h3>Adresse</h3>
+                <p class="text-center mb-0">
+                  TotalEnergies<br />
+                  Rue Hédi Nouira<br />
+                  Tunis 1002, Tunisie
+                </p>
+              </div>
+            </a>
+          </div>
+
+          <div class="col-md-6">
+            <a
+              href="tel:+21671334455"
+              class="card h-100 info-box text-decoration-none"
+            >
+              <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <i
+                  class="bi bi-telephone mb-3"
+                  style="font-size: 2rem"
+                ></i>
+                <h3>Téléphone</h3>
+                <p class="text-center mb-0">
+                  +216 71 334 455<br />
+                  +216 98 334 455
+                </p>
+              </div>
+            </a>
+          </div>
+
+          <div class="col-md-6">
+            <a
+              href="mailto:supportKiosque@gmail.com"
+              class="card h-100 info-box text-decoration-none"
+            >
+              <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <i
+                  class="bi bi-envelope mb-3"
+                  style="font-size: 2rem"
+                ></i>
+                <h3>Email</h3>
+                <p class="text-center mb-0">supportKiosque&#64;gmail.com</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card h-100 info-box">
+              <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <i
+                  class="bi bi-clock mb-3"
+                  style="font-size: 2rem"
+                ></i>
+                <h3>Horaires</h3>
+                <p class="text-center mb-0">
+                  Lundi - Vendredi<br />
+                  8:00 - 18:00
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>

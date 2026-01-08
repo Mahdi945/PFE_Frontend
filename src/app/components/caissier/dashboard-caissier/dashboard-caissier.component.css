@@ -1,0 +1,307 @@
+/* Styles globaux */
+.main {
+  padding: 20px 30px;
+  transition: all 0.3s;
+}
+
+.section {
+  padding: 20px 0;
+}
+
+/* Cartes */
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+/* Cartes d'info */
+.info-card {
+  height: 100%;
+}
+
+.info-card .card-icon {
+  font-size: 1.5rem;
+  width: 50px;
+  height: 50px;
+  background-color: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+}
+
+.info-card.revenue-card .card-icon {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: #2ecc71;
+}
+
+/* Tableau */
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  font-weight: 500;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* Badges */
+.badge {
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 50px;
+}
+
+/* Graphiques */
+.chart-container {
+  position: relative;
+}
+
+/* Modal */
+.modal-content {
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 15px 20px;
+}
+
+.modal-body {
+  padding: 25px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main {
+    padding: 20px 15px;
+  }
+
+  .section {
+    padding: 15px 0;
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card,
+.table {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Icônes */
+.bi {
+  vertical-align: middle;
+}
+/* Style global du breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 0 0 15px 0;
+  list-style: none;
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+}
+
+/* Éléments du breadcrumb */
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+/* Style des liens */
+.breadcrumb-item a {
+  color: #718096;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+/* Icône maison */
+.breadcrumb-item a i {
+  font-size: 1.1rem;
+  color: #4a5568;
+}
+
+/* Élément actif */
+.breadcrumb-item.active {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* Séparateur personnalisé */
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  padding: 0 8px;
+  color: #a0aec0;
+  font-size: 1.2rem;
+  font-weight: 300;
+}
+
+/* Effets au survol */
+.breadcrumb-item a:hover {
+  color: #3182ce;
+}
+
+.breadcrumb-item a:hover i {
+  color: #3182ce;
+  transform: scale(1.1);
+}
+
+/* Animation sur l'icône maison */
+.breadcrumb-item:first-child a:hover i {
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+/* Styles pour le conteneur principal */
+.pagetitle {
+  margin: 25px 0 30px;
+}
+
+/* Style principal du titre */
+.pagetitle h1 {
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  line-height: 1.2;
+}
+
+/* Style de l'icône - Version bleue */
+.pagetitle .title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 178, 255, 0.2);
+  transition: all 0.3s ease;
+  will-change: transform;
+}
+
+.pagetitle .title-icon svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+/* Style du texte du titre */
+.pagetitle .title-text {
+  display: flex;
+  align-items: baseline;
+}
+
+.pagetitle .title-main {
+  font-weight: 600;
+  color: #4a5568;
+  letter-spacing: -0.5px;
+}
+
+.pagetitle .title-emphasis {
+  color: #3182ce;
+  font-weight: 800;
+  position: relative;
+  letter-spacing: -0.5px;
+  margin-left: 10px;
+}
+
+/* Effet de soulignement bleu */
+.pagetitle .title-emphasis::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #3182ce 30%, rgba(49, 130, 206, 0.1) 100%);
+  border-radius: 3px;
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Animations au survol améliorées */
+.pagetitle h1:hover .title-icon {
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 0 6px 16px rgba(0, 178, 255, 0.3);
+}
+
+.pagetitle h1:hover .title-emphasis::after {
+  transform: scaleX(1.1);
+  background: linear-gradient(90deg, #3182ce 50%, rgba(49, 130, 206, 0.1) 100%);
+}
+
+/* Option : Effet de vague sur le texte principal au survol */
+.pagetitle h1:hover .title-main {
+  background: linear-gradient(90deg, #4a5568, #718096);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: textWave 1.5s ease infinite;
+}
+
+@keyframes textWave {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}

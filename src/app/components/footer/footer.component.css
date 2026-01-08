@@ -1,0 +1,102 @@
+.footer {
+  padding: 28px 0;
+  font-size: 14px;
+  text-align: center;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 -4px 24px rgba(15, 23, 42, 0.04);
+  position: relative;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    #e2e8f0 20%, 
+    #e2e8f0 80%, 
+    transparent 100%);
+}
+
+.footer .copyright,
+.footer .credits {
+  color: #1e293b;
+}
+
+.footer .copyright {
+  font-weight: 600;
+}
+
+body.dark-theme .footer,
+:host-context(body.dark-theme) .footer {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
+  color: #f1f5f9;
+}
+
+body.dark-theme .footer::before,
+:host-context(body.dark-theme) .footer::before {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    #334155 20%, 
+    #334155 80%, 
+    transparent 100%);
+}
+
+body.dark-theme .footer .copyright,
+body.dark-theme .footer .credits,
+:host-context(body.dark-theme) .footer .copyright,
+:host-context(body.dark-theme) .footer .credits {
+  color: #f1f5f9;
+}
+
+.footer .social-links {
+  margin-bottom: 10px;
+}
+
+.footer .social-links p {
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.footer .social-links a {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 18px;
+  margin: 0 8px;
+  transition: 0.3s;
+  color: white; /* Icônes blanches par défaut */
+}
+/* Ajout de couleurs permanentes */
+.footer .social-links .facebook {
+  background: #1877f2; /* Bleu Facebook */
+}
+
+.footer .social-links .instagram {
+  background: #e4405f; /* Dégradé Instagram */
+}
+
+.footer .social-links .linkedin {
+  background: #0077b5; /* Bleu LinkedIn */
+}
+
+.footer .social-links .twitter {
+  background: #1da1f2; /* Bleu Twitter */
+}
+
+/* Effet au survol : Légèrement plus lumineux */
+.footer .social-links a:hover {
+  filter: brightness(1.2);
+}
+
+.footer .copyright,
+.footer .credits {
+  margin-top: 10px;
+}

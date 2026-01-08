@@ -1,0 +1,472 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<!-- Contenu principal de la page de gestion des affectations -->
+<main
+  id="main"
+  class="main"
+>
+  <!-- ==================== EN-TÊTE ET NAVIGATION ==================== -->
+  <!-- Breadcrumb de navigation avec icônes modernes - Premier rang à gauche -->
+  <div class="pagetitle">
+    <!-- Breadcrumb en premier -->
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#"><i class="bi bi-house-door"></i></a>
+        </li>
+        <li class="breadcrumb-item active">Affectations Pompistes</li>
+      </ol>
+    </nav>
+    <!-- Titre principal en noir en dessous -->
+    <h1 class="title-main">Gestion des Affectations</h1>
+  </div>
+  <!-- ==================== SECTION PRINCIPALE ==================== -->
+  <section class="section affectations-management">
+    <div class="container-fluid">
+      <!-- ==================== ALERTE INFORMATIVE ==================== -->
+      <!-- Information importante sur les contraintes de date -->
+      <div class="alert alert-info modern-alert">
+        <div class="alert-icon">
+          <i class="bi bi-info-circle-fill"></i>
+        </div>
+        <div class="alert-content">
+          <strong>Information importante :</strong>
+          Les affectations doivent être réalisées avant le 1er du mois concerné.
+          <span
+            *ngIf="isPastFirstDayOfSelectedMonth()"
+            class="alert-warning-text"
+          >
+            <i class="bi bi-exclamation-triangle-fill ms-2 me-1"></i>
+            Attention : Nous sommes déjà après le 1er du mois sélectionné.
+          </span>
+        </div>
+      </div>
+
+      <!-- ==================== PANNEAU DE CONTRÔLE ==================== -->
+      <!-- Sélection du mois et actions principales -->
+      <div class="card control-panel-card">
+        <div class="card-header">
+          <div class="header-content">
+            <i class="bi bi-calendar-range"></i>
+            <h5 class="header-title">Panneau de Contrôle</h5>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Sélecteurs de date -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label
+                for="mois"
+                class="form-label modern-label"
+              >
+                <i class="bi bi-calendar3 me-2"></i>Mois
+              </label>
+              <select
+                class="form-select modern-select"
+                id="mois"
+                [(ngModel)]="mois"
+                (change)="loadAffectations()"
+              >
+                <option
+                  *ngFor="let m of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
+                  [value]="m"
+                >
+                  {{ getMonthName(m) }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label
+                for="annee"
+                class="form-label modern-label"
+              >
+                <i class="bi bi-calendar4-range me-2"></i>Année
+              </label>
+              <input
+                type="number"
+                class="form-control modern-input"
+                id="annee"
+                [(ngModel)]="annee"
+                (change)="loadAffectations()"
+                min="2020"
+              />
+            </div>
+          </div>
+
+          <!-- Section des boutons d'action -->
+          <div class="actions-section">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+              <!-- Bouton principal -->
+              <div class="primary-action">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-modern btn-generate"
+                  (click)="generateAffectations()"
+                  [disabled]="!mois || !annee || isPastFirstDayOfSelectedMonth()"
+                >
+                  <i class="bi bi-gear-fill me-2"></i>
+                  <span>Générer les Affectations</span>
+                </button>
+              </div>
+
+              <!-- Boutons secondaires -->
+              <div class="secondary-actions">
+                <button
+                  type="button"
+                  class="btn btn-info btn-modern"
+                  (click)="toggleListeAffectations()"
+                >
+                  <i class="bi bi-list-ul me-2"></i>
+                  <span>{{ showListeAffectations ? 'Masquer' : 'Afficher' }} Liste</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-danger btn-modern"
+                  (click)="exportPdfMensuel()"
+                  [disabled]="listeAffectations.length === 0"
+                >
+                  <i class="bi bi-file-earmark-pdf-fill me-2"></i>
+                  <span>Exporter PDF</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ==================== LISTE DES AFFECTATIONS ==================== -->
+      <!-- Tableau détaillé des affectations du mois sélectionné -->
+      <div
+        *ngIf="showListeAffectations"
+        class="card list-card"
+      >
+        <div class="card-header">
+          <div class="header-content">
+            <i class="bi bi-list-ul"></i>
+            <div class="header-text">
+              <h5 class="header-title">Liste des Affectations</h5>
+              <span class="header-subtitle">{{ getMonthName(mois) }} {{ annee }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table modern-table">
+              <thead>
+                <tr>
+                  <th><i class="bi bi-calendar3 me-2"></i>Date</th>
+                  <th><i class="bi bi-person-badge me-2"></i>Pompiste</th>
+                  <th><i class="bi bi-fuel-pump me-2"></i>Pompe</th>
+                  <th><i class="bi bi-geo-alt me-2"></i>Poste</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let aff of listeAffectations"
+                  class="table-row-hover"
+                >
+                  <td class="date-cell">{{ datePipe.transform(aff.date, 'dd/MM/yyyy') }}</td>
+                  <td class="pompiste-cell">{{ aff?.pompiste || 'N/A' }}</td>
+                  <td class="pompe-cell">{{ aff?.numero_pompe || 'N/A' }}</td>
+                  <td class="poste-cell">
+                    <span
+                      class="badge-poste"
+                      [style.background-color]="getPosteColor(aff?.poste)"
+                    >
+                      {{ aff?.poste || 'N/A' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== CALENDRIER INTERACTIF ==================== -->
+      <!-- Vue calendrier avec événements cliquables -->
+      <div class="card calendar-card">
+        <div class="card-header">
+          <div class="header-content">
+            <i class="bi bi-calendar3"></i>
+            <h5 class="header-title">
+              Calendrier des Affectations - {{ getMonthName(mois) }} {{ annee }}
+            </h5>
+          </div>
+        </div>
+        <div class="card-body calendar-container">
+          <full-calendar [options]="calendarOptions"></full-calendar>
+        </div>
+      </div>
+
+      <!-- ==================== DÉTAILS DES AFFECTATIONS ==================== -->
+      <!-- Affichage détaillé des affectations pour une date sélectionnée -->
+      <div
+        id="affectations-details"
+        class="card details-card"
+      >
+        <div class="card-header">
+          <div class="header-content">
+            <i class="bi bi-list-task"></i>
+            <h5 class="header-title">
+              <span *ngIf="selectedDate"
+                >Affectations du {{ datePipe.transform(selectedDate, 'dd/MM/yyyy') }}</span
+              >
+              <span *ngIf="!selectedDate">Sélectionnez une date dans le calendrier</span>
+            </h5>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!-- Tableau des affectations du jour -->
+          <div
+            *ngIf="affectations.length > 0 && selectedDate"
+            class="table-responsive"
+          >
+            <table class="table modern-table">
+              <thead>
+                <tr>
+                  <th><i class="bi bi-person-badge me-2"></i>Pompiste</th>
+                  <th><i class="bi bi-fuel-pump me-2"></i>Pompe</th>
+                  <th><i class="bi bi-geo-alt me-2"></i>Poste</th>
+                  <th><i class="bi bi-gear me-2"></i>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let affectation of affectations"
+                  class="table-row-hover"
+                >
+                  <td class="pompiste-cell">{{ affectation?.pompiste || 'N/A' }}</td>
+                  <td class="pompe-cell">{{ affectation?.numero_pompe || 'N/A' }}</td>
+                  <td class="poste-cell">
+                    <span
+                      class="badge-poste"
+                      [style.background-color]="getPosteColor(affectation?.poste)"
+                    >
+                      {{ affectation?.poste || 'N/A' }}
+                    </span>
+                  </td>
+                  <td class="actions-cell">
+                    <button
+                      class="btn btn-outline-primary btn-sm btn-action"
+                      (click)="editAffectation(affectation)"
+                    >
+                      <i class="bi bi-pencil-square me-1"></i>
+                      Modifier
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Messages d'état -->
+          <div
+            *ngIf="affectations.length === 0 && selectedDate"
+            class="alert alert-info modern-alert"
+          >
+            <div class="alert-icon">
+              <i class="bi bi-info-circle-fill"></i>
+            </div>
+            <div class="alert-content">Aucune affectation trouvée pour cette date</div>
+          </div>
+
+          <div
+            *ngIf="!selectedDate"
+            class="alert alert-warning modern-alert"
+          >
+            <div class="alert-icon">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div class="alert-content">
+              Veuillez sélectionner une date dans le calendrier pour voir les détails
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ==================== MODAL DE MODIFICATION MODERNE ==================== -->
+  <!-- Modal d'édition avec design moderne inspiré du profil -->
+  <div
+    *ngIf="showModal"
+    class="modal-overlay edit-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom modal-edit">
+      <div class="modal-content-custom">
+        <div class="modal-icon">
+          <i class="bi bi-pencil-square"></i>
+        </div>
+        <h3 class="modal-title">Modifier Affectation</h3>
+        <p class="modal-text">
+          Modification de l'affectation du {{ selectedDate | date: 'dd/MM/yyyy' }}
+        </p>
+
+        <form
+          #editForm="ngForm"
+          (ngSubmit)="saveAffectation()"
+          class="edit-form"
+        >
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label-modern">
+                <i class="bi bi-person-badge me-2"></i>Pompiste
+              </label>
+              <select
+                class="form-select-modern"
+                [(ngModel)]="affectationToEdit.pompiste"
+                name="pompiste"
+                required
+              >
+                <option
+                  *ngFor="let pompiste of allPompistes"
+                  [value]="pompiste"
+                  [selected]="pompiste === affectationToEdit.pompiste"
+                >
+                  {{ pompiste }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label-modern"> <i class="bi bi-fuel-pump me-2"></i>Pompe </label>
+              <select
+                class="form-select-modern"
+                [(ngModel)]="affectationToEdit.numero_pompe"
+                name="numero_pompe"
+                required
+              >
+                <option
+                  *ngFor="let pompe of allPompes"
+                  [value]="pompe"
+                  [selected]="pompe === affectationToEdit.numero_pompe"
+                >
+                  {{ pompe }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label-modern"> <i class="bi bi-geo-alt me-2"></i>Poste </label>
+              <select
+                class="form-select-modern"
+                [(ngModel)]="affectationToEdit.poste"
+                name="poste"
+                required
+              >
+                <option
+                  *ngFor="let poste of allPostes"
+                  [value]="poste"
+                  [selected]="poste === affectationToEdit.poste"
+                >
+                  {{ poste }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-cancel"
+              (click)="closeModals()"
+            >
+              <i class="bi bi-x-circle me-2"></i>Annuler
+            </button>
+            <button
+              type="submit"
+              class="btn-confirm"
+              [disabled]="!editForm.valid"
+            >
+              <i class="bi bi-save me-2"></i>Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- ==================== MODALES MODERNES ==================== -->
+  <!-- Modales avec design moderne et animations inspirées du profil -->
+
+  <!-- Modal de succès avec design moderne et animations -->
+  <div
+    *ngIf="showMessageModal && isSuccessMessage"
+    class="modal-overlay success-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom">
+      <div class="modal-content-custom">
+        <div class="modal-icon">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <h3 class="modal-title">{{ modalTitle }}</h3>
+        <p class="modal-text">{{ modalMessage }}</p>
+        <button
+          class="btn-close-modal"
+          (click)="closeModals()"
+        >
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal d'erreur avec design moderne et animations -->
+  <div
+    *ngIf="showMessageModal && !isSuccessMessage"
+    class="modal-overlay error-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom">
+      <div class="modal-content-custom">
+        <div class="modal-icon">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <h3 class="modal-title">{{ modalTitle }}</h3>
+        <p class="modal-text">{{ modalMessage }}</p>
+        <button
+          class="btn-close-modal"
+          (click)="closeModals()"
+        >
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmation moderne -->
+  <div
+    *ngIf="showConfirmationModal"
+    class="modal-overlay confirmation-modal"
+    (click)="onModalOverlayClick($event)"
+  >
+    <div class="modal-dialog-custom">
+      <div class="modal-content-custom">
+        <div class="modal-icon">
+          <i class="bi bi-question-circle-fill"></i>
+        </div>
+        <h3 class="modal-title">{{ modalTitle }}</h3>
+        <p class="modal-text">{{ modalMessage }}</p>
+        <div class="modal-actions">
+          <button
+            class="btn-cancel"
+            (click)="closeModals()"
+          >
+            <i class="bi bi-x-circle me-2"></i>Annuler
+          </button>
+          <button
+            class="btn-confirm-orange"
+            (click)="executeAction()"
+          >
+            <i class="bi bi-check-circle me-2"></i>Confirmer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

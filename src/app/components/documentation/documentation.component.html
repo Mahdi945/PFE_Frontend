@@ -1,0 +1,1141 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <!-- Breadcrumb -->
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a><i class="bi bi-house-door"></i></a>
+      </li>
+      <li class="breadcrumb-item active">Documentation</li>
+    </ol>
+  </nav>
+
+  <!-- Page Title -->
+  <div class="pagetitle">
+    <div class="title-with-icon">
+      <div class="title-text-content">
+        <h1 class="title-main">Documentation du Système</h1>
+        <p class="subtitle">
+          Guide complet pour l'utilisation de l'application de gestion de station-service developé
+          par CarboTrack
+        </p>
+      </div>
+      <div class="title-icon">
+        <i class="bi bi-book"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Documentation Content -->
+  <section class="section documentation-section">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="documentation-container">
+              <!-- Introduction -->
+              <section class="doc-section">
+                <h2 class="doc-section-title">
+                  <i class="bi bi-info-circle-fill"></i> Introduction
+                </h2>
+                <div class="doc-section-content">
+                  <p>
+                    Cette documentation fournit des informations complètes sur l'utilisation du
+                    système de gestion de station-service. Elle couvre toutes les fonctionnalités
+                    principales et les procédures d'utilisation.
+                  </p>
+                </div>
+              </section>
+
+              <!-- Roles and Permissions -->
+              <section class="doc-section">
+                <h2 class="doc-section-title">
+                  <i class="bi bi-shield-lock"></i> Rôles et Permissions
+                </h2>
+                <div class="doc-section-content">
+                  <h3>Description des Rôles</h3>
+                  <div class="roles-grid">
+                    <div class="role-card">
+                      <div class="role-header bg-primary">
+                        <i class="bi bi-person-gear"></i>
+                        <h4>Gérant</h4>
+                      </div>
+                      <div class="role-body">
+                        <p>
+                          Accès complet à toutes les fonctionnalités du système avec droits
+                          d'administration.
+                        </p>
+                        <ul>
+                          <li>Création et gestion des comptes utilisateurs</li>
+                          <li>Gestion des permissions pour tous les rôles</li>
+                          <li>Affectation des pompistes</li>
+                          <li>Gestion complète des crédits et véhicules</li>
+                          <li>Supervision des transactions et revenus</li>
+                          <li>Traitement des réclamations</li>
+                          <li>Gestion complète du stock</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="role-card">
+                      <div class="role-header bg-secondary">
+                        <i class="bi bi-person-check"></i>
+                        <h4>Cogérant</h4>
+                      </div>
+                      <div class="role-body">
+                        <p>
+                          Accès presque complet avec quelques restrictions par rapport au gérant.
+                        </p>
+                        <ul>
+                          <li>Gestion des utilisateurs (sans création de compte)</li>
+                          <li>Affectation des pompistes</li>
+                          <li>Gestion des crédits et véhicules</li>
+                          <li>Accès limité à certains historiques</li>
+                          <li>Traitement des réclamations</li>
+                          <li>Gestion du stock</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="role-card">
+                      <div class="role-header bg-success">
+                        <i class="bi bi-cash-coin"></i>
+                        <h4>Caissier</h4>
+                      </div>
+                      <div class="role-body">
+                        <p>Gestion des transactions financières et paiements.</p>
+                        <ul>
+                          <li>Enregistrement des paiements</li>
+                          <li>Saisie des ventes crédit</li>
+                          <li>Visualisation du dashboard</li>
+                          <li>Gestion du point de vente</li>
+                          <li>Accès limité aux autres fonctionnalités</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="role-card">
+                      <div class="role-header bg-warning">
+                        <i class="bi bi-fuel-pump"></i>
+                        <h4>Pompiste</h4>
+                      </div>
+                      <div class="role-body">
+                        <p>Gestion des opérations de pompe et saisie des index.</p>
+                        <ul>
+                          <li>Saisie des index de fermeture</li>
+                          <li>Saisie des ventes crédit</li>
+                          <li>Visualisation des affectations</li>
+                          <li>Accès au dashboard</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="role-card">
+                      <div class="role-header bg-info">
+                        <i class="bi bi-person"></i>
+                        <h4>Client</h4>
+                      </div>
+                      <div class="role-body">
+                        <p>Accès limité aux fonctionnalités client.</p>
+                        <ul>
+                          <li>Visualisation du dashboard</li>
+                          <li>Consultation des crédits</li>
+                          <li>Historique des transactions</li>
+                          <li>Envoi de réclamations</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h3>Gestion des Permissions</h3>
+                  <div class="permissions-table-container">
+                    <table class="table table-bordered permissions-table">
+                      <thead>
+                        <tr>
+                          <th>Élément</th>
+                          <th>Gérant</th>
+                          <th>Cogérant</th>
+                          <th>Caissier</th>
+                          <th>Pompiste</th>
+                          <th>Client</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Créer compte</td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                        </tr>
+                        <tr>
+                          <td>Liste utilisateurs</td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                        </tr>
+                        <tr>
+                          <td>Affecter pompistes</td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                        </tr>
+                        <tr>
+                          <td>Enregistrer crédit</td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                        </tr>
+                        <tr>
+                          <td>Saisie paiements</td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                        </tr>
+                        <tr>
+                          <td>Visualiser Revenues</td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                        </tr>
+                        <tr>
+                          <td>Saisie index fermeture</td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                        </tr>
+                        <tr>
+                          <td>Gestion des réclamations</td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                        </tr>
+                        <tr>
+                          <td>Gestion du stock</td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                        </tr>
+                        <tr>
+                          <td>Point de vente</td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-check-circle-fill text-success"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                          <td><i class="bi bi-x-circle-fill text-danger"></i></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </section>
+
+              <!-- User Management -->
+              <section class="doc-section">
+                <h2 class="doc-section-title">
+                  <i class="bi bi-people-fill"></i> Gestion des Utilisateurs
+                </h2>
+                <div class="doc-section-content">
+                  <h3>Création de Compte Utilisateur</h3>
+                  <div class="process-steps">
+                    <div class="process-step">
+                      <div class="step-number">1</div>
+                      <div class="step-content">
+                        <h4>Accéder au formulaire</h4>
+                        <p>
+                          Dans le menu principal, sélectionnez "Utilisateurs" puis "Créer un compte"
+                        </p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">2</div>
+                      <div class="step-content">
+                        <h4>Remplir les informations</h4>
+                        <p>
+                          Complétez tous les champs obligatoires : nom d'utilisateur, email,
+                          téléphone, mot de passe et rôle
+                        </p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">3</div>
+                      <div class="step-content">
+                        <h4>Validation</h4>
+                        <p>
+                          Cliquez sur "Valider" pour créer le compte. Un message de confirmation
+                          s'affichera
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h3>Liste des Utilisateurs</h3>
+                  <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Seuls les gérants et cogérants peuvent accéder
+                    à cette fonctionnalité.
+                  </div>
+                  <div class="features-grid">
+                    <div class="feature-card">
+                      <div class="feature-icon bg-primary">
+                        <i class="bi bi-card-list"></i>
+                      </div>
+                      <h4>Visualisation</h4>
+                      <p>
+                        Tableau listant tous les utilisateurs avec leurs informations principales
+                      </p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-success">
+                        <i class="bi bi-toggle-on"></i>
+                      </div>
+                      <h4>Activation/Désactivation</h4>
+                      <p>Bouton toggle pour activer ou désactiver un compte utilisateur</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-warning">
+                        <i class="bi bi-search"></i>
+                      </div>
+                      <h4>Recherche</h4>
+                      <p>Fonction de filtrage par nom, email ou rôle</p>
+                    </div>
+                  </div>
+
+                  <h3>Affectation des Pompistes</h3>
+                  <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> Cette fonctionnalité est réservée aux
+                    gérants et cogérants.
+                  </div>
+                  <div class="process-steps">
+                    <div class="process-step">
+                      <div class="step-number">1</div>
+                      <div class="step-content">
+                        <h4>Sélection du mois</h4>
+                        <p>
+                          Choisissez le mois pour lequel vous souhaitez planifier les affectations
+                        </p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">2</div>
+                      <div class="step-content">
+                        <h4>Génération du calendrier</h4>
+                        <p>Cliquez sur "Générer" pour afficher le calendrier interactif</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">3</div>
+                      <div class="step-content">
+                        <h4>Affectation des pompistes</h4>
+                        <p>Cliquez sur un jour pour voir/ajouter des affectations</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">4</div>
+                      <div class="step-content">
+                        <h4>Modification</h4>
+                        <p>Cliquez sur un pompiste pour ouvrir le modal de modification</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">5</div>
+                      <div class="step-content">
+                        <h4>Exporter en PDF</h4>
+                        <p>
+                          Cliquez sur exporter en PDF pour avoir un tableau d'affcetations de mois
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Credit Management -->
+              <section class="doc-section">
+                <h2 class="doc-section-title">
+                  <i class="bi bi-credit-card"></i> Gestion des Crédits
+                </h2>
+                <div class="doc-section-content">
+                  <h3>Enregistrement des Crédits</h3>
+                  <div class="features-grid">
+                    <div class="feature-card">
+                      <div class="feature-icon bg-primary">
+                        <i class="bi bi-plus-circle"></i>
+                      </div>
+                      <h4>Ajout de crédit</h4>
+                      <p>Formulaire complet pour enregistrer un nouveau crédit client</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-success">
+                        <i class="bi bi-arrow-repeat"></i>
+                      </div>
+                      <h4>Renouvellement</h4>
+                      <p>Possibilité de renouveler un crédit expiré ou remboursé</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-warning">
+                        <i class="bi bi-funnel"></i>
+                      </div>
+                      <h4>Filtres avancés</h4>
+                      <p>Recherche par client, statut ou date d'expiration</p>
+                    </div>
+                  </div>
+
+                  <h3>Gestion des Véhicules</h3>
+                  <div class="process-steps">
+                    <div class="process-step">
+                      <div class="step-number">1</div>
+                      <div class="step-content">
+                        <h4>Liste des véhicules</h4>
+                        <p>Visualisation de tous les véhicules enregistrés avec leurs QR codes</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">2</div>
+                      <div class="step-content">
+                        <h4>Affectation aux crédits</h4>
+                        <p>Modal d'ajout pour lier un véhicule à un crédit existant</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">3</div>
+                      <div class="step-content">
+                        <h4>Ajout de véhicule</h4>
+                        <p>Formulaire complet pour enregistrer un nouveau véhicule</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h3>Historiques</h3>
+                  <div class="features-grid">
+                    <div class="feature-card">
+                      <div class="feature-icon bg-primary">
+                        <i class="bi bi-clock-history"></i>
+                      </div>
+                      <h4>Historique des Paiements</h4>
+                      <p>Détails complets des remboursements effectués</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-success">
+                        <i class="bi bi-list-check"></i>
+                      </div>
+                      <h4>Historique des Transactions</h4>
+                      <p>Journal des remplissages d'essence avec preuves de transaction</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-warning">
+                        <i class="bi bi-file-earmark-excel"></i>
+                      </div>
+                      <h4>Export Excel</h4>
+                      <p>Génération dynamique de rapports selon les filtres choisis</p>
+                    </div>
+                  </div>
+
+                  <h3>Saisie des Paiements</h3>
+                  <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Accessible aux gérants, cogérants et
+                    caissiers.
+                  </div>
+                  <ol class="steps-list">
+                    <li>Sélectionnez le client concerné</li>
+                    <li>Entrez le montant du remboursement</li>
+                    <li>Ajoutez une description optionnelle</li>
+                    <li>Validez l'enregistrement</li>
+                  </ol>
+                </div>
+              </section>
+
+              <!-- Pump Management -->
+              <section class="doc-section">
+                <h2 class="doc-section-title">
+                  <i class="bi bi-fuel-pump"></i> Gestion des Pompes
+                </h2>
+                <div class="doc-section-content">
+                  <h3>Enregistrement des Pompes</h3>
+                  <div class="process-steps">
+                    <div class="process-step">
+                      <div class="step-number">1</div>
+                      <div class="step-content">
+                        <h4>Informations de base</h4>
+                        <p>Remplissez les champs obligatoires sur la pompe</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">2</div>
+                      <div class="step-content">
+                        <h4>Pistolets associés</h4>
+                        <p>Spécifiez le nombre de pistolets et leurs caractéristiques</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">3</div>
+                      <div class="step-content">
+                        <h4>Validation</h4>
+                        <p>Enregistrez la pompe avec ses pistolets</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h3>Liste des Pompes</h3>
+                  <div class="features-grid">
+                    <div class="feature-card">
+                      <div class="feature-icon bg-primary">
+                        <i class="bi bi-list-ul"></i>
+                      </div>
+                      <h4>Visualisation</h4>
+                      <p>Tableau récapitulatif de toutes les pompes</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-success">
+                        <i class="bi bi-pencil"></i>
+                      </div>
+                      <h4>Modification</h4>
+                      <p>Changement d'état ou d'informations de la pompe</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-warning">
+                        <i class="bi bi-eye"></i>
+                      </div>
+                      <h4>Détails pistolets</h4>
+                      <p>Visualisation et gestion des pistolets associés</p>
+                    </div>
+                  </div>
+
+                  <h3>Visualisation des Revenus</h3>
+                  <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Réservé aux gérants et cogérants.
+                  </div>
+                  <ol class="steps-list">
+                    <li>Sélectionnez une période pour les revenus des pistolets</li>
+                    <li>Choisissez une date fixe pour les paiements de crédits</li>
+                    <li>Cliquez sur "Générer le rapport"</li>
+                    <li>Consultez le total et les détails par poste</li>
+                    <li>Validez l'état du relevé si nécessaire</li>
+                  </ol>
+
+                  <h3>Saisie des Index de Fermeture</h3>
+                  <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> Fonctionnalité réservée aux
+                    pompistes.
+                  </div>
+                  <div class="process-steps">
+                    <div class="process-step">
+                      <div class="step-number">1</div>
+                      <div class="step-content">
+                        <h4>Accès automatique</h4>
+                        <p>Le pompiste voit automatiquement son poste et sa pompe assignée</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">2</div>
+                      <div class="step-content">
+                        <h4>Saisie des index</h4>
+                        <p>Entrée des valeurs de fermeture pour chaque pistolet</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">3</div>
+                      <div class="step-content">
+                        <h4>Correction</h4>
+                        <p>Le gérant peut modifier les index en cas d'erreur</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Claims Management -->
+              <section class="doc-section">
+                <h2 class="doc-section-title">
+                  <i class="bi bi-chat-left-text"></i> Gestion des Réclamations
+                </h2>
+                <div class="doc-section-content">
+                  <h3>Envoi de Réclamation (Client)</h3>
+                  <div class="process-steps">
+                    <div class="process-step">
+                      <div class="step-number">1</div>
+                      <div class="step-content">
+                        <h4>Accéder à la section</h4>
+                        <p>Dans le menu principal, sélectionnez "Réclamations"</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">2</div>
+                      <div class="step-content">
+                        <h4>Nouvelle réclamation</h4>
+                        <p>Cliquez sur "Nouvelle réclamation" pour accéder au formulaire</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">3</div>
+                      <div class="step-content">
+                        <h4>Remplir le formulaire</h4>
+                        <p>Sélectionnez la transaction concernée et décrivez la réclamation</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">4</div>
+                      <div class="step-content">
+                        <h4>Soumettre</h4>
+                        <p>Cliquez sur "Envoyer" pour soumettre la réclamation</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h3>Traitement des Réclamations (Gérant/Cogérant)</h3>
+                  <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Seuls les gérants et cogérants peuvent traiter
+                    les réclamations.
+                  </div>
+                  <div class="features-grid">
+                    <div class="feature-card">
+                      <div class="feature-icon bg-primary">
+                        <i class="bi bi-list-check"></i>
+                      </div>
+                      <h4>Liste des réclamations</h4>
+                      <p>Tableau avec filtres par statut, date et client</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-success">
+                        <i class="bi bi-pencil-square"></i>
+                      </div>
+                      <h4>Mise à jour du statut</h4>
+                      <p>Changement d'état (Nouveau, En cours, Résolu, Fermé)</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-warning">
+                        <i class="bi bi-eye"></i>
+                      </div>
+                      <h4>Détails complets</h4>
+                      <p>
+                        Visualisation des détails de la réclamation et de la transaction associée
+                      </p>
+                    </div>
+                  </div>
+
+                  <h3>Règles de Gestion</h3>
+                  <ul class="rules-list">
+                    <li>Une réclamation fermée ne peut plus être modifiée</li>
+                    <li>Seul le gérant ou cogérant peut fermer une réclamation</li>
+                    <li>Les clients sont notifiés par email des changements de statut</li>
+                    <li>Toutes les actions sont tracées dans l'historique</li>
+                  </ul>
+                </div>
+              </section>
+
+              <!-- Stock Management -->
+              <section class="doc-section">
+                <h2 class="doc-section-title"><i class="bi bi-box-seam"></i> Gestion du Stock</h2>
+                <div class="doc-section-content">
+                  <h3>Gestion des Produits</h3>
+                  <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Accessible aux gérants et cogérants
+                    uniquement.
+                  </div>
+                  <div class="features-grid">
+                    <div class="feature-card">
+                      <div class="feature-icon bg-primary">
+                        <i class="bi bi-plus-circle"></i>
+                      </div>
+                      <h4>Création de produit</h4>
+                      <p>Formulaire complet avec génération automatique de code-barres</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-success">
+                        <i class="bi bi-pencil"></i>
+                      </div>
+                      <h4>Modification</h4>
+                      <p>Édition des informations produit avec ou sans changement d'image</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-danger">
+                        <i class="bi bi-trash"></i>
+                      </div>
+                      <h4>Suppression</h4>
+                      <p>Possibilité de supprimer un produit non utilisé dans des transactions</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-warning">
+                        <i class="bi bi-funnel"></i>
+                      </div>
+                      <h4>Filtres avancés</h4>
+                      <p>Recherche par catégorie, code-barres ou statut de stock</p>
+                    </div>
+                  </div>
+
+                  <h3>Gestion des Catégories</h3>
+                  <div class="process-steps">
+                    <div class="process-step">
+                      <div class="step-number">1</div>
+                      <div class="step-content">
+                        <h4>Accéder à l'onglet</h4>
+                        <p>Sélectionnez "Catégories" dans le menu de gestion du stock</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">2</div>
+                      <div class="step-content">
+                        <h4>Nouvelle catégorie</h4>
+                        <p>Cliquez sur "Ajouter" et remplissez le nom et la catégorie parente</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">3</div>
+                      <div class="step-content">
+                        <h4>Modification/Suppression</h4>
+                        <p>
+                          Utilisez les boutons d'action pour modifier ou supprimer une catégorie
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h3>Mouvements de Stock</h3>
+                  <div class="features-grid">
+                    <div class="feature-card">
+                      <div class="feature-icon bg-primary">
+                        <i class="bi bi-arrow-left-right"></i>
+                      </div>
+                      <h4>Types de mouvements</h4>
+                      <p>Entrée, Sortie, Correction, Transfert entre dépôts</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-success">
+                        <i class="bi bi-journal-plus"></i>
+                      </div>
+                      <h4>Enregistrement</h4>
+                      <p>Sélection du type, produit, quantité et raison optionnelle</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-info">
+                        <i class="bi bi-clock-history"></i>
+                      </div>
+                      <h4>Historique</h4>
+                      <p>Journal complet avec filtres par date et type de mouvement</p>
+                    </div>
+                  </div>
+
+                  <h3>Gestion des Ventes</h3>
+                  <div class="process-steps">
+                    <div class="process-step">
+                      <div class="step-number">1</div>
+                      <div class="step-content">
+                        <h4>Filtrage</h4>
+                        <p>Sélectionnez une période pour visualiser les ventes</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">2</div>
+                      <div class="step-content">
+                        <h4>Détails des ventes</h4>
+                        <p>Cliquez sur l'icône "œil" pour voir les lignes de vente</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">3</div>
+                      <div class="step-content">
+                        <h4>Export</h4>
+                        <p>Possibilité d'exporter les données en Excel ou PDF</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Point of Sale -->
+              <section class="doc-section">
+                <h2 class="doc-section-title">
+                  <i class="bi bi-cash-register"></i> Point de Vente
+                </h2>
+                <div class="doc-section-content">
+                  <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Fonctionnalité réservée aux caissiers.
+                  </div>
+                  <h3>Processus de Vente</h3>
+                  <div class="process-steps">
+                    <div class="process-step">
+                      <div class="step-number">1</div>
+                      <div class="step-content">
+                        <h4>Ajout de produits</h4>
+                        <p>Saisie manuelle du code-barres ou scan avec un lecteur</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">2</div>
+                      <div class="step-content">
+                        <h4>Ajustement des quantités</h4>
+                        <p>Modification directe dans le panier ou suppression d'articles</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">3</div>
+                      <div class="step-content">
+                        <h4>Paiement</h4>
+                        <p>
+                          Saisie du montant payé par le client et calcul automatique de la monnaie
+                        </p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">4</div>
+                      <div class="step-content">
+                        <h4>Validation</h4>
+                        <p>Confirmation de la vente et génération du ticket</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">5</div>
+                      <div class="step-content">
+                        <h4>Impression</h4>
+                        <p>Option d'impression du reçu pour le client</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Dashboard -->
+              <section class="doc-section">
+                <h2 class="doc-section-title">
+                  <i class="bi bi-speedometer2"></i> Tableau de Bord
+                </h2>
+                <div class="doc-section-content">
+                  <h3>Vue d'Ensemble</h3>
+                  <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Le tableau de bord s'adapte en fonction du
+                    rôle de l'utilisateur.
+                  </div>
+                  <div class="features-grid">
+                    <div class="feature-card">
+                      <div class="feature-icon bg-primary">
+                        <i class="bi bi-graph-up"></i>
+                      </div>
+                      <h4>Statistiques</h4>
+                      <p>Indicateurs clés (ventes, crédits, stocks) selon le rôle</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-success">
+                        <i class="bi bi-calendar-check"></i>
+                      </div>
+                      <h4>Activités récentes</h4>
+                      <p>Historique des dernières actions dans le système</p>
+                    </div>
+                    <div class="feature-card">
+                      <div class="feature-icon bg-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                      </div>
+                      <h4>Alertes</h4>
+                      <p>Notifications importantes (stocks bas, crédits expirés, etc.)</p>
+                    </div>
+                  </div>
+
+                  <h3>Personnalisation</h3>
+                  <div class="process-steps">
+                    <div class="process-step">
+                      <div class="step-number">1</div>
+                      <div class="step-content">
+                        <h4>Période</h4>
+                        <p>Sélectionnez une période spécifique pour les données</p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">2</div>
+                      <div class="step-content">
+                        <h4>Filtres</h4>
+                        <p>
+                          Application de filtres selon les besoins (par produit, pompiste, etc.)
+                        </p>
+                      </div>
+                    </div>
+                    <div class="process-step">
+                      <div class="step-number">3</div>
+                      <div class="step-content">
+                        <h4>Export</h4>
+                        <p>Génération de rapports en PDF ou Excel</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- FAQ -->
+              <section class="doc-section">
+                <h2 class="doc-section-title"><i class="bi bi-question-circle-fill"></i> FAQ</h2>
+                <div class="doc-section-content">
+                  <div
+                    class="accordion"
+                    id="faqAccordion"
+                  >
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#faq1"
+                        >
+                          Comment créer un nouveau compte utilisateur en tant que gérant ?
+                        </button>
+                      </h2>
+                      <div
+                        id="faq1"
+                        class="accordion-collapse collapse show"
+                      >
+                        <div class="accordion-body">
+                          <ol>
+                            <li>Accédez à la section "Utilisateurs" dans le menu principal</li>
+                            <li>Cliquez sur "Créer un compte"</li>
+                            <li>
+                              Remplissez tous les champs obligatoires (nom d'utilisateur, email,
+                              téléphone, mot de passe)
+                            </li>
+                            <li>Sélectionnez le rôle approprié dans la liste déroulante</li>
+                            <li>Cliquez sur "Valider" pour enregistrer le compte</li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#faq2"
+                        >
+                          Comment affecter les pompistes à des postes de travail ?
+                        </button>
+                      </h2>
+                      <div
+                        id="faq2"
+                        class="accordion-collapse collapse"
+                      >
+                        <div class="accordion-body">
+                          <ol>
+                            <li>Accédez à la section "Affecter pompistes"</li>
+                            <li>Sélectionnez le mois concerné</li>
+                            <li>Cliquez sur "Générer" pour afficher le calendrier</li>
+                            <li>
+                              Cliquez sur un jour spécifique pour voir/ajouter des affectations
+                            </li>
+                            <li>
+                              Pour modifier, cliquez sur un pompiste et utilisez le modal qui
+                              s'affiche
+                            </li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#faq3"
+                        >
+                          Comment enregistrer un nouveau crédit pour un client ?
+                        </button>
+                      </h2>
+                      <div
+                        id="faq3"
+                        class="accordion-collapse collapse"
+                      >
+                        <div class="accordion-body">
+                          <ol>
+                            <li>Accédez à la section "Crédits" puis "Enregistrer crédit"</li>
+                            <li>Remplissez tous les champs obligatoires du formulaire</li>
+                            <li>
+                              Pour associer un véhicule, scannez le QR code ou sélectionnez-le
+                              manuellement
+                            </li>
+                            <li>Validez l'enregistrement</li>
+                            <li>
+                              Pour renouveler un crédit expiré, utilisez l'option "Renouveler" dans
+                              la liste des crédits
+                            </li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#faq4"
+                        >
+                          Comment corriger un index de fermeture erroné ?
+                        </button>
+                      </h2>
+                      <div
+                        id="faq4"
+                        class="accordion-collapse collapse"
+                      >
+                        <div class="accordion-body">
+                          <ol>
+                            <li>Accédez à la section "Pompes" puis "Saisie Index fermeture"</li>
+                            <li>Sélectionnez la date concernée</li>
+                            <li>Modifiez manuellement les valeurs incorrectes</li>
+                            <li>Ajoutez un commentaire justificatif si nécessaire</li>
+                            <li>Enregistrez les modifications</li>
+                          </ol>
+                          <p class="mt-2">
+                            <strong>Note :</strong> Seul le gérant peut effectuer cette correction.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#faq5"
+                        >
+                          Comment générer un rapport des revenus sur une période spécifique ?
+                        </button>
+                      </h2>
+                      <div
+                        id="faq5"
+                        class="accordion-collapse collapse"
+                      >
+                        <div class="accordion-body">
+                          <ol>
+                            <li>Accédez à la section "Visualiser Revenues"</li>
+                            <li>
+                              Sélectionnez une date de début et de fin pour les revenus des
+                              pistolets
+                            </li>
+                            <li>Choisissez une date fixe pour les paiements de crédits</li>
+                            <li>Cliquez sur "Générer le rapport"</li>
+                            <li>Consultez le total ou exportez en Excel si nécessaire</li>
+                            <li>
+                              Dans l'onglet "Relevés postes", vous pouvez valider l'état du relevé
+                            </li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#faq6"
+                        >
+                          Comment envoyer une réclamation en tant que client ?
+                        </button>
+                      </h2>
+                      <div
+                        id="faq6"
+                        class="accordion-collapse collapse"
+                      >
+                        <div class="accordion-body">
+                          <ol>
+                            <li>Connectez-vous à votre compte client</li>
+                            <li>Accédez à la section "Réclamations"</li>
+                            <li>Cliquez sur "Nouvelle réclamation"</li>
+                            <li>Sélectionnez la transaction concernée</li>
+                            <li>Décrivez le problème en détail</li>
+                            <li>Soumettez la réclamation</li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#faq7"
+                        >
+                          Comment ajouter un nouveau produit au stock ?
+                        </button>
+                      </h2>
+                      <div
+                        id="faq7"
+                        class="accordion-collapse collapse"
+                      >
+                        <div class="accordion-body">
+                          <ol>
+                            <li>Accédez à "Gestion du stock" puis "Produits"</li>
+                            <li>Cliquez sur "Ajouter un produit"</li>
+                            <li>
+                              Remplissez tous les champs obligatoires (nom, catégorie, prix, etc.)
+                            </li>
+                            <li>Optionnellement, téléchargez une image du produit</li>
+                            <li>Le système génère automatiquement un code-barres</li>
+                            <li>Validez l'enregistrement</li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#faq8"
+                        >
+                          Comment enregistrer une vente au point de vente ?
+                        </button>
+                      </h2>
+                      <div
+                        id="faq8"
+                        class="accordion-collapse collapse"
+                      >
+                        <div class="accordion-body">
+                          <ol>
+                            <li>Accédez à la section "Point de vente"</li>
+                            <li>Ajoutez des produits par scan ou saisie manuelle</li>
+                            <li>Ajustez les quantités si nécessaire</li>
+                            <li>Cliquez sur "Paiement"</li>
+                            <li>Entrez le montant remis par le client</li>
+                            <li>Confirmez la vente</li>
+                            <li>Optionnellement, imprimez le reçu</li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-footer></app-footer>
+
+<a
+  href="#"
+  class="back-to-top d-flex align-items-center justify-content-center"
+>
+  <i class="bi bi-arrow-up-short"></i>
+</a>

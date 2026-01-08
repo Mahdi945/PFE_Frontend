@@ -1,0 +1,314 @@
+/* Style général */
+.card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  border: none;
+}
+
+.card-title {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.info-card .card-icon {
+  font-size: 1.5rem;
+  width: 50px;
+  height: 50px;
+}
+
+/* Style des onglets */
+.btn-group .btn {
+  border-radius: 20px;
+  margin: 0 5px;
+  padding: 8px 20px;
+}
+
+.btn-group .btn.active {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Style des tableaux */
+.table-responsive {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* Style des graphiques */
+.chart-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Style des badges */
+.badge {
+  padding: 6px 10px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Style des filtres */
+.filter-container {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.filter-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.filter-label {
+  font-weight: 500;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+/* Animation de chargement */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.card {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Style des petits boutons */
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Espacement entre les éléments de filtre */
+.g-2 {
+  gap: 0.5rem;
+}
+.info-card {
+  min-height: 120px; /* Hauteur minimale garantie */
+}
+
+.card-title {
+  white-space: nowrap; /* Empêche le retour à la ligne */
+  font-size: 0.95rem; /* Taille de police légèrement réduite */
+}
+
+.card-icon i {
+  font-size: 1.5rem; /* Taille d'icône uniforme */
+}
+/* Animation de chargement */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.card {
+  animation: fadeIn 0.5s ease-in-out;
+}
+/* Style global du breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 0 0 15px 0;
+  list-style: none;
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+}
+
+/* Éléments du breadcrumb */
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+/* Style des liens */
+.breadcrumb-item a {
+  color: #718096;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+/* Icône maison */
+.breadcrumb-item a i {
+  font-size: 1.1rem;
+  color: #4a5568;
+}
+
+/* Élément actif */
+.breadcrumb-item.active {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* Séparateur personnalisé */
+.breadcrumb-item + .breadcrumb-item::before {
+  content: "›";
+  padding: 0 8px;
+  color: #a0aec0;
+  font-size: 1.2rem;
+  font-weight: 300;
+}
+
+/* Effets au survol */
+.breadcrumb-item a:hover {
+  color: #3182ce;
+}
+
+.breadcrumb-item a:hover i {
+  color: #3182ce;
+  transform: scale(1.1);
+}
+
+/* Animation sur l'icône maison */
+.breadcrumb-item:first-child a:hover i {
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+/* Styles pour le conteneur principal */
+.pagetitle {
+  margin: 25px 0 30px;
+}
+
+/* Style principal du titre */
+.pagetitle h1 {
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  line-height: 1.2;
+}
+
+/* Style de l'icône - Version bleue */
+.pagetitle .title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 178, 255, 0.2);
+  transition: all 0.3s ease;
+  will-change: transform;
+}
+
+.pagetitle .title-icon svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+/* Style du texte du titre */
+.pagetitle .title-text {
+  display: flex;
+  align-items: baseline;
+}
+
+.pagetitle .title-main {
+  font-weight: 600;
+  color: #4a5568;
+  letter-spacing: -0.5px;
+}
+
+.pagetitle .title-emphasis {
+  color: #3182ce;
+  font-weight: 800;
+  position: relative;
+  letter-spacing: -0.5px;
+  margin-left: 10px;
+}
+
+/* Effet de soulignement bleu */
+.pagetitle .title-emphasis::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #3182ce 30%, rgba(49, 130, 206, 0.1) 100%);
+  border-radius: 3px;
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Animations au survol améliorées */
+.pagetitle h1:hover .title-icon {
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 0 6px 16px rgba(0, 178, 255, 0.3);
+}
+
+.pagetitle h1:hover .title-emphasis::after {
+  transform: scaleX(1.1);
+  background: linear-gradient(90deg, #3182ce 50%, rgba(49, 130, 206, 0.1) 100%);
+}
+
+/* Option : Effet de vague sur le texte principal au survol */
+.pagetitle h1:hover .title-main {
+  background: linear-gradient(90deg, #4a5568, #718096);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: textWave 1.5s ease infinite;
+}
+
+@keyframes textWave {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}

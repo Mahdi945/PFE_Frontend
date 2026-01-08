@@ -1,0 +1,549 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <!-- Breadcrumb -->
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+      <li class="breadcrumb-item">Crédits</li>
+      <li class="breadcrumb-item active">Historique des Transactions</li>
+    </ol>
+  </nav>
+
+  <!-- Titre de page amélioré -->
+  <div class="pagetitle d-flex justify-content-between align-items-center mb-4">
+    <div class="title-with-icon d-flex align-items-center">
+      <div class="title-icon-wrapper me-3">
+        <i class="bi bi-receipt title-icon"></i>
+      </div>
+      <div class="title-text-content">
+        <h1 class="title-main mb-0">Historique des Transactions</h1>
+        <p class="title-subtitle mb-0">Gestion et suivi des transactions de crédit</p>
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <button
+        class="btn btn-success btn-modern"
+        (click)="exportToExcel()"
+        title="Exporter toutes les transactions"
+      >
+        <i class="bi bi-file-excel me-2"></i>Exporter Excel
+      </button>
+    </div>
+  </div>
+  <!-- Filtres améliorés -->
+  <div class="filters-card mb-4">
+    <div class="card-header">
+      <h6 class="card-title mb-0"><i class="bi bi-funnel me-2"></i>Filtres de recherche</h6>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- Champ de recherche général -->
+        <div class="col-md-3">
+          <div class="input-group input-group-modern">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Rechercher par nom client ou immatriculation..."
+              [(ngModel)]="searchTerm"
+              (input)="filterTransactions()"
+            />
+          </div>
+        </div>
+
+        <!-- Recherche par ID Transaction -->
+        <div class="col-md-2">
+          <div class="input-group input-group-modern">
+            <span class="input-group-text"><i class="bi bi-hash"></i></span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="ID Transaction..."
+              [(ngModel)]="searchTransactionId"
+              (input)="filterTransactions()"
+            />
+          </div>
+        </div>
+
+        <!-- Recherche par ID Crédit -->
+        <div class="col-md-2">
+          <div class="input-group input-group-modern">
+            <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="ID Crédit..."
+              [(ngModel)]="searchCreditId"
+              (input)="filterTransactions()"
+            />
+          </div>
+        </div>
+
+        <!-- Filtre par mode -->
+        <div class="col-md-2">
+          <div class="input-group input-group-modern">
+            <span class="input-group-text"><i class="bi bi-wallet2"></i></span>
+            <select
+              class="form-select"
+              [(ngModel)]="selectedMode"
+              (change)="filterTransactions()"
+            >
+              <option value="">Tous les modes</option>
+              <option
+                *ngFor="let mode of modes"
+                [value]="mode"
+              >
+                {{ mode }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Filtre par date -->
+        <div class="col-md-3">
+          <div class="input-group input-group-modern">
+            <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+            <input
+              type="date"
+              class="form-control"
+              [(ngModel)]="selectedDate"
+              (change)="filterTransactions()"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Résumé -->
+  <div class="stats-card mb-4">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="stat-item">
+          <div class="stat-icon bg-primary">
+            <i class="bi bi-receipt"></i>
+          </div>
+          <div class="stat-content">
+            <h4>{{ filteredTransactions.length }}</h4>
+            <p>Transaction(s)</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-item">
+          <div class="stat-icon bg-success">
+            <i class="bi bi-currency-dollar"></i>
+          </div>
+          <div class="stat-content">
+            <h4>{{ totalAmount | number: '1.2-2' }} DT</h4>
+            <p>Montant Total</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-item">
+          <div class="stat-icon bg-info">
+            <i class="bi bi-fuel-pump"></i>
+          </div>
+          <div class="stat-content">
+            <h4>{{ totalQuantity | number: '1.2-2' }} L</h4>
+            <p>Quantité Totale</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Tableau moderne -->
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="table table-modern">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Date & Heure</th>
+            <th>Client</th>
+            <th>Véhicule</th>
+            <th>Quantité</th>
+            <th>Montant</th>
+            <th>Pompiste</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let transaction of filteredTransactions
+                | slice: (currentPage - 1) * pageSize : currentPage * pageSize
+            "
+            class="table-row-clickable"
+            (click)="openDetails(transaction)"
+          >
+            <td>
+              <span class="reference-badge">
+                <i class="bi bi-hash me-1"></i>
+                {{ transaction.id }}
+              </span>
+            </td>
+            <td>
+              <div class="date-info">
+                <div>{{ transaction.date_transaction | date: 'dd/MM/yyyy' }}</div>
+                <small class="text-muted">{{ transaction.date_transaction | date: 'HH:mm' }}</small>
+              </div>
+            </td>
+            <td>
+              <div class="client-info">
+                <strong>{{ transaction.username }}</strong>
+              </div>
+            </td>
+            <td>
+              <span class="reference-badge">
+                {{ transaction.immatriculation }}
+              </span>
+            </td>
+            <td>
+              <span class="amount-info">
+                <i class="bi bi-fuel-pump me-1"></i>
+                {{ transaction.quantite | number: '1.2-2' }} L
+              </span>
+            </td>
+            <td>
+              <div class="amount-info">
+                <span class="amount-paid">{{ transaction.montant | number: '1.2-2' }} DT</span>
+              </div>
+            </td>
+            <td>
+              <div class="client-info">
+                <strong>{{ transaction.pompiste_username }}</strong>
+              </div>
+            </td>
+            <td>
+              <button
+                class="btn btn-eye-simple"
+                (click)="openDetails(transaction); $event.stopPropagation()"
+                title="Voir les détails"
+              >
+                <i class="bi bi-eye"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredTransactions.length === 0 && !isLoading">
+            <td
+              colspan="8"
+              class="text-center"
+            >
+              Aucune transaction trouvée
+            </td>
+          </tr>
+          <tr *ngIf="isLoading">
+            <td
+              colspan="8"
+              class="text-center"
+            >
+              <div
+                class="spinner-border text-primary"
+                role="status"
+              >
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination moderne -->
+    <nav
+      *ngIf="totalPages > 1"
+      class="pagination-container"
+    >
+      <ul class="pagination pagination-modern justify-content-center">
+        <li
+          class="page-item"
+          [class.disabled]="currentPage === 1"
+        >
+          <a
+            class="page-link"
+            (click)="changePage(currentPage - 1)"
+          >
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        </li>
+        <li
+          class="page-item"
+          *ngFor="let page of getPages()"
+          [class.active]="page === currentPage"
+        >
+          <a
+            class="page-link"
+            (click)="changePage(page)"
+            >{{ page }}</a
+          >
+        </li>
+        <li
+          class="page-item"
+          [class.disabled]="currentPage === totalPages"
+        >
+          <a
+            class="page-link"
+            (click)="changePage(currentPage + 1)"
+          >
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+      <div class="pagination-info">
+        Page {{ currentPage }} sur {{ totalPages }} -
+        {{ filteredTransactions.length }} transaction(s)
+      </div>
+    </nav>
+  </div>
+</main>
+
+<!-- Modal de détails moderne -->
+<div
+  *ngIf="showDetailsModal"
+  class="modal-overlay"
+  (click)="closeDetailsModal()"
+>
+  <div
+    class="modal-dialog-modern"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-content-modern">
+      <div class="modal-header-modern">
+        <div class="modal-title-container">
+          <div class="modal-icon-wrapper">
+            <i class="bi bi-receipt"></i>
+          </div>
+          <div>
+            <h4 class="modal-title">Détails de la Transaction</h4>
+            <p class="modal-subtitle">Transaction #{{ selectedTransaction?.id }}</p>
+          </div>
+        </div>
+        <button
+          class="btn-close-modern"
+          (click)="closeDetailsModal()"
+        >
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-modern">
+        <div
+          class="row g-4"
+          *ngIf="selectedTransaction"
+        >
+          <!-- Informations Transaction -->
+          <div class="col-md-6">
+            <div class="info-card">
+              <div class="info-card-header">
+                <h5><i class="bi bi-receipt me-2"></i>Informations Transaction</h5>
+              </div>
+              <div class="info-card-body">
+                <div class="info-item">
+                  <label>Date et heure :</label>
+                  <div class="value">
+                    {{ selectedTransaction.date_transaction | date: 'dd/MM/yyyy HH:mm' }}
+                  </div>
+                </div>
+                <div class="info-item">
+                  <label>ID :</label>
+                  <div class="value">#{{ selectedTransaction.id }}</div>
+                </div>
+                <div class="info-item">
+                  <label>Quantité :</label>
+                  <div class="value amount">
+                    {{ selectedTransaction.quantite | number: '1.2-2' }} L
+                  </div>
+                </div>
+                <div class="info-item">
+                  <label>Montant :</label>
+                  <div class="value amount">
+                    {{ selectedTransaction.montant | number: '1.2-2' }} DT
+                  </div>
+                </div>
+                <div class="info-item">
+                  <label>Mode de paiement :</label>
+                  <div class="value">{{ selectedTransaction.mode_paiement || 'Espèces' }}</div>
+                </div>
+                <div class="info-item">
+                  <label>Pompiste :</label>
+                  <div class="value">{{ selectedTransaction.pompiste_username }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Informations Client -->
+          <div class="col-md-6">
+            <div class="info-card">
+              <div class="info-card-header">
+                <h5><i class="bi bi-person me-2"></i>Informations Client</h5>
+              </div>
+              <div class="info-card-body">
+                <div class="info-item">
+                  <label>Nom d'utilisateur :</label>
+                  <div class="value">{{ selectedTransaction.username }}</div>
+                </div>
+                <div class="info-item">
+                  <label>Email :</label>
+                  <div class="value">{{ selectedTransaction.email }}</div>
+                </div>
+                <div class="info-item">
+                  <label>Téléphone :</label>
+                  <div class="value">{{ selectedTransaction.numero_telephone }}</div>
+                </div>
+                <div class="info-item">
+                  <label>ID Utilisateur :</label>
+                  <div class="value">#{{ selectedTransaction.id_utilisateur }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Informations Véhicule -->
+          <div class="col-md-6">
+            <div class="info-card">
+              <div class="info-card-header">
+                <h5><i class="bi bi-car-front me-2"></i>Informations Véhicule</h5>
+              </div>
+              <div class="info-card-body">
+                <div class="info-item">
+                  <label>Immatriculation :</label>
+                  <div class="value">{{ selectedTransaction.immatriculation }}</div>
+                </div>
+                <div class="info-item">
+                  <label>Marque :</label>
+                  <div class="value">{{ selectedTransaction.marque }}</div>
+                </div>
+                <div class="info-item">
+                  <label>Type :</label>
+                  <div class="value">{{ selectedTransaction.type_vehicule }}</div>
+                </div>
+                <div class="info-item">
+                  <label>ID Véhicule :</label>
+                  <div class="value">#{{ selectedTransaction.id_vehicule }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Informations Crédit -->
+          <div class="col-md-6">
+            <div class="info-card">
+              <div class="info-card-header">
+                <h5><i class="bi bi-credit-card me-2"></i>Informations Crédit</h5>
+              </div>
+              <div class="info-card-body">
+                <div class="info-item">
+                  <label>ID Crédit :</label>
+                  <div class="value">#{{ selectedTransaction.id_credit }}</div>
+                </div>
+                <div class="info-item">
+                  <label>Solde crédit :</label>
+                  <div class="value amount">
+                    {{ selectedTransaction.solde_credit | number: '1.2-2' }} DT
+                  </div>
+                </div>
+                <div class="info-item">
+                  <label>Crédit utilisé :</label>
+                  <div class="value amount">
+                    {{ selectedTransaction.credit_utilise | number: '1.2-2' }} DT
+                  </div>
+                </div>
+                <div class="info-item">
+                  <label>Montant restant :</label>
+                  <div class="value amount">
+                    {{ selectedTransaction.montant_restant | number: '1.2-2' }} DT
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preuve de Transaction -->
+          <div
+            class="col-12"
+            *ngIf="selectedTransaction.preuve"
+          >
+            <div class="info-card">
+              <div class="info-card-header">
+                <h5><i class="bi bi-image me-2"></i>Preuve de Transaction</h5>
+              </div>
+              <div class="info-card-body text-center">
+                <div class="proof-container">
+                  <img
+                    [src]="selectedTransaction.preuve"
+                    alt="Preuve de transaction"
+                    class="img-fluid proof-image rounded shadow-sm"
+                    [class.zoomed]="isImageZoomed"
+                    (click)="toggleImageZoom()"
+                  />
+                  <div class="mt-3">
+                    <button
+                      class="btn btn-outline-primary btn-sm me-2"
+                      (click)="toggleImageZoom()"
+                    >
+                      <i
+                        class="bi"
+                        [class.bi-zoom-in]="!isImageZoomed"
+                        [class.bi-zoom-out]="isImageZoomed"
+                      ></i>
+                      {{ isImageZoomed ? 'Réduire' : 'Agrandir' }}
+                    </button>
+                    <button
+                      class="btn btn-outline-success btn-sm"
+                      (click)="downloadProof()"
+                    >
+                      <i class="bi bi-download"></i> Télécharger
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer-modern">
+        <button
+          class="btn btn-secondary"
+          (click)="closeDetailsModal()"
+        >
+          <i class="bi bi-x me-2"></i>Fermer
+        </button>
+        <button
+          class="btn btn-success"
+          (click)="exportTransactionDetails()"
+        >
+          <i class="bi bi-file-excel me-2"></i>Exporter en Excel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay pour l'image zoomée -->
+<div
+  class="image-overlay"
+  *ngIf="isImageZoomed"
+  (click)="toggleImageZoom()"
+>
+  <img
+    [src]="selectedTransaction?.preuve"
+    class="zoomed-image"
+  />
+</div>
+
+<app-footer></app-footer>
+<a
+  href="#"
+  class="back-to-top d-flex align-items-center justify-content-center"
+>
+  <i class="bi bi-arrow-up-short"></i>
+</a>

@@ -1,0 +1,348 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main
+  id="main"
+  class="main"
+>
+  <div class="container">
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><i class="bi bi-house-door"></i></li>
+
+        <li class="breadcrumb-item active">Saisie vente crédit</li>
+      </ol>
+    </nav>
+
+    <!-- Titre de page amélioré -->
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+      <div class="title-text-content">
+        <h1 class="title-main">Saisie d'un vente crédit</h1>
+        <p>Scanner le QR code du véhicule pour commencer la transaction</p>
+      </div>
+    </div>
+
+    <!-- Message d'erreur global -->
+    <div
+      *ngIf="errorMessage"
+      class="alert alert-danger alert-dismissible fade show"
+      role="alert"
+    >
+      <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+      <button
+        type="button"
+        class="btn-close"
+        (click)="errorMessage = ''"
+      ></button>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <!-- Scanner Section -->
+          <div class="col-md-6">
+            <div class="scanner-container">
+              <h3 class="text-center mb-4"><i class="bi bi-qr-code-scan"></i> Scanner QR Code</h3>
+
+              <div class="scanner-wrapper">
+                <zxing-scanner
+                  #scanner
+                  [enable]="isScannerActive"
+                  (scanSuccess)="onScanSuccess($event)"
+                  [formats]="availableFormats"
+                  [device]="currentDevice"
+                  (camerasFound)="onCamerasFound($event)"
+                  (permissionResponse)="onHasPermission($event)"
+                  class="scanner"
+                >
+                </zxing-scanner>
+
+                <div
+                  *ngIf="!isScannerActive"
+                  class="scanner-placeholder text-center"
+                >
+                  <i
+                    class="bi bi-qr-code"
+                    style="font-size: 5rem; color: #6c757d"
+                  ></i>
+                  <p class="mt-3 text-muted">Cliquez sur démarrer le scan</p>
+                </div>
+              </div>
+
+              <div class="text-center mt-3">
+                <button
+                  class="btn btn-primary"
+                  (click)="toggleScanner()"
+                >
+                  <i
+                    class="bi"
+                    [class.bi-camera]="!isScannerActive"
+                    [class.bi-stop-circle]="isScannerActive"
+                  ></i>
+                  {{ isScannerActive ? 'Arrêter le scan' : 'Démarrer le scan' }}
+                </button>
+
+                <select
+                  *ngIf="devices && devices.length > 1"
+                  class="form-select mt-2"
+                  [(ngModel)]="currentDevice"
+                  (change)="onDeviceSelectChange()"
+                >
+                  <option
+                    *ngFor="let device of devices"
+                    [ngValue]="device"
+                  >
+                    {{ device.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transaction Section -->
+          <div class="col-md-6">
+            <div *ngIf="scannedVehicule; else noVehicleTemplate">
+              <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                  <h5 class="card-title mb-0"><i class="bi bi-car-front"></i> Véhicule scanné</h5>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <p><strong>Immatriculation:</strong> {{ scannedVehicule.immatriculation }}</p>
+                      <p><strong>Marque:</strong> {{ scannedVehicule.marque }}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p><strong>Type:</strong> {{ scannedVehicule.type_vehicule | titlecase }}</p>
+                      <p><strong>Propriétaire:</strong> {{ scannedVehicule.username }}</p>
+                      <p *ngIf="creditInfo">
+                        <strong>Crédit total:</strong>
+                        {{ creditInfo.solde_credit | number: '1.2-2' }} DT
+                      </p>
+                      <p *ngIf="creditInfo">
+                        <strong>Crédit utilisé:</strong>
+                        {{ creditInfo.credit_utilise | number: '1.2-2' }} DT
+                      </p>
+                      <p
+                        *ngIf="creditInfo"
+                        [ngClass]="{
+                          'text-success': creditInfo.solde_disponible > 0,
+                          'text-danger': creditInfo.solde_disponible <= 0,
+                        }"
+                      >
+                        <strong>Solde disponible:</strong>
+                        {{ creditInfo.solde_disponible | number: '1.2-2' }} DT
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header bg-success text-white">
+                  <h5 class="card-title mb-0">
+                    <i class="bi bi-fuel-pump"></i> Nouvelle transaction
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <form (ngSubmit)="submitTransaction()">
+                    <div class="mb-3">
+                      <label
+                        for="amount"
+                        class="form-label"
+                      >
+                        Montant total (DT) <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0.01"
+                        class="form-control"
+                        id="amount"
+                        [(ngModel)]="transaction.amount"
+                        name="amount"
+                        required
+                        (input)="calculateQuantity()"
+                      />
+                    </div>
+
+                    <div class="mb-3">
+                      <label
+                        for="pricePerLiter"
+                        class="form-label"
+                      >
+                        Prix par litre (DT) <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0.01"
+                        class="form-control"
+                        id="pricePerLiter"
+                        [(ngModel)]="transaction.pricePerLiter"
+                        name="pricePerLiter"
+                        required
+                        (input)="calculateQuantity()"
+                      />
+                    </div>
+
+                    <div class="mb-3">
+                      <label
+                        for="quantity"
+                        class="form-label"
+                        >Quantité (litres)</label
+                      >
+                      <input
+                        type="number"
+                        step="0.01"
+                        class="form-control"
+                        id="quantity"
+                        [(ngModel)]="transaction.quantity"
+                        name="quantity"
+                        readonly
+                      />
+                    </div>
+
+                    <!-- Photo Proof Section -->
+                    <div class="mb-3">
+                      <label
+                        for="proofPhoto"
+                        class="form-label"
+                        >Preuve photo (optionnelle)</label
+                      >
+                      <div class="input-group mb-2">
+                        <button
+                          class="btn btn-outline-primary"
+                          type="button"
+                          (click)="openCamera()"
+                        >
+                          <i class="bi bi-camera"></i> Prendre une photo
+                        </button>
+                        <button
+                          class="btn btn-outline-secondary"
+                          type="button"
+                          (click)="openFileInput()"
+                        >
+                          <i class="bi bi-folder"></i> Choisir un fichier
+                        </button>
+                        <input
+                          type="file"
+                          #fileInput
+                          class="form-control d-none"
+                          id="proofPhoto"
+                          accept="image/*"
+                          (change)="onFileSelected($event)"
+                        />
+                      </div>
+
+                      <small class="text-muted"
+                        >Preuve visuelle de la transaction (optionnelle)</small
+                      >
+                    </div>
+
+                    <div
+                      *ngIf="proofPhotoPreview"
+                      class="mb-3 text-center"
+                    >
+                      <img
+                        [src]="proofPhotoPreview"
+                        class="img-thumbnail"
+                        [class.loading]="isTakingPhoto"
+                        style="max-height: 200px"
+                      />
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-danger ms-2"
+                        (click)="removePhoto()"
+                      >
+                        <i class="bi bi-trash"></i> Supprimer
+                      </button>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        [disabled]="
+                          isSubmitting ||
+                          (creditInfo &&
+                            transaction.amount &&
+                            transaction.amount > creditInfo.solde_disponible)
+                        "
+                      >
+                        <span *ngIf="!isSubmitting">
+                          <i class="bi bi-check-circle"></i> Enregistrer
+                        </span>
+                        <span *ngIf="isSubmitting">
+                          <span
+                            class="spinner-border spinner-border-sm"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
+                          Enregistrement...
+                        </span>
+                      </button>
+                    </div>
+
+                    <div
+                      *ngIf="
+                        creditInfo &&
+                        transaction.amount &&
+                        transaction.amount > creditInfo.solde_disponible
+                      "
+                      class="alert alert-warning mt-3"
+                    >
+                      <i class="bi bi-exclamation-triangle"></i> Le montant saisi dépasse le solde
+                      disponible!
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <ng-template #noVehicleTemplate>
+              <div class="text-center no-vehicle p-5">
+                <i
+                  class="bi bi-car-front"
+                  style="font-size: 5rem; color: #6c757d"
+                ></i>
+                <h4 class="mt-3">Aucun véhicule scanné</h4>
+                <p class="text-muted">Scannez le QR code du véhicule pour commencer</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Success Modal -->
+<div
+  *ngIf="showSuccessModal"
+  class="modal fade show"
+  style="display: block; background-color: rgba(0, 0, 0, 0.5)"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title"><i class="bi bi-check-circle"></i> Succès</h5>
+      </div>
+      <div class="modal-body text-center">
+        <p>La transaction a été enregistrée avec succès!</p>
+        <p>Redirection dans {{ redirectSeconds }} secondes...</p>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="closeSuccessModal()"
+        >
+          Fermer maintenant
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
