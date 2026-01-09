@@ -572,50 +572,6 @@ body.dark-theme .btn-secondary:hover {
   background-color: var(--hover-bg);
 }
 
-/* Scrollbar pour le mode sombre */
-body.dark-theme ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-body.dark-theme ::-webkit-scrollbar-track {
-  background: var(--bg-tertiary);
-  border-radius: 10px;
-}
-
-body.dark-theme ::-webkit-scrollbar-thumb {
-  background: var(--text-muted);
-  border-radius: 10px;
-}
-
-body.dark-theme ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
-}
-
-/* ============================================ */
-/* SCROLLBAR MODERNE (Mode clair) */
-/* ============================================ */
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-tertiary);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 10px;
-  border: 2px solid var(--bg-tertiary);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
-}
-
 /* Bordures et séparateurs */
 body.dark-theme hr,
 body.dark-theme .border,
@@ -742,12 +698,17 @@ app-footer {
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   display: block;
   width: 100%;
+  box-sizing: border-box;
 }
 
-/* Centrer le contenu du footer */
+/* Centrer le contenu du footer dans l'espace disponible */
 #footer .footer,
 .footer {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 body.dark-theme #footer,
@@ -1150,7 +1111,121 @@ body.dark-theme .spinner-grow {
   }
 }
 
+/* ============================================ */
+/* PAGINATION RESPONSIVE - Cacher Précédent/Suivant sur mobile */
+/* ============================================ */
+
+@media (max-width: 576px) {
+  /* Cacher les boutons Précédent et Suivant sur mobile */
+  .pagination .page-item:first-child,
+  .pagination .page-item:last-child {
+    display: none !important;
+  }
+  
+  /* Réduire la taille des boutons de pagination sur mobile */
+  .pagination .page-link {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    min-width: 36px;
+    text-align: center;
+  }
+  
+  /* Centrer la pagination */
+  .pagination {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}
+
+/* ============================================ */
+/* TABLEAUX RESPONSIVES - Scroll horizontal complet */
+/* ============================================ */
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+.table-responsive > table {
+  margin-bottom: 0;
+  width: max-content;
+  min-width: 100%;
+}
+
+/* Forcer TOUS les tableaux à afficher leur contenu complet */
+table.table,
+.table {
+  width: max-content;
+  min-width: 100%;
+}
+
+/* Wrapper automatique pour scrollbar sur les tableaux */
+.table-wrapper {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+}
+
 @media (max-width: 768px) {
+  /* Forcer le scroll horizontal pour tous les tableaux sur mobile */
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto !important;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+    border-radius: var(--border-radius-sm);
+    max-width: 100vw;
+  }
+  
+  /* S'assurer que les tableaux affichent TOUT leur contenu */
+  .table-responsive > .table,
+  .table-responsive > table {
+    width: max-content;
+    min-width: 100%;
+    margin-bottom: 0;
+    white-space: nowrap;
+  }
+  
+  /* Pour les tableaux dans les cards */
+  .card-body .table-responsive {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: calc(100% + 2rem);
+  }
+  
+  /* TOUS les tableaux doivent avoir scroll horizontal complet sur mobile */
+  table.table,
+  .table,
+  table {
+    width: max-content;
+    min-width: 100%;
+    white-space: nowrap;
+  }
+  
+  /* Wrapper automatique pour les tableaux non wrappés */
+  .card-body > table:not(.table-responsive table),
+  .container > table:not(.table-responsive table),
+  .content > table,
+  div > table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    width: max-content;
+    min-width: 100%;
+  }
+
   .card {
     border-radius: var(--border-radius-sm);
   }
@@ -1161,5 +1236,59 @@ body.dark-theme .spinner-grow {
   
   .btn {
     padding: 10px 16px;
+  }
+}
+
+/* ============================================ */
+/* FOOTER CENTRAGE DYNAMIQUE */
+/* ============================================ */
+
+/* Footer centré en tenant compte de la sidebar */
+#footer,
+.footer,
+app-footer {
+  box-sizing: border-box;
+}
+
+/* Contenu du footer centré dans l'espace disponible (total width - sidebar width) */
+.footer-content,
+#footer > div,
+.footer > div:not(.social-links) {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Quand la sidebar est ouverte - centrer dans l'espace restant */
+body:not(.sidebar-closed) #footer .footer,
+body:not(.sidebar-closed) app-footer .footer {
+  padding-left: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Quand la sidebar est fermée - centrer sur toute la largeur */
+body.sidebar-closed #footer .footer,
+body.sidebar-closed app-footer .footer,
+body.sidebar-closed .footer {
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sur mobile, toujours centré sans padding */
+@media (max-width: 1199px) {
+  #footer .footer,
+  app-footer .footer,
+  .footer {
+    padding-left: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 }

@@ -97,18 +97,9 @@
   line-height: 1.2;
 }
 
-/* Style de l'icône - Version bleue */
+/* Style de l'icône - Version bleue (masquée) */
 .pagetitle .title-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0, 178, 255, 0.2);
-  transition: all 0.3s ease;
-  will-change: transform;
+  display: none;
 }
 
 .pagetitle .title-icon svg {
@@ -204,11 +195,46 @@
   border-radius: 20px;
   margin: 0 5px;
   padding: 8px 20px;
+  white-space: nowrap;
 }
 
 .btn-group .btn.active {
   background-color: #3b82f6;
   color: white;
+}
+
+/* Scrollbar horizontale pour les boutons de section sur mobile */
+@media (max-width: 768px) {
+  .card-body .btn-group {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    margin: 0 -5px;
+  }
+
+  .card-body .btn-group::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .card-body .btn-group::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+
+  .card-body .btn-group::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+
+  .card-body .btn-group::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+  }
+
+  .card-body .btn-group .btn {
+    flex-shrink: 0;
+  }
 }
 
 /* Style des tableaux */

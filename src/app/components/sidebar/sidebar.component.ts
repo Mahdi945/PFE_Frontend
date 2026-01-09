@@ -28,6 +28,7 @@ export class SidebarComponent implements OnInit {
   profilePhoto: string | null = null;
   menuItems: MenuItem[] = [];
   permissions: any[] = [];
+  unreadMessagesCount: number = 0;
 
   constructor(
     private sidebarService: SidebarService,
@@ -184,6 +185,24 @@ export class SidebarComponent implements OnInit {
 
   hasVisibleChildren(item: MenuItem): boolean {
     return !!item.children && item.children.length > 0;
+  }
+
+  // Fermer le sidebar sur mobile après un clic sur un lien
+  onMenuItemClick(): void {
+    if (this.sidebarService.checkIsMobile()) {
+      this.sidebarService.closeSidebar();
+    }
+  }
+
+  // Ouvrir le modal de messagerie
+  openMessagesModal(): void {
+    // Émettre un événement pour ouvrir le modal de messagerie du navbar
+    window.dispatchEvent(new CustomEvent('openMessagesModal'));
+    
+    // Fermer le sidebar sur mobile
+    if (this.sidebarService.checkIsMobile()) {
+      this.sidebarService.closeSidebar();
+    }
   }
 
   onImageError(event: Event): void {

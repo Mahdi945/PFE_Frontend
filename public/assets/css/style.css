@@ -877,24 +877,6 @@ body.dark-theme .sidebar {
   border-right-color: #334155;
 }
 
-/* Scrollbar élégante */
-.sidebar::-webkit-scrollbar {
-  width: 4px;
-}
-
-.sidebar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.2);
-  border-radius: 10px;
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.4);
-}
-
 /* Structure de base */
 .sidebar-nav {
   padding: 0;

@@ -1499,3 +1499,270 @@ body {
     animation: none !important;
   }
 }
+
+/* ================ NAVBAR RESPONSIVE MOBILE ================ */
+@media (max-width: 768px) {
+  /* Réduire la taille du logo */
+  .logo-img {
+    max-height: 50px !important;
+    width: 100px !important;
+  }
+
+  /* Cacher la barre de recherche sur mobile */
+  .search-bar {
+    display: none !important;
+  }
+
+  /* Cacher l'icône de messagerie sur mobile */
+  .nav-item.position-relative:has(.bi-chat-dots) {
+    display: none !important;
+  }
+
+  /* Style pour le bouton de recherche mobile */
+  .nav-item.d-block.d-lg-none {
+    display: block !important;
+  }
+
+  .search-bar-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    transition: all 0.3s ease;
+  }
+
+  .search-bar-toggle:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+  }
+
+  .search-bar-toggle i {
+    font-size: 1.1rem;
+    color: #6366f1;
+  }
+
+  /* Réorganiser les éléments de la navbar */
+  .header-nav {
+    margin-left: auto !important;
+  }
+
+  .header-nav ul {
+    gap: 0.25rem !important;
+  }
+
+  .header-nav .nav-item {
+    margin: 0 0.15rem !important;
+  }
+
+  /* Réduire la taille des boutons */
+  .theme-toggle {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
+  }
+
+  .theme-toggle mat-icon {
+    font-size: 18px !important;
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  /* Réduire la taille des icônes de notification et messagerie */
+  .nav-icon i {
+    font-size: 1.1rem !important;
+  }
+
+  .nav-link.nav-icon {
+    padding: 0.4rem !important;
+  }
+
+  /* Réduire la taille de la photo de profil */
+  .profile-img {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .default-profile-icon {
+    font-size: 34px !important;
+  }
+
+  /* Badge de notification plus petit */
+  .badge-notification {
+    min-width: 16px !important;
+    height: 16px !important;
+    font-size: 10px !important;
+    top: -3px !important;
+    right: -3px !important;
+  }
+
+  /* Toggle sidebar button */
+  .toggle-sidebar-btn {
+    font-size: 1.5rem;
+    padding: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Encore plus petit sur très petits écrans */
+  .logo-img {
+    max-height: 40px !important;
+    width: 80px !important;
+  }
+
+  .theme-toggle {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .theme-toggle mat-icon {
+    font-size: 16px !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .search-bar-toggle {
+    width: 34px;
+    height: 34px;
+  }
+
+  .search-bar-toggle i {
+    font-size: 1rem;
+  }
+
+  .nav-icon i {
+    font-size: 1rem !important;
+  }
+
+  .profile-img {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .default-profile-icon {
+    font-size: 30px !important;
+  }
+
+  .header-nav ul {
+    gap: 0.1rem !important;
+  }
+
+  .header-nav .nav-item {
+    margin: 0 0.1rem !important;
+  }
+}
+
+/* ================ SEARCH MODAL MOBILE ================ */
+.search-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 60px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.search-modal-content {
+  width: 95%;
+  max-width: 500px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-modal-header {
+  padding: 16px;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-modal-header input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.search-modal-header input:focus {
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.search-modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.search-modal-close:hover {
+  background: #e9ecef;
+}
+
+.search-modal-results {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.search-modal-results .search-result-item {
+  padding: 12px 16px;
+}
+
+/* Dark mode pour le search modal */
+.dark-theme .search-modal-content {
+  background: #2a2a2a;
+}
+
+.dark-theme .search-modal-header {
+  border-bottom-color: #444;
+}
+
+.dark-theme .search-modal-header input {
+  background: #333;
+  color: #f0f0f0;
+}
+
+.dark-theme .search-modal-header input:focus {
+  background: #444;
+}
+
+.dark-theme .search-modal-close {
+  background: #333;
+  color: #f0f0f0;
+}
+
+.dark-theme .search-modal-close:hover {
+  background: #444;
+}

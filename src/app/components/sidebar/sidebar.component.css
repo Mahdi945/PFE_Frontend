@@ -262,18 +262,127 @@ body.dark-theme .sidebar-toggle i {
   }
 }
 
+/* ==================== SECTION COMPTE UTILISATEUR ==================== */
+.sidebar-account-section {
+  flex-shrink: 0;
+  padding: 0;
+  margin-top: auto;
+}
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #e0e0e0, transparent);
+  margin: 16px 12px 12px 12px;
+}
+
+body.dark-theme .section-divider,
+:host-context(body.dark-theme) .section-divider {
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent) !important;
+}
+
+/* Titre de la section */
+.section-title {
+  display: flex;
+  align-items: center;
+  padding: 8px 20px;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+}
+
+body.dark-theme .section-title,
+:host-context(body.dark-theme) .section-title {
+  color: #a0a3a7 !important;
+}
+
+.section-title i {
+  font-size: 0.9rem;
+  margin-right: 8px;
+}
+
+.account-menu {
+  list-style: none;
+  padding: 0 8px;
+  margin: 0 0 12px 0;
+}
+
+.account-menu .nav-item {
+  margin-bottom: 4px;
+}
+
+.account-menu .nav-link {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  color: #4a5568;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+body.dark-theme .account-menu .nav-link,
+:host-context(body.dark-theme) .account-menu .nav-link {
+  color: #e4e6eb !important;
+}
+
+.account-menu .nav-link:hover {
+  background-color: rgba(0, 123, 255, 0.08);
+  color: #007bff;
+}
+
+body.dark-theme .account-menu .nav-link:hover,
+:host-context(body.dark-theme) .account-menu .nav-link:hover {
+  background-color: rgba(74, 144, 226, 0.1) !important;
+  color: #4a90e2 !important;
+}
+
+.account-menu .nav-link.active {
+  background-color: rgba(0, 123, 255, 0.12);
+  color: #007bff;
+  font-weight: 600;
+}
+
+body.dark-theme .account-menu .nav-link.active,
+:host-context(body.dark-theme) .account-menu .nav-link.active {
+  background-color: rgba(74, 144, 226, 0.15) !important;
+  color: #4a90e2 !important;
+}
+
+.account-menu .nav-link i {
+  font-size: 1.1rem;
+  margin-right: 10px;
+  min-width: 20px;
+}
+
+.account-menu .badge-count {
+  margin-left: auto;
+  background: #dc3545;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+  font-weight: 600;
+}
+
 /* ==================== BADGE UTILISATEUR (Style Shipnology) ==================== */
 .user-profile-badge {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 14px;
-  margin: 12px;
+  padding: 10px 14px;
+  margin: 0 12px 8px 12px;
   border-radius: 12px;
   background-color: #e8f4fd;
   box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
   border: 1px solid rgba(0, 123, 255, 0.15);
-  margin-top: auto;
   flex-shrink: 0;
 }
 
@@ -412,8 +521,31 @@ body.dark-theme .logout-btn:hover,
 
 /* Responsive pour le badge utilisateur */
 @media (max-width: 768px) {
+  .sidebar-account-section {
+    position: sticky;
+    bottom: 50px;
+    background-color: #fff;
+    padding-bottom: 8px;
+    z-index: 10;
+  }
+
+  body.dark-theme .sidebar-account-section,
+  :host-context(body.dark-theme) .sidebar-account-section {
+    background-color: #2c3038 !important;
+  }
+
   .user-profile-badge {
-    padding: 12px 15px;
+    padding: 10px 12px;
+    margin: 0 10px 8px 10px;
+    position: sticky;
+    bottom: 0;
+    background-color: #e8f4fd;
+    z-index: 10;
+  }
+
+  body.dark-theme .user-profile-badge,
+  :host-context(body.dark-theme) .user-profile-badge {
+    background-color: #1a2744 !important;
   }
 
   .user-avatar {

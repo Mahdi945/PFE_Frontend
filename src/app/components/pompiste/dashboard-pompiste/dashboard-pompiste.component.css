@@ -585,3 +585,16 @@
     background-position: 100% 50%;
   }
 }
+
+
+/* Responsive - Masquer l'icône sur mobile */
+@media (max-width: 768px) {
+  .pagetitle .title-icon {
+    display: none;
+  }
+  
+  .pagetitle h1 {
+    font-size: 1.8rem;
+  }
+}
+

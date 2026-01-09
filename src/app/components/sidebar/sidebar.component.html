@@ -18,6 +18,7 @@
           [routerLink]="item.routerLink"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
+          (click)="onMenuItemClick()"
         >
           <i [class]="'bi ' + item.icon"></i><span>{{ item.element_name }}</span>
         </a>
@@ -46,6 +47,7 @@
               <a
                 [routerLink]="child.routerLink"
                 routerLinkActive="active"
+                (click)="onMenuItemClick()"
               >
                 <i [class]="'bi ' + child.icon + ' fs-5'"></i><span>{{ child.element_name }}</span>
               </a>
@@ -55,6 +57,30 @@
       </li>
     </ng-container>
   </ul>
+
+  <!-- Section spéciale : Mon compte (séparée des éléments de menu) -->
+  <div class="sidebar-account-section">
+    <div class="section-divider"></div>
+    <div class="section-title">
+      <i class="bi bi-person-gear"></i>
+      <span>Mon Compte</span>
+    </div>
+    <ul class="account-menu">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/profile-utilisateur" routerLinkActive="active" (click)="onMenuItemClick()">
+          <i class="bi bi-person-circle"></i>
+          <span>Mon Profil</span>
+        </a>
+      </li>
+      <li class="nav-item" *ngIf="userRole !== 'client'">
+        <a class="nav-link" href="#" (click)="$event.preventDefault(); openMessagesModal()">
+          <i class="bi bi-chat-dots"></i>
+          <span>Messagerie</span>
+          <span *ngIf="unreadMessagesCount > 0" class="badge-count">{{ unreadMessagesCount }}</span>
+        </a>
+      </li>
+    </ul>
+  </div>
 
   <!-- Badge utilisateur en bas de la sidebar -->
   <div class="user-profile-badge">

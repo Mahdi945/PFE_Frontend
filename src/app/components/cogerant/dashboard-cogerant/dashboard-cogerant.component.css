@@ -22,11 +22,42 @@
   border-radius: 20px;
   margin: 0 5px;
   padding: 8px 20px;
+  white-space: nowrap;
 }
 
 .btn-group .btn.active {
   background-color: #3b82f6;
   color: white;
+}
+
+/* Scroll horizontal sur mobile */
+@media (max-width: 768px) {
+  .card-body .btn-group {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 5px;
+  }
+  
+  .card-body .btn-group::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .card-body .btn-group::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .card-body .btn-group::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  .card-body .btn-group::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 }
 
 /* Style des tableaux */
@@ -312,3 +343,16 @@
     background-position: 100% 50%;
   }
 }
+
+
+/* Responsive - Masquer l'ic�ne sur mobile */
+@media (max-width: 768px) {
+  .pagetitle .title-icon {
+    display: none;
+  }
+  
+  .pagetitle h1 {
+    font-size: 1.8rem;
+  }
+}
+

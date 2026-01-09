@@ -533,10 +533,11 @@
 
 .password-input {
   padding-right: 50px;
+  border-radius: 0 0 0 0 !important;
+  border-right: none !important;
 }
 
 .password-toggle-btn {
-  border-left: none;
   background-color: #f8f9fa;
   border: 2px solid var(--login-border);
   border-left: none;
@@ -544,7 +545,9 @@
   cursor: pointer;
   transition: var(--login-transition);
   border-radius: 0 14px 14px 0;
+  margin-left: 0 !important;
 }
+
 
 .password-toggle-btn:hover {
   background-color: rgba(99, 102, 241, 0.1);
@@ -760,3 +763,4 @@
     transition-duration: 0.01ms !important;
   }
 }
+

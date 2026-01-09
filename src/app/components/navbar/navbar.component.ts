@@ -68,6 +68,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   searchQuery: string = '';
   searchResults: any[] = [];
   showSearchResults: boolean = false;
+  showSearchModal: boolean = false;
   isMessageModalOpen = false;
 
   // Propriétés pour la messagerie
@@ -89,6 +90,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('mobileSearchInput') mobileSearchInput!: ElementRef<HTMLInputElement>;
   private messagesSub!: Subscription;
   private contactsSub!: Subscription;
   private unreadCountSub!: Subscription;
@@ -290,6 +292,28 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.showSearchResults = this.searchResults.length > 0;
   }
 
+  // Ouvrir le modal de recherche mobile
+  openSearchModal(): void {
+    this.showSearchModal = true;
+    this.searchQuery = '';
+    this.searchResults = [];
+    document.body.style.overflow = 'hidden';
+    // Focus sur l'input après ouverture
+    setTimeout(() => {
+      if (this.mobileSearchInput) {
+        this.mobileSearchInput.nativeElement.focus();
+      }
+    }, 100);
+  }
+
+  // Fermer le modal de recherche mobile
+  closeSearchModal(): void {
+    this.showSearchModal = false;
+    this.searchQuery = '';
+    this.searchResults = [];
+    document.body.style.overflow = '';
+  }
+
   navigateToResult(result: any): void {
     this.showSearchResults = false;
     this.searchQuery = '';
@@ -308,6 +332,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (!target.closest('.search-bar')) {
       this.showSearchResults = false;
     }
+  }
+
+  // Écouter l'événement du sidebar pour ouvrir la messagerie
+  @HostListener('window:openMessagesModal')
+  onOpenMessagesFromSidebar(): void {
+    this.openMessages();
   }
 
   toggleSidebar(): void {

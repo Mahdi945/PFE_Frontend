@@ -69,7 +69,7 @@
         <a
           class="nav-link nav-icon search-bar-toggle"
           href="#"
-          (click)="$event.preventDefault(); focusSearch()"
+          (click)="$event.preventDefault(); openSearchModal()"
         >
           <i class="bi bi-search"></i>
         </a>
@@ -516,5 +516,49 @@
     >
       Fermer
     </button>
+  </div>
+</div>
+
+<!-- Modal de recherche mobile -->
+<div 
+  class="search-modal-overlay" 
+  *ngIf="showSearchModal"
+  (click)="closeSearchModal()"
+>
+  <div class="search-modal-content" (click)="$event.stopPropagation()">
+    <div class="search-modal-header">
+      <i class="bi bi-search"></i>
+      <input
+        #mobileSearchInput
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="onSearchInput()"
+        placeholder="Rechercher..."
+        autocomplete="off"
+        autofocus
+      />
+      <button class="search-modal-close" (click)="closeSearchModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="search-modal-results" *ngIf="searchResults.length > 0">
+      <div
+        *ngFor="let result of searchResults"
+        class="search-result-item"
+        (click)="navigateToResult(result); closeSearchModal()"
+      >
+        <i class="bi" [ngClass]="result.icon || 'bi-link'"></i>
+        <div>
+          <h6>{{ result.title }}</h6>
+          <p class="text-muted small">{{ result.description }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="search-modal-results" *ngIf="searchQuery && searchResults.length === 0">
+      <div class="text-center text-muted py-4">
+        <i class="bi bi-search" style="font-size: 2rem; opacity: 0.3;"></i>
+        <p class="mt-2 mb-0">Aucun résultat trouvé</p>
+      </div>
+    </div>
   </div>
 </div>
